@@ -1,5 +1,5 @@
 //============================================================================
-// Name        : DP8.cpp
+// Name        : main.cpp
 // Author      : Allan Goff
 // Version     :
 // Copyright   : Novatia Labs 2015
@@ -9,7 +9,8 @@
 #include "DP.h"
 
 int main(int argc, char* args[]) {
-	cout << "Hello DP8.\n" << endl;
+	DTOR("Hello IDP\n", Architecture)
+	if(flags) cout << endl;
 
 	observer::ObserverSubject* command = new observer::ObserverSubject();
 
@@ -40,6 +41,6 @@ int main(int argc, char* args[]) {
 
 	delete command;
 
-	cout << "Aloha DP8.\n" << endl;
+	DTOR("Aloha IDP", Architecture)
 	return 0;
 }

@@ -6,6 +6,8 @@
  */
 
 #include "DP.h"
+
+#include "Final/final.h"
 #include "Lectures/strategy.h"
 #include "Lectures/adapter.h"
 // Seam point - add another design pattern include (strategy.h, adapter.h, etc.).
@@ -44,6 +46,8 @@ void ObserverSubject::init() {
 	new strategy::StrategyObserver(this, ++i);
 	new adapter::AdapterObserver(this, ++i);
 	// Seam point - add another design pattern command.
+
+	new final::FinalObserver(this, 0);
 
 	new LectureObserver(this);
 	new HomeworkObserver(this);
