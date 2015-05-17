@@ -42,6 +42,13 @@ public: ~PETCleanup() { DTORF("~PETCleanup "); }
 	}
 };
 
+void defaulting(map<string,string>& order, const string& option, string def="simulation") {
+	cout << "  <>Unknown " << option << " |";
+	cout << order[option] << "|";
+	order[option] = def;
+	cout << " defaulting to '" << order[option] << "'.\n";
+}
+
 }
 
 namespace adapter {			// DP 2.
@@ -100,8 +107,9 @@ namespace factory_method {	// DP 5.
 
 namespace template_method {	// DP 4.
 
+// Seam point - add another polymorphic step.
+// Seam point - add another constant step.
 // Seam point - convert a constant step into a polymorphic step.
-// Seam point - add another step.
 
 }
 
