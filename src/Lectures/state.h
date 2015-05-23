@@ -46,6 +46,86 @@ void demo(int seqNo) {
 
 namespace problem {
 
+/* There are two things that can vary here:
+ * 1) The states
+ * 2) The actions
+ * Think graph theory; nodes and edges
+ * Initially, we will only know about a few states and a few actions.
+ * In the original state design pattern it is only easy to add states.
+ * Here, I am going to try to make it easy to add actions.
+ */
+
+class State2;
+
+class Context2 {
+public:
+	Context2(State2* initialState) : state(initialState) {}
+	virtual ~Context2() { DTOR("~Context2 ", Architecture); }
+public:
+	State2*	state;
+public:
+	void start();
+	void stop();
+	// Seam point - add another action.
+};
+
+class State2 {
+public:
+	State2() {}
+	virtual ~State2() { DTOR("~State2 ", Architecture); }
+public:
+	virtual void start(Context2* context) { cout << "State2.start()\n"; }
+	virtual void stop(Context2* context) { cout << "State2.stop()\n"; }
+	// Seam point - add another action.
+public:
+	static State2* decisionLogic(string criteria);
+};
+class Started : public State2 {
+public:
+	Started() {}
+	virtual ~Started() { DTOR("~Started ", Architecture); }
+public:
+	void start(Context2* context) {
+		cout << "  Starting; fresh context.\n";
+	}
+	void stop(Context2* context) {
+		cout << "  Stopping; forgetting context.\n";
+	}
+	// Seam point - add another action.
+};
+class Stopped : public State2 {
+public:
+	Stopped() {}
+	virtual ~Stopped() { DTOR("~Stopped ", Architecture); }
+public:
+	void start(Context2* context) {
+		cout << "  Starting; fresh context.\n";
+	}
+	void stop(Context2* context) {
+		cout << "  Stopping; forgetting context.\n";
+	}
+	// Seam point - add another action.
+};
+// Seam point - add another state.
+
+State2* State2::decisionLogic(string newState) {	// Decouples derived states from each other.
+	if(		newState == "Started")		return new Started;
+	else if(newState == "Stopped")		return new Stopped;
+	// Seam point - add another state.
+	else {
+		return new State2;
+	}
+}
+
+//Context2::Context2(State2* initialState) : state(initialState) {}
+//Context2::~Context2() {
+//		delete state;
+//		DTOR("~Context2\n", Architecture);
+//	}
+void Context2::start()	{ state->start(this); }
+void Context2::stop()	{ state->stop(this); }
+// Seam point - add another action.
+
 void demo(int seqNo) {
 	cout << seqNo << ") << state::lecture::problem::demo() >>\n";
 }

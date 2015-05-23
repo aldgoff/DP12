@@ -8,9 +8,11 @@
 #include "DP.h"
 
 #include "Final/final.h"
+#include "dptemplate.h"
 #include "Lectures/strategy.h"
 #include "Lectures/adapter.h"
 #include "Lectures/state.h"
+#include "Lectures/headfirst.h"
 // Seam point - add another design pattern include (strategy.h, adapter.h, etc.).
 
 namespace observer {
@@ -47,6 +49,7 @@ void ObserverSubject::init() {
 	new strategy::StrategyObserver(this, ++i);
 	new adapter::AdapterObserver(this, ++i);
 	new state::StateObserver(this, ++i);
+	new headfirst::HeadfirstObserver(this, ++i);
 	// Seam point - add another design pattern command.
 
 	new final::FinalObserver(this, 0);

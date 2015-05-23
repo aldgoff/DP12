@@ -16,7 +16,7 @@
 #include <list>
 using namespace std;
 
-const unsigned flags = 0x01;	// Dtor instrumentation controlled by bit flags.
+const unsigned flags = 0x02;	// Dtor instrumentation controlled by bit flags.
 #define DTOR(x, flag) if(flag & flags) { cout << x; }
 enum DtorFlags {
 	Architecture	= 0x01,
@@ -27,6 +27,13 @@ enum DtorFlags {
 	Final			= 0x10,
 };
 
+/* Seam point index
+ * path/file/namespace/class/method
+ * --------------------------------
+ * src/<designPattern>.h
+ * src/DP.cpp/#include <designPattern>.h
+ * src/DP.cpp/ObserverSubject/init()
+ */
 namespace observer {
 
 class ObserverSubject;
