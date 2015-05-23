@@ -10,6 +10,7 @@
 #include "Final/final.h"
 #include "Lectures/strategy.h"
 #include "Lectures/adapter.h"
+#include "Lectures/state.h"
 // Seam point - add another design pattern include (strategy.h, adapter.h, etc.).
 
 namespace observer {
@@ -45,6 +46,7 @@ void ObserverSubject::init() {
 	int i=0;
 	new strategy::StrategyObserver(this, ++i);
 	new adapter::AdapterObserver(this, ++i);
+	new state::StateObserver(this, ++i);
 	// Seam point - add another design pattern command.
 
 	new final::FinalObserver(this, 0);
