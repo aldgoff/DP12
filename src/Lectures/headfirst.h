@@ -23,9 +23,7 @@ namespace headfirst {	// Command line: headfirst [l|h] [ll|lp|ls] [hl|hp|hs]
 
 namespace lecture {
 
-namespace legacy {
-
-// Chapter 1: The duck example used the Strategy pattern.
+namespace legacy {	// Chapter 1: The duck example used the Strategy pattern.
 
 class Fly {
 public:
@@ -243,7 +241,136 @@ void demo(int seqNo) {
 
 }
 
-namespace problem {
+namespace problem {	// Chapter 2: Weather station example used the Observer pattern.
+
+class Subject;
+
+class Observer {
+public:
+	Observer() {}
+	virtual ~Observer() { DTOR("~Observer\n", Architecture); }
+public:
+	virtual void update() {}
+};
+
+class Subject {
+	set<Observer*> observers;
+public:
+	Subject() {}
+	~Subject() { DTOR("~Subject\n", Architecture); }
+public:
+	void subscribe(Observer* obs) {		// Attach, register, etc.
+		observers.insert(obs);
+	};
+	void unsubscribe(Observer* obs) {	// Detach, remove, etc.
+		observers.erase(obs);
+	};
+public:
+	void notifyObservers() {
+		set<Observer*>::iterator it;
+		for(it=observers.begin(); it!=observers.end(); ++it) {
+			(*it)->update();
+		}
+	}
+};
+
+class WeatherDisplay : public Observer {
+public:
+	WeatherDisplay() {}
+	virtual ~WeatherDisplay() { DTOR("~WeatherDisplay\n", Architecture); }
+public:
+	virtual void update() {
+		cout << "WeatherDisplay(Observer).update().\n";
+	}
+};
+
+class WeatherData2 : public Subject {
+public:
+	WeatherData2() {}
+	virtual ~WeatherData2() { DTOR("~WeatherData2\n", Architecture); }
+public:
+private:
+	float getTemperature() {
+		return 0.0;
+	}
+	float getHumidity() {
+		return 0.70;
+	}
+	float getPressure() {
+		return 14.5;
+	}
+public:
+	void measurementsChanged() {			// Notify, warn, send, etc.
+		float temp		= getTemperature();
+		float humidity	= getHumidity();
+		float pressure	= getPressure();
+
+		notifyObservers();
+	}
+};
+
+class Display {
+public:
+	Display() {}
+	virtual ~Display() { DTOR("~Display\n", Architecture); }
+public:
+	virtual void update(float, float, float) {}
+public:
+};
+class CurrentConditions : public Display {
+public:
+	CurrentConditions() {}
+	virtual ~CurrentConditions() { DTOR("~CurrentConditions ", Architecture); }
+public:
+	void update(float, float, float) {}
+};
+class WeatherStats : public Display {
+public:
+	WeatherStats() {}
+	virtual ~WeatherStats() { DTOR("~WeatherStats ", Architecture); }
+public:
+	void update(float, float, float) {}
+};
+class Forecast : public Display {
+public:
+	Forecast() {}
+	virtual ~Forecast() { DTOR("~Forecast ", Architecture); }
+public:
+	void update(float, float, float) {}
+};
+// Seam point - add another display.
+
+class WeatherData {	// Subject class.
+	set<Display*> observers;
+public:
+	void subscribe(Display* display) {		// Attach, register, etc.
+		observers.insert(display);
+	}
+	void unsubscribe(Display* display) {	// Detach, remove, etc.
+		observers.erase(display);
+	}
+private:
+	float getTemperature() {
+		return 0.0;
+	}
+	float getHumidity() {
+		return 0.70;
+	}
+	float getPressure() {
+		return 14.5;
+	}
+public:
+	void measurementsChanged() {			// Notify, warn, send, etc.
+		float temp		= getTemperature();
+		float humidity	= getHumidity();
+		float pressure	= getPressure();
+
+		set<Display*>::iterator it;
+		for(it=observers.begin(); it!=observers.end(); ++it) {
+			(*it)->update(temp, humidity, pressure);
+		}
+	}
+};
 
 void demo(int seqNo) {
 	cout << seqNo << ") << headfirst::lecture::problem::demo() >>\n";

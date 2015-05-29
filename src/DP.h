@@ -14,6 +14,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <set>
 using namespace std;
 
 const unsigned flags = 0x02;	// Dtor instrumentation controlled by bit flags.
