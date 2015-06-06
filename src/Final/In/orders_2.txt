@@ -4,15 +4,15 @@
 	endOfOrder
 2:
 	orderNum	= 2
-	comment		= Example order - one of everything.
+	comment		= Example order - first one of everything.
 	size		= 10000
-	packager	= Bulk
-	plastic		= ABS
-	moldLoc		= inventory
-	mold		= duck
-	tags		= ModelNumber
 	color		= red
+	plastic		= ABS
+	mold		= duck
+	moldLoc		= inventory
+	tags		= ModelNumber
 	UVInhibiter	= 6
+	packager	= Bulk
 	endOfOrder
 3:
 	orderNum		= 3

@@ -301,9 +301,9 @@ private:
 	}
 public:
 	void measurementsChanged() {			// Notify, warn, send, etc.
-		float temp		= getTemperature();
-		float humidity	= getHumidity();
-		float pressure	= getPressure();
+//		float temp		= getTemperature();
+//		float humidity	= getHumidity();
+//		float pressure	= getPressure();
 
 		notifyObservers();
 	}
