@@ -6,13 +6,13 @@
 	orderNum	= 2
 	comment		= Example order - one of everything.
 	size		= 10000
-	packager	= Bulk
+	mold		= duck
+	color		= red
 	plastic		= ABS
 	moldLoc		= inventory
-	mold		= duck
 	tags		= ModelNumber
-	color		= red
 	UVInhibiter	= 6
+	packager	= Bulk
 	endOfOrder
 3:
 	orderNum		= 3

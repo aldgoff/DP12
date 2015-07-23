@@ -11,7 +11,7 @@
 // TODO: Implement the lessons learned.
 /*
  *  1.	DP12
- -  2.	Consider the 4 new design patterns that fit the varies paradigm
+ x  2.	Consider the 4 new design patterns that fit the varies paradigm
  *  3.	Run size calc: runSize = orderSize/cavities
  *  4.	Null Observers don't respond to pause
  *  5.	Strategy needs to be more separate from Template Method
@@ -19,15 +19,15 @@
  -  7.	Present final Part 1 first day of class
  -  8.	Be able to deal with C+11 (shared_ptr, unique_ptr, etc.)
  -  9.	Dual grades:
- -  	9.1  Time: 2 hrs => A(4), 3 hrs => B(3), 4 hrs => C(2), 5 hrs => D(5).
+ *  	9.1  Time: 2 hrs => A(4), 3 hrs => B(3), 4 hrs => C(2), 5 hrs => D(5).
  -  	9.2  Quality: subjective, but ???
  -  		 9.2.1	Perfect(4) - Dtors, white space, punc only
  -  		 9.2.2	Excellent(3) - Misspellings
  -  		 9.2.3	Good(2) - A few missing or incorrect lines
  -  		 9.2.4	Fair(1) - Major elements wrong or missing
  -  		 9.2.5	Poor(0) - Fails to run to completion
- * 10.	Output bin should have a capacity that triggers the pause when full
- * 11.	Injection run should trigger 1 to 3 full output bins
+ x 10.	Output bin should have a capacity that triggers the pause when full
+ x 11.	Injection run should trigger 1 to 3 full output bins
  - 12.	Dtor instrumentation should be a command line option
  - 13.	Tag blank should depend on mold shape (18 to 26 mm, say)
  - 14.	Molds should have a duration count and limit
@@ -50,11 +50,12 @@
  - 31.	Correct tag list spacing inside brackets [Country Date]
  - 32.	Make design pattern dtor number a coding option
  - 33.	Allow multiple molds of the same shape (pick one w/ enough life)
- - 34.	Each strategy pattern should be used at least once
+ * 34.	Each strategy pattern should be used at least once
  * 35.	One of the initially constant TM_4 steps should have to become virtual
  - 36.	Consider adding dryers, visual inspection, rejections affect run size
  * 37.	Fully decouple the decision logic
  * 38.	Eliminate the Hello/Aloha requirement.
+ * 39.  Spell nylon correctly.
  */
 
 #endif /* FINAL_LESSONSLEARNED_H_ */

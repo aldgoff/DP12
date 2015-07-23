@@ -9,9 +9,16 @@ Run sizes:
   100,000
   200,000
   400,000 defaults to 200,000
+  
+Shapes:
+  duck (35 cc)
+  car (40 cc)
+  hero (50 cc)
+  ...
+  dino (30 cc)
 
 Colors:
-  black
+  black (default)
   brown
   red
   orange
@@ -24,15 +31,15 @@ Colors:
   white
 
 Plastics:
-  ABS
+  ABS (default)
   Poly
 	Polypropylene
 	Polyethelene
   PET
   ...
-  Sythetics - come colored
+  Sythetics - come pre-colored
 	Styrene
-	Nilon66
+	Nylon66
 
 Injection cycles:
   ABS - Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject
@@ -40,14 +47,17 @@ Injection cycles:
   PET - Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject
   ...
   Synthetics - Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject
-  
-Shapes:
-  duck (35 cc)
-  car (40 cc)
-  hero (50 cc)
-  ...
-  dino (30 cc)
 
+Run time estimates (hours):
+  BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
+  Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, mold->volume);
+  Historical(50k):        runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
+  Default to highest fidelty estimate.
+  ...
+  Projection(100k): runTime = ijm->setupTime_mins()
+						    + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
+					        + ijm->teardownTime_mins();
+  
 Mold locations:
   Inventory
   Sister company
@@ -184,7 +194,8 @@ Setup the injection run:
   Get and install the mold
   Insert tags into mold
   Compute estimated run time
-  Load additive bins
+  Load plastic and color bins
+  Load additive bins (if any)
   Run the injection cycle till done
   Clean the mold
   ...
