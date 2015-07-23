@@ -61,9 +61,6 @@ void defaulting(map<string,string>& order, const string& option, string def="sim
 	cout << " defaulting to '" << order[option] << "'.\n";
 }
 
-int packingSize_cc(int partSize_cc, float packingFraction, float packagerFraction) {
-	return (partSize_cc*(1 + packingFraction))*(1 + packagerFraction);
-}
 }
 
 namespace adapter {			// DP 2.
@@ -74,13 +71,13 @@ namespace adapter {			// DP 2.
 
 namespace strategy {		// DP 1.
 
-// 1) BackOfTheEnvelope(10k): runTime = orderSize*60/cavities;
-// 2) Calculation(50k):  runTime = orderSize/cavities * cycletime(metal, mold->volume);
-// 3) Historical(200k): runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
+// 1) BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
+// 2) Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, mold->volume);
+// 3) Historical(50k):        runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
 // Seam point -
-// 4) Projection(1M): runTime = ijm->setupTime_mins()
-//							  + (1+0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
-//						      + ijm->teardownTime_mins();
+// 4) Projection(100k): runTime = ijm->setupTime_mins()
+//							    + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
+//						        + ijm->teardownTime_mins();
 
 class Strategy {
 protected:
@@ -115,37 +112,50 @@ public:
 	~Calculation() { DTORF("~Calculation "); }
 public:
 	virtual int runTimeEst_hrs(map<string,string>& order) {
-		int orderSize = atoi(order["size"].c_str());
-		int cavities = atoi(order["cavities"].c_str());
-		if(cavities <= 0)	cavities = 1;
+		Strategy::runTimeEst_hrs(order);
 		int volume_cc = atoi(order["volume"].c_str());
 		int cycleTime = legacy_classes::cycleTime_sec(order["metal"], volume_cc);
 		return (orderSize/cavities)*cycleTime/3600;
 	}
 };
-class Historical : public Strategy {
+class Historical : public Strategy {	// TODO: mold->cycletime_sec().
 public:
 	Historical() {}
 	~Historical() { DTORF("~Historical "); }
 public:
 	virtual int runTimeEst_hrs(map<string,string>& order) {
 		using namespace legacy_classes;
-		int orderSize = atoi(order["size"].c_str());
-		int cavities = atoi(order["cavities"].c_str());
-		if(cavities <= 0)	cavities = 1;
+		Strategy::runTimeEst_hrs(order);
 		int cycleTime = 30; // Get from mold->cycletime_sec();
 		return (setupAvg_min + (orderSize/cavities)*cycleTime/60 + teardownAvg_min)/60;
 	}
 };
 // Seam point - add another algorithm.
+class Projection : public Strategy {	// TODO: mold->cycletime_sec() & ijm->times_mins().
+public:
+	Projection() {}
+	~Projection() { DTORF("~Projection "); }
+public:
+	virtual int runTimeEst_hrs(map<string,string>& order) {
+		using namespace legacy_classes;
+		Strategy::runTimeEst_hrs(order);
+		int cycleTime = 30; // Get from mold->cycletime_sec();
+		int setupTime_min    = setupAvg_min;	// Get from ijm->setupTime_mins();
+		int tearDownTime_min = teardownAvg_min;	// Get from ijm->tearDownTime_mins();
+		return (setupTime_min
+			 + (1 + 0.01*rejectRate_pcnt)*(orderSize/cavities)*cycleTime/60
+			 + tearDownTime_min)/60;
+	}
+};
 
 Strategy* Strategy::selectEstimationAlgorithm(map<string,string>& order) {
 	int orderSize = atoi(order["size"].c_str());
 
 	if(		orderSize <  10000)	return new BackOfTheEnvelope;
-	else if(orderSize <  50000)	return new Calculation;
-	else if(orderSize < 200000)	return new Historical;
+	else if(orderSize <  25000)	return new Calculation;
+	else if(orderSize <  50000)	return new Historical;
 	// Seam point - add another runtime estimation algorithm.
+	else if(orderSize < 100000)	return new Projection;
 
 	else {
 		legacy_classes::defaulting(order, "size", "100");
@@ -201,95 +211,70 @@ namespace factory_method {	// DP 5.
 namespace template_method {	// DP 4.
 
 class ProcessOrder_TM {	// Template Method (order processing steps).
-	int runSize;
 public:
-	ProcessOrder_TM() : runSize(0) {}
+	ProcessOrder_TM() {}
 	virtual ~ProcessOrder_TM() { DTORF("~ProcessOrder_TM\n"); }
-private:
-	int RunSize(map<string,string>& order) {
-		int orderSize = atoi(order["size"].c_str());
-		int runSize = orderSize/2;
-		cout << "  Injection cycle: " << orderSize << " order";
-		cout << " (" << runSize << " run)...\n";
-		return runSize;
-	}
 public:
 	void run(map<string,string>& order) {	// Template Method (plastic).
-		cout << "ProcessOrder_TM.run()\n";
 		setupLine(order);		// AF (order size), Factory (packaging).
 		getMold(order); 		// CofR (mold location), Bridge (shape, milling).
 		insertTags(order);	 	// Decorator (tag list).
 		runTimeEst(order);		// Strategy (order size).
 		loadBins(order);		// Becomes polymorphic on new (colored) plastics.
 		loadAdditives(order);	// Decorator (additive list).
-		runSize = RunSize(order);
+		runSize(order);
 		cycleRecipe(order);		// TM polymorphic on plastic type.
 		injectionCycle(order);	// Observer (bin full).
 		cleanMold(order);		// Adapter (plastic, mold metal).
-		// Seam point - add step.
+		// Seam point - add another constant step.
 		ship(order);			// Factory (stuffing).
 	}
-public:
+protected:
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-
+		cout << "  Setup injection line for " << order["size"] << " order with <packager> packager:\n";
+		cout << "    IJM_<num> - <metal>(<cavities>) - <conveyer> conveyer belt - <packageBin>.\n";
 	}
 	void getMold(map<string,string>& order) { // CofR (mold location), Bridge (shape, milling platform).
-		cout << "  Mold has 2 cavities.\n";
+		cout << "  Process order:\n";
+		cout << "    Pull <shape> mold from <location>.\n";
 	}
 	void insertTags(map<string,string>& order) { // Decorator (tag list).
-
+		cout << "    Insert tags [<a,b,c>] of width <width>/<space> mm.\n";
 	}
 	void runTimeEst(map<string,string>& order) { // Strategy (order size).
 		using namespace strategy;
 		Strategy* strategy = Strategy::selectEstimationAlgorithm(order);
-		cout << "  Estimated run time = " << strategy->runTimeEst_hrs(order)/60.0;
-		cout << " days.\n";
+		cout << "    Estimated run time = " << (int)(strategy->runTimeEst_hrs(order));
+		cout << " hours.\n";
 	}
+	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {	// Polymorphic on new (colored) plastics.
-		cout << "  Load plastic bin with " << order["plastic"] << ".\n";
-		cout << "  Load color bin with " << order["color"] << ".\n";
+		cout << "    Load plastic bin with " << order["plastic"];
+		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "    Load plastic bin with " << order["color"] << " " << order["plastic"] << " pellets.\n";
 	}
 	void loadAdditives(map<string,string>& order) {	// Decorator (additive list).
-
+		cout << "    Load additives (if any) [<x, y, z>].\n";
+		cout << "      Recipe: <plastic>(vol-caddTotal) <color>(vol) <x>(vol) ... <z>(vol) Total = <tot>.\n";
+	}
+	void runSize(map<string,string>& order) {
+		int orderSize = atoi(order["size"].c_str());
+		int runSize = orderSize/2;
+		cout << "    Cycle <IJM> for <plastic> " << runSize << " times...\n";
 	}
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "    <plastic> - Close - heat to <temp> - inject at <pressure>";
+		cout << "      Close - heat to <temp> - inject at <pressure>";
 		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void injectionCycle(map<string,string>& order) {	// Observer (bin full).
-		int effPartVol_cc = legacy_classes::packingSize_cc(50, .10, .25);
-		int capacity = 300000/effPartVol_cc;
-		cout << "    Effective part volume ~ " << effPartVol_cc;
-		cout << " implies <package> bin capacity ~ " << capacity << ".\n";
-		int count = 0;
-		int total = 0;
-		for(int i=0; i<runSize; i++) {
-//			count += mold->cavities;
-			count += 1;
-//			bin->increment(mold->cavities);
-//			if(bin->full()) {
-			if(count > capacity) {
-				cout << "    <package> bin full (" << count << " parts).\n";
-//				bin->update();
-				cout << "      IJM/Conveyer/Packager pausing while <package> bin is swapped.\n";
-				cout << "      Fill <package> bin with <stuffer> packing.\n";
-				total += count;
-				count = 0;
-			}
-		}
-		if(count > 0) {
-			cout << "    <package> bin partial (" << count << " parts).\n";
-			cout << "      Fill <package> bin with <stuffer> packing.\n";
-		}
-		total += count;
-		cout << "  Total parts produced, boxed (and shipped) = " << total << ".\n";
+		cout << "      When <packageBin> full, paused <IJM/Conveyer/OptionalPackager> while stuffed with <stuffer> packing & swapped.\n";
 	}
 	void cleanMold(map<string,string>& order) {	// Adapter (plastic, mold metal).
-
+		cout << "    Clean " << order["plastic"] << " " << "<metal>" << " mold: <cleaning adapter>.\n";
 	}
-	// Seam point - add another step.
+	// Seam point - add another constant step.
 	void ship(map<string,string>& order) {	// Factory (stuffing).
-
+		cout << "    Ship to <address>.\n";
 	}
 public:
 	static ProcessOrder_TM* getOrderProcess(map<string,string>& order);
@@ -305,8 +290,7 @@ public:
 	}
 	virtual void cycleRecipe(map<string,string>& order) {}
 };
-// Seam point - add another plastic.
-// Seam point - convert a constant step into a polymorphic step.
+// Seam point - add another polymorphic step (not in this version).
 
 ProcessOrder_TM* ProcessOrder_TM::getOrderProcess(map<string,string>& order) {
 	if(		order["plastic"] == "whatever")		return new ProcessOrder_TM;
@@ -314,7 +298,7 @@ ProcessOrder_TM* ProcessOrder_TM::getOrderProcess(map<string,string>& order) {
 	// Seam point - add another plastic.
 
 	else {
-		legacy_classes::defaulting(order, "plastic");
+		legacy_classes::defaulting(order, "plastic", "simulation");
 		return new ProcessOrder_TM;
 	}
 }
@@ -332,7 +316,7 @@ void process(map<string,string>& order) {
 	delete processOrder;
 }
 
-pair<string, string> parse(string line) {
+pair<string,string> parse(string line) {
 	char key[83];
 	char val[83] = {0};
 
@@ -354,10 +338,10 @@ pair<string, string> parse(string line) {
 	return make_pair(key, value);
 }
 
-map<string, string> getCompleteOrder(FILE* orderFilePtr) {
-	map<string, string> order;
+map<string,string> getCompleteOrder(FILE* orderFilePtr) {
+	map<string,string> order;
 	char line[80+3];
-	pair<string, string>	keyValue;
+	pair<string,string>	keyValue;
 
 	while(fgets(line, 80, orderFilePtr)) {
 		cout << line;

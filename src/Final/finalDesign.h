@@ -113,11 +113,12 @@ namespace template_method {	// DP 4.
 
 }
 
-void process(map<string, string>& order) {
-
+void process(map<string,string>& order) {
+	// Fill in the namespaces above with your design pattern class hierarchies.
+	// Call your order processing class from here <myProcess>->run(order);
 }
 
-pair<string, string> parse(string line) {
+pair<string,string> parse(string line) {
 	char key[83];
 	char val[83] = {0};
 
@@ -139,10 +140,10 @@ pair<string, string> parse(string line) {
 	return make_pair(key, value);
 }
 
-map<string, string> getCompleteOrder(FILE* orderFilePtr) {
-	map<string, string> order;
+map<string,string> getCompleteOrder(FILE* orderFilePtr) {
+	map<string,string> order;
 	char line[80+3];
-	pair<string, string>	keyValue;
+	pair<string,string>	keyValue;
 
 	while(fgets(line, 80, orderFilePtr)) {
 		cout << line;
@@ -168,7 +169,7 @@ void demo(const string& orderFile) {
 	FILE* orderFilePtr = fopen(orderFile.c_str(), "r");
 
 	for(;;) {	// Get and process each order.
-		map<string, string> order = getCompleteOrder(orderFilePtr);
+		map<string,string> order = getCompleteOrder(orderFilePtr);
 		if(order.size() == 0)
 			break;
 		process(order);
