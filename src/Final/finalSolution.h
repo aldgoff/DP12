@@ -78,7 +78,7 @@ void defaulting(map<string,string>& order, const string& option, string def="sim
 
 namespace adapter {			// DP 2 - done.
 
-class CleanMold {
+class CleanMold {	// If the interfaces are varying...
 public:
 	CleanMold() {}
 	virtual ~CleanMold() { DTORF("~adapter::CleanMold\n"); }
@@ -131,7 +131,7 @@ namespace strategy {		// DP 1 - done except for todos.
 //							    + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
 //						        + ijm->teardownTime_mins();
 
-class RuntimeEstimate {
+class RuntimeEstimate {	// If the algorithms are varying...
 protected:
 	int orderSize;
 	int cavities;
@@ -225,14 +225,283 @@ namespace observer {		// DP 7.
 
 }
 
-namespace abstract_factory {// DP 10.
+namespace abstract_factory {// DP 10 - done except for Observer.
 
 // Seam point - add another type 1.
 // Seam point - add another type 2.
 // Seam point - add another type 3.
 // Seam point - add another ...
 // Seam point - add another type N.
+
+class IJM {
+public:
+	IJM() {}
+	virtual ~IJM() { DTORF("~IJM "); }
+public:
+	virtual string setup() { return "IJM base"; }
+};
+class IJM_110 : public IJM {					// PilotOrder.
+public:
+	~IJM_110() { cout << "~IJM_110 "; }
+public:
+	string setup() { return "IJM_110"; }
+};
+class IJM_120 : public IJM {					// SmallOrder.
+public:
+	~IJM_120() { cout << "~IJM_120 "; }
+public:
+	string setup() { return "IJM_120"; }
+};
+class IJM_210 : public IJM {					// MediumOrder.
+public:
+	~IJM_210() { cout << "~IJM_210 "; }
+public:
+	string setup() { return "IJM_210"; }
+};
+// Seam point - add another Injection Molding machine.
+class IJM_140 : public IJM {					// FastOrder.
+public:
+	~IJM_140() { cout << "~IJM_140 "; }
+public:
+	string setup() { return "IJM_140"; }
+};
+class IJM_220 : public IJM {					// LargeOrder.
+public:
+	~IJM_220() { cout << "~IJM_220 "; }
+public:
+	string setup() { return "IJM_220"; }
+};
+class IJM_240 : public IJM {					// HugeOrder.
+public:
+	~IJM_240() { cout << "~IJM_240 "; }
+public:
+	string setup() { return "IJM_240"; }
+};
+
+class Mold {
+	unsigned m_cavities;
+public:
+	Mold(unsigned cavities=0) : m_cavities(cavities) {}
+	virtual ~Mold() { DTORF("~Mold "); }
+public:
+	virtual string setup() { return "Mold base"; }
+//	virtual string metal() { return "unobtainium"; }
+	unsigned cavities() { return m_cavities; }
+	string cavitiesAsString() {
+		char cav[] = "( )";
+		cav[1] = cavities() + '0';
+		return string(cav);
+	}
+};
+class Aluminum : public Mold {
+public:
+	Aluminum(unsigned cavities=0) : Mold(cavities) {}
+	~Aluminum() { cout << "~Aluminum "; }
+public:
+	string setup() { return "Aluminum" + cavitiesAsString(); }
+};
+class Steel : public Mold {
+public:
+	Steel(unsigned cavities=0) : Mold(cavities) {}
+	~Steel() { cout << "~Steel "; }
+public:
+	string setup() { return "Steel" + cavitiesAsString(); }
+};
+
+class ConveyerBelt {
+public:
+	ConveyerBelt() {}
+	virtual ~ConveyerBelt() { DTORF("~ConveyerBelt "); }
+public:
+	virtual string setup() { return "ConveyerBelt base"; }
+};
+class LinearBelt : public ConveyerBelt {
+public:
+	LinearBelt() {}
+	~LinearBelt() { cout << "~LinearBelt "; }
+public:
+	string setup() {return "Linear conveyer belt"; }
+};
+class YSplitBelt : public ConveyerBelt {
+public:
+	YSplitBelt() {}
+	~YSplitBelt() { cout << "~YSplitBelt "; }
+public:
+	string setup() {return "Y-Split conveyer belt"; }
+};
+// Seam point - add another conveyer belt.
+class VLevelBelt : public ConveyerBelt {
+public:
+	VLevelBelt() {}
+	~VLevelBelt() { cout << "~VLevelBelt "; }
+public:
+	string setup() {return "V-Level conveyer belt"; }
+};
+
+class PackageBin {
+public:
+	PackageBin() {}
+	virtual ~PackageBin() { DTORF("~PackageBin "); }
+public:
+	virtual string setup() { return "PackageBin base"; }
+};
+class CardboardBox : public PackageBin {
+public:
+	~CardboardBox() { cout << "~CardboardBox "; }
+public:
+	string setup() { return "CardboardBox"; }
+};
+class PallotBox : public PackageBin {
+public:
+	~PallotBox() { cout << "~PallotBox "; }
+public:
+	string setup() { return "PallotBox"; }
+};
+// Seam point - add another package bin.
+class Crate : public PackageBin {
+public:
+	~Crate() { cout << "~Crate "; }
+public:
+	string setup() { return "Crate"; }
+};
+
+class InjectionLine {	// If the families are varying...
+public:
+	InjectionLine() {}
+	virtual ~InjectionLine() { DTORF("~abstract_factory::InjectionLine\n"); }
+public:
+	virtual IJM* createIJM(map<string,string>& order) {
+		return new IJM();
+	}
+	virtual Mold* createMold(map<string,string>& order) {
+		return new Mold();
+	}
+	virtual ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new ConveyerBelt();
+	}
+	virtual PackageBin* createPackageBin(map<string,string>& order) {
+		return new PackageBin();
+	}
+public:
+	static InjectionLine* createInjectionLine(map<string,string>& order);
+};
+class PilotOrder : public InjectionLine {
+public:	virtual ~PilotOrder() { DTORF("~PilotOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_110();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Aluminum(1);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new LinearBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new CardboardBox();
+	}
+};
+class SmallOrder : public InjectionLine {
+public:	virtual ~SmallOrder() { DTORF("~SmallOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_120();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Aluminum(2);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new YSplitBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new CardboardBox();
+	}
+};
+class MediumOrder : public InjectionLine {
+public:	virtual ~MediumOrder() { DTORF("~MediumOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_210();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Steel(1);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new LinearBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new PallotBox();
+	}
+};
 // Seam point - add another family.
+class FastOrder : public InjectionLine {
+public:	virtual ~FastOrder() { DTORF("~FastOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_140();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Aluminum(4);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new VLevelBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new PallotBox();
+	}
+};
+class LargeOrder : public InjectionLine {
+public:	virtual ~LargeOrder() { DTORF("~LargeOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_220();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Steel(2);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new YSplitBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new Crate();
+	}
+};
+class HugeOrder : public InjectionLine {
+public:	virtual ~HugeOrder() { DTORF("~HugeOrder "); }
+public:
+	IJM* createIJM(map<string,string>& order) {
+		return new IJM_240();
+	}
+	Mold* createMold(map<string,string>& order) {
+		return new Steel(4);
+	}
+	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
+		return new VLevelBelt();
+	}
+	PackageBin* createPackageBin(map<string,string>& order) {
+		return new Crate();
+	}
+};
+
+InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
+	unsigned size = atoi(order["size"].c_str());
+
+	if(		size <= 10000)		return new PilotOrder;
+	else if(size <= 20000)		return new SmallOrder;
+	// Seam point - add fast order.
+	else if(size <= 40000)		return new FastOrder;
+	else if(size <= 50000)		return new MediumOrder;
+	// Seam point - add larger orders.
+	else if(size <= 100000)		return new LargeOrder;
+	else if(size <= 200000)		return new HugeOrder;
+
+	else {						// Defaulting to HugeOrder.
+		cout << "  <>Size exceeds mold lifetime |" << size << "|";
+		order["size"] = "200000";
+		cout << " defaulting to HugeOrder of " << order["size"] << ".\n";
+		return new HugeOrder;
+	}
+}
 
 }
 
@@ -249,9 +518,9 @@ namespace chain_of_resp {	// DP 8.
 
 }
 
-namespace decorator {		// DP 6.
+namespace decorator {		// DP 6 - done.
 
-class TagCavity {
+class TagCavity {	// If the options are varying...
 public:
 	const unsigned space_mm;
 private:
@@ -283,57 +552,57 @@ public:
 	virtual unsigned width_mm() { return 0; }
 	string list() { return ""; }
 };
-class Decorator : public TagCavity {
+class Tags : public TagCavity {
 protected:
 	TagCavity* delegate;
 public:
-	Decorator(TagCavity* delegate) : delegate(delegate) {}
-	virtual ~Decorator() { cout << "~Decorator "; delete delegate; }
+	Tags(TagCavity* delegate) : delegate(delegate) {}
+	virtual ~Tags() { cout << "~Tags "; delete delegate; }
 };
-class ModelNumber : public Decorator {
+class ModelNumber : public Tags {
 public:
-	ModelNumber(TagCavity* delegate) : Decorator(delegate) {}
+	ModelNumber(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~ModelNumber() { cout << "~ModelNumber "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "ModelNumber "; }
 };
-class Country : public Decorator {
+class Country : public Tags {
 public:
-	Country(TagCavity* delegate) : Decorator(delegate) {}
+	Country(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~Country() { cout << "~Country "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Country "; }
 };
-class Date : public Decorator {
+class Date : public Tags {
 public:
-	Date(TagCavity* delegate) : Decorator(delegate) {}
+	Date(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~Date() { cout << "~Date "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Date "; }
 };
 // Seam point - add another option.
-class IncCounter : public Decorator {
+class IncCounter : public Tags {
 public:
-	IncCounter(TagCavity* delegate) : Decorator(delegate) {}
+	IncCounter(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~IncCounter() { cout << "~IncCounter "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 4; }
 	string list() { return delegate->list() + "IncCounter "; }
 };
-class PartNumber : public Decorator {
+class PartNumber : public Tags {
 public:
-	PartNumber(TagCavity* delegate) : Decorator(delegate) {}
+	PartNumber(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~PartNumber() { cout << "~PartNumber "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "PartNumber "; }
 };
-class RecycleCode : public Decorator {
+class RecycleCode : public Tags {
 public:
-	RecycleCode(TagCavity* delegate) : Decorator(delegate) {}
+	RecycleCode(TagCavity* delegate) : Tags(delegate) {}
 	virtual ~RecycleCode() { cout << "~RecycleCode "; }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 6; }
@@ -365,11 +634,105 @@ TagCavity* TagCavity::addTags(TagCavity* cavity, const string& list) {
 	return cavity;
 }
 
+class Polymer {
+protected:
+	unsigned volume_m3;
+public:
+	Polymer(unsigned volume_m3=0) : volume_m3(volume_m3) {}
+	virtual ~Polymer() { DTORF("~decorator::Polymer\n"); }
+public:
+	virtual unsigned mix() { return 0; }
+	virtual string idNvol() { return ""; }
+protected:
+	 string volAsStr() {
+		char vol[80];
+		sprintf(vol, "(%d)", volume_m3);
+		return vol;
+	}
+};
+class Plastic : public Polymer {
+public:
+	Plastic(unsigned volume_m3=0) : Polymer(volume_m3) {}
+	virtual ~Plastic() { DTORF("~Plastic "); }
+};
+class Additive : public Polymer {
+protected:
+	Polymer* delegate;
+public:
+	Additive(Polymer* delegate, unsigned volume_m3)
+	  : Polymer(volume_m3), delegate(delegate) {}
+	virtual ~Additive() { DTORF("~Polymer "); delete delegate; }
+};
+class Color : public Additive {
+public:
+	Color(Polymer* delegate, unsigned volume_m3=0)
+	  : Additive(delegate, volume_m3) {}
+	virtual ~Color() { DTORF("~Color "); }
+public:
+	unsigned mix() { return delegate->mix() + volume_m3; }
+	string idNvol() { return delegate->idNvol() + " Color" + volAsStr(); }
+};
+class UVInhibiter : public Additive {
+public:
+	UVInhibiter(Polymer* delegate, unsigned volume_m3=0)
+	  : Additive(delegate, volume_m3) {}
+	virtual ~UVInhibiter() { DTORF("~UVInhibiter "); }
+public:
+	unsigned mix() { return delegate->mix() + volume_m3; }
+	string idNvol() { return delegate->idNvol() + " UVInhibiter" + volAsStr(); }
+};
+class AntiBacterial : public Additive {
+public:
+	AntiBacterial(Polymer* delegate, unsigned volume_m3=0)
+	  : Additive(delegate, volume_m3) {}
+	virtual ~AntiBacterial() { DTORF("~AntiBacterial "); }
+public:
+	unsigned mix() { return delegate->mix() + volume_m3; }
+	string idNvol() { return delegate->idNvol() + " AntiBacterial" + volAsStr(); }
+};
+class Hydrophilic : public Additive {
+public:
+	Hydrophilic(Polymer* delegate, unsigned volume_m3=0)
+	  : Additive(delegate, volume_m3) {}
+	virtual ~Hydrophilic() { DTORF("~Hydrophilic "); }
+public:
+	unsigned mix() { return delegate->mix() + volume_m3; }
+	string idNvol() { return delegate->idNvol() + " Hydrophilic" + volAsStr(); }
+};
+// Seam point - add another option.
+class MicroFibers : public Additive {
+public:
+	MicroFibers(Polymer* delegate, unsigned volume_m3=0)
+	  : Additive(delegate, volume_m3) {}
+	virtual ~MicroFibers() { DTORF("~MicroFibers "); }
+public:
+	unsigned mix() { return delegate->mix() + volume_m3; }
+	string idNvol() { return delegate->idNvol() + " MicroFibers" + volAsStr(); }
+};
+
+Polymer* addAdditives(Polymer* additive, map<string,string>& order) {
+	if(order.find("UVInhibiter") != order.end()) {
+		additive = new UVInhibiter(additive, atoi(order["UVInhibiter"].c_str()));
+	}
+	if(order.find("AntiBacterial") != order.end()) {
+		additive = new AntiBacterial(additive, atoi(order["AntiBacterial"].c_str()));
+	}
+	if(order.find("Hydrophilic") != order.end()) {
+		additive = new Hydrophilic(additive, atoi(order["Hydrophilic"].c_str()));
+	}
+	// Seam point - add another option.
+	if(order.find("MicroFibers") != order.end()) {
+		additive = new MicroFibers(additive, atoi(order["MicroFibers"].c_str()));
+	}
+
+	return additive;
+}
+
 }
 
 namespace factory_method {	// DP 5 - done except for inheriting from Observer.
 
-class Packager {
+class Packager {	// If the classes are varying...
 public:
 	Packager() {}
 	virtual ~Packager() { DTORF("~factory_method::Packager\n"); }
@@ -423,7 +786,7 @@ Packager* Packager::makeObject(map<string,string>& order) {
 
 // Seam point - add another Observer.
 
-class Stuffer {
+class Stuffer {	// If the classes are varying...
 public:
 	Stuffer() {}
 	virtual ~Stuffer() { DTORF("~factory_method::Stuffer\n"); }
@@ -483,22 +846,47 @@ using namespace adapter;
 using namespace strategy;
 using namespace factory_method;
 using namespace decorator;
+using namespace abstract_factory;
 
 class ProcessOrder_TM {	// Template Method (order processing steps).
-	adapter::CleanMold*			cleaning;
-	strategy::RuntimeEstimate*	runtimeEst;
-	factory_method::Packager*	packager;
-	factory_method::Stuffer*	cushion;	// Specs 2.
-	decorator::TagCavity*		tagCavity;
+protected:
+	string plasticDesc;
+	unsigned colorVol;
+private: // Heap objects.
+	adapter::CleanMold*				cleaning;
+	strategy::RuntimeEstimate*		runtimeEst;
+	factory_method::Packager*		packager;
+	factory_method::Stuffer*		cushion;	// Specs 2.
+	decorator::TagCavity*			tagCavity;
+	decorator::Additive*			additives;
+	abstract_factory::InjectionLine*injectionLine;
+	abstract_factory::IJM*			ijm;
+	abstract_factory::Mold*			mold;
+	abstract_factory::ConveyerBelt*	belt;
+	abstract_factory::PackageBin*	bin;
 public:
 	ProcessOrder_TM(CleanMold* cleaning) :
+		colorVol(0),
+		// Heap objects to delete.
 		cleaning(cleaning),
 		runtimeEst(0),
 		packager(0),
 		cushion(0),	// Specs 2.
-		tagCavity(0)
+		tagCavity(0),
+		additives(0),
+		injectionLine(0),
+		ijm(0),
+		mold(0),
+		belt(0),
+		bin(0)
 	{}
 	virtual ~ProcessOrder_TM() {
+		delete bin;
+		delete belt;
+		delete mold;
+		delete ijm;
+		delete injectionLine;
+		delete additives;
 		delete tagCavity;
 		delete cushion;	// Specs 2.
 		delete packager;
@@ -513,8 +901,7 @@ public:
 		insertTags(order);	 	// Decorator (tag list).
 		loadBins(order);		// Becomes polymorphic on new (colored) plastics.
 		loadAdditives(order);	// Decorator (additive list).
-		runTimeEst(order);		// Strategy (order size).
-		runSize(order);
+		runStats(order);		// Strategy (order size).
 		cycleRecipe(order);		// TM polymorphic on plastic type.
 		injectionCycle(order);	// Observer (bin full).
 		cleanMold(order);		// Adapter (plastic, mold metal).
@@ -523,6 +910,19 @@ public:
 	}
 protected:
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		if(order.find("size") == order.end()) {
+			cout << "  <>No size specified, defaulting to 100.\n";
+			order["size"] = "100";
+		}
+
+		injectionLine = InjectionLine::createInjectionLine(order);
+
+		bin		= injectionLine->createPackageBin(order);			// Observer Subject.
+
+		ijm		= injectionLine->createIJM(order);		// Observer.
+		mold	= injectionLine->createMold(order);			// CofR, # of cavities.
+		belt	= injectionLine->createConveyerBelt(order);	// Observer.
+
 		packager = Packager::makeObject(order);	// FM & O.
 		cushion = Stuffer::makeObject(order);	// FM & O - Specs 2.
 
@@ -533,7 +933,11 @@ protected:
 		cout << " and " << cushion->fill() << " stuffer";
 		cout << ":\n";
 
-		cout << "    IJM_<num> - <metal>(<cavities>) - <conveyer> conveyer belt - <packageBin>.\n";
+		cout << "    ";
+		cout << ijm->setup() << " - ";
+		cout << mold->setup() << " - ";
+		cout << belt->setup() << " - ";
+		cout << bin->setup() << ".\n";
 	}
 	void getMold(map<string,string>& order) { // CofR (mold location), Bridge (shape, milling platform).
 		cout << "  Process order:\n";
@@ -561,24 +965,45 @@ protected:
 	}
 	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {	// Polymorphic on new (colored) plastics.
-		if(order.find("color") == order.end())
-			legacy_classes::defaulting(order, "color", "black");
-		cout << "    Load plastic bin with " << order["plastic"];
+		unsigned shapeVol = 22;	// TODO: Replace with shape->volume_m3.
+		if(order.find("color") != order.end())
+			colorVol = 0.1*shapeVol;
+		plasticDesc = order["plastic"];
+		cout << "    Load plastic bin with " << plasticDesc;
 		cout << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {	// Decorator (additive list).
-		cout << "    Load additives (if any) [<x, y, z>].\n";
-		cout << "      Recipe: <plastic>(vol-caddTotal) <color>(vol) <x>(vol) ... <z>(vol) Total = <tot>.\n";
+		Polymer* plastic = new Plastic();
+
+		Polymer* additives = addAdditives(plastic, order);
+
+		string colorDesc = "";
+		char str[80];
+		if(colorVol) {
+			sprintf(str, "(%d)", colorVol);
+			colorDesc = string(" ") + order["color"] + str;
+		}
+
+		unsigned shapeVol = 35; // TODO: Get from shape->vol();
+		unsigned cavities = 2;	// TODO: Get from mold->cavities();
+		unsigned total = cavities*shapeVol;
+
+		unsigned plasticVol = shapeVol - colorVol - additives->mix();
+
+		cout << "      Recipe: " << plasticDesc << "(" << plasticVol << ")";
+		cout << colorDesc << additives->idNvol() << " = 35.\n";
+
+		cout << "      Volume: " << order["mold"] << "(" << shapeVol << ")";
+		cout << " * " << cavities << " cavities";
+		cout << " = " << total << " cc.\n";
 	}
-	void runTimeEst(map<string,string>& order) { // Strategy (order size).
-		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
-		cout << "    Estimated run time = " << (*runtimeEst)(order);
-		cout << " hours.\n";
-	}
-	void runSize(map<string,string>& order) {
+	void runStats(map<string,string>& order) { // Strategy (order size).
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/2;
-		cout << "    Cycle <IJM> for " << order["plastic"] << " " << runSize << " times...\n";
+		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
+
+		cout << "    Cycle <IJM> for " << order["plastic"] << " " << runSize << " times, ";
+		cout << "estimated run time = " << (*runtimeEst)(order) << " hours.\n";
 	}
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
 		cout << "      Close - heat to <temp> - inject at <pressure>";
@@ -592,7 +1017,7 @@ protected:
 	}
 	// Seam point - add another constant step.
 	void ship(map<string,string>& order) {	// Factory (stuffing).
-		cout << "    Ship to <address>.\n";
+		cout << "    Ship to \"" << order["address"] << "\".\n";
 	}
 public:
 	static ProcessOrder_TM* getOrderProcess(map<string,string>& order);
@@ -606,7 +1031,7 @@ public:
 		cout << "      Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.\n";
 	}
 };
-class Poly : public ProcessOrder_TM {	// If the plastics are varying...
+class Poly : public ProcessOrder_TM {
 public:
 	Poly() : ProcessOrder_TM(new adapter::Poly()) {}
 	~Poly() { DTORF("~Poly\n"); }
@@ -615,7 +1040,7 @@ public:
 		cout << "      Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.\n";
 	}
 };
-class PET : public ProcessOrder_TM {	// If the plastics are varying...
+class PET : public ProcessOrder_TM {
 public:
 	PET() : ProcessOrder_TM(new adapter::PET()) {}
 	~PET() { DTORF("~PET\n"); }
@@ -632,9 +1057,9 @@ public:
 public:
 	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {
-		if(order.find("color") == order.end())
-			legacy_classes::defaulting(order, "color", "black");
-		cout << "    Load plastic bin with " << order["color"] << " " << order["plastic"] << " pellets.\n";
+		colorVol = 0;
+		plasticDesc = order["color"] + string("-") + order["plastic"];
+		cout << "    Load plastic bin with " << plasticDesc << " pellets.\n";
 	}
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
 		cout << "      Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.\n";

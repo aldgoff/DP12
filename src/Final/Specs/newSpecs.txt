@@ -18,7 +18,7 @@ Shapes:
   dino (30 cc)
 
 Colors:
-  black (default)
+  black
   brown
   red
   orange

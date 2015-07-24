@@ -11,7 +11,7 @@
 	plastic		= ABS
 	moldLoc		= inventory
 	tags		= ModelNumber
-	UVInhibiter	= 6
+	UVInhibiter	= 2
 	packager	= Bulk
 	endOfOrder
 3:
@@ -25,8 +25,9 @@
 	finish			= smooth
 	tags			= ModelNumber Country Date
 	color			= orange
-	UVInhibiter		= 6
+	UVInhibiter		= 2
 	AntiBacterial	= 1
+	Hydrophilic		= 2
 	endOfOrder
 4:
 	orderNum	= 4
@@ -103,7 +104,7 @@
 	color			= white
 	tags			= IncCounter PartNumber RecycleCode ModelNumber Country Date
 	MicroFibers		= 3
-	UVInhibiter		= 6
+	UVInhibiter		= 2
 	AntiBacterial	= 1
 	stuffer			= Foam
 	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
