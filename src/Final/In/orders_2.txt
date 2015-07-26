@@ -106,6 +106,7 @@
 	MicroFibers		= 3
 	UVInhibiter		= 2
 	AntiBacterial	= 1
+	Hydrophilic		= 2
 	stuffer			= Foam
 	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
 	endOfOrder

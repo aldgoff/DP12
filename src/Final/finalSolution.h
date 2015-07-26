@@ -9,6 +9,7 @@
 #define FINAL_FINAL_SOLUTION_H_
 
 #include <map>
+#include <list>
 using namespace std;
 
 namespace final_solution {
@@ -221,11 +222,57 @@ RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& 
 
 namespace observer {		// DP 7.
 
-// Seam point - add another listener.
+class BinSubject;
+class BinObserver;
+
+class BinSubject {
+public:
+	const string name;
+private:
+	list<BinObserver*>	obs;
+public:
+	BinSubject(const string name="needName") : name(name) {}
+	~BinSubject();
+public:
+	void attach(BinObserver* observer) { obs.push_back(observer); }
+	void detach(BinObserver* observer) { obs.remove(observer); }
+	void pause();
+};
+
+class BinObserver {
+	BinSubject* bin;
+public:
+	BinObserver(BinSubject* bin) : bin(bin) {
+		bin->attach(this);
+	}
+	virtual ~BinObserver() {
+		bin->detach(this);
+		DTORF("~observer::BinObserver\n");
+	}
+public:
+	virtual void update(BinSubject* bin=0) {}
+};
+// Seam point - add another listener (in other namespaces; the listeners are base classes).
+
+BinSubject::~BinSubject() {
+	DTORF("~observer::BinSubject\n");
+	DTORF(" BinObservers left to process (should be zero) = ");
+	DTORF(obs.size());
+	DTORF(".\n");
+}
+void BinSubject::pause() {
+	cout << "      Whenever " << name << " package bin was full...\n";
+	list<BinObserver*>::iterator it;
+	for(it=obs.begin(); it!=obs.end(); ++it) {
+		(*it)->update(this);
+	}
+}
 
 }
 
-namespace abstract_factory {// DP 10 - done except for Observer.
+namespace abstract_factory {// DP 10 - done.
+
+using namespace observer;
 
 // Seam point - add another type 1.
 // Seam point - add another type 2.
@@ -233,47 +280,57 @@ namespace abstract_factory {// DP 10 - done except for Observer.
 // Seam point - add another ...
 // Seam point - add another type N.
 
-class IJM {
+class IJM : public BinObserver {
 public:
-	IJM() {}
+	IJM(BinSubject* bin) : BinObserver(bin) {}
 	virtual ~IJM() { DTORF("~IJM "); }
 public:
+	void update(BinSubject* bin) {
+		cout << "        " << setup() << " paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 	virtual string setup() { return "IJM base"; }
 };
 class IJM_110 : public IJM {					// PilotOrder.
 public:
-	~IJM_110() { cout << "~IJM_110 "; }
+	IJM_110(BinSubject* bin) : IJM(bin) {}
+	~IJM_110() { DTORF("~IJM_110 "); }
 public:
 	string setup() { return "IJM_110"; }
 };
 class IJM_120 : public IJM {					// SmallOrder.
 public:
-	~IJM_120() { cout << "~IJM_120 "; }
+	IJM_120(BinSubject* bin) : IJM(bin) {}
+	~IJM_120() { DTORF("~IJM_120 "); }
 public:
 	string setup() { return "IJM_120"; }
 };
 class IJM_210 : public IJM {					// MediumOrder.
 public:
-	~IJM_210() { cout << "~IJM_210 "; }
+	IJM_210(BinSubject* bin) : IJM(bin) {}
+	~IJM_210() { DTORF("~IJM_210 "); }
 public:
 	string setup() { return "IJM_210"; }
 };
 // Seam point - add another Injection Molding machine.
 class IJM_140 : public IJM {					// FastOrder.
 public:
-	~IJM_140() { cout << "~IJM_140 "; }
+	IJM_140(BinSubject* bin) : IJM(bin) {}
+	~IJM_140() { DTORF("~IJM_140 "); }
 public:
 	string setup() { return "IJM_140"; }
 };
 class IJM_220 : public IJM {					// LargeOrder.
 public:
-	~IJM_220() { cout << "~IJM_220 "; }
+	IJM_220(BinSubject* bin) : IJM(bin) {}
+	~IJM_220() { DTORF("~IJM_220 "); }
 public:
 	string setup() { return "IJM_220"; }
 };
 class IJM_240 : public IJM {					// HugeOrder.
 public:
-	~IJM_240() { cout << "~IJM_240 "; }
+	IJM_240(BinSubject* bin) : IJM(bin) {}
+	~IJM_240() { DTORF("~IJM_240 "); }
 public:
 	string setup() { return "IJM_240"; }
 };
@@ -282,10 +339,10 @@ class Mold {
 	unsigned m_cavities;
 public:
 	Mold(unsigned cavities=0) : m_cavities(cavities) {}
-	virtual ~Mold() { DTORF("~Mold "); }
+	virtual ~Mold() { DTORF("~Mold\n"); }
 public:
 	virtual string setup() { return "Mold base"; }
-//	virtual string metal() { return "unobtainium"; }
+	virtual string metal() { return "unobtainium"; }
 	unsigned cavities() { return m_cavities; }
 	string cavitiesAsString() {
 		char cav[] = "( )";
@@ -296,71 +353,81 @@ public:
 class Aluminum : public Mold {
 public:
 	Aluminum(unsigned cavities=0) : Mold(cavities) {}
-	~Aluminum() { cout << "~Aluminum "; }
+	~Aluminum() { DTORF("~Aluminum "); }
 public:
 	string setup() { return "Aluminum" + cavitiesAsString(); }
+	virtual string metal() { return "aluminum"; }
 };
 class Steel : public Mold {
 public:
 	Steel(unsigned cavities=0) : Mold(cavities) {}
-	~Steel() { cout << "~Steel "; }
+	~Steel() { DTORF("~Steel "); }
 public:
 	string setup() { return "Steel" + cavitiesAsString(); }
+	virtual string metal() { return "steel"; }
 };
 
-class ConveyerBelt {
+class ConveyerBelt : public BinObserver {
 public:
-	ConveyerBelt() {}
+	ConveyerBelt(BinSubject* bin) : BinObserver(bin) {}
 	virtual ~ConveyerBelt() { DTORF("~ConveyerBelt "); }
 public:
+public:
+	void update(BinSubject* bin) {
+		cout << "        " << setup() << " paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 	virtual string setup() { return "ConveyerBelt base"; }
 };
 class LinearBelt : public ConveyerBelt {
 public:
-	LinearBelt() {}
-	~LinearBelt() { cout << "~LinearBelt "; }
+	LinearBelt(BinSubject* bin) : ConveyerBelt(bin) {}
+	~LinearBelt() { DTORF("~LinearBelt "); }
 public:
 	string setup() {return "Linear conveyer belt"; }
 };
 class YSplitBelt : public ConveyerBelt {
 public:
-	YSplitBelt() {}
-	~YSplitBelt() { cout << "~YSplitBelt "; }
+	YSplitBelt(BinSubject* bin) : ConveyerBelt(bin) {}
+	~YSplitBelt() { DTORF("~YSplitBelt "); }
 public:
 	string setup() {return "Y-Split conveyer belt"; }
 };
 // Seam point - add another conveyer belt.
 class VLevelBelt : public ConveyerBelt {
 public:
-	VLevelBelt() {}
-	~VLevelBelt() { cout << "~VLevelBelt "; }
+	VLevelBelt(BinSubject* bin) : ConveyerBelt(bin) {}
+	~VLevelBelt() { DTORF("~VLevelBelt "); }
 public:
 	string setup() {return "V-Level conveyer belt"; }
 };
 
-class PackageBin {
+class PackageBin : public BinSubject {
 public:
-	PackageBin() {}
+	PackageBin(const string name) : BinSubject(name) {}
 	virtual ~PackageBin() { DTORF("~PackageBin "); }
 public:
 	virtual string setup() { return "PackageBin base"; }
 };
 class CardboardBox : public PackageBin {
 public:
-	~CardboardBox() { cout << "~CardboardBox "; }
+	CardboardBox() : PackageBin("CardboardBox") {}
+	~CardboardBox() { DTORF("~CardboardBox "); }
 public:
 	string setup() { return "CardboardBox"; }
 };
 class PallotBox : public PackageBin {
 public:
-	~PallotBox() { cout << "~PallotBox "; }
+	PallotBox() : PackageBin("PallotBox") {}
+	~PallotBox() { DTORF("~PallotBox "); }
 public:
 	string setup() { return "PallotBox"; }
 };
 // Seam point - add another package bin.
 class Crate : public PackageBin {
 public:
-	~Crate() { cout << "~Crate "; }
+	Crate() : PackageBin("Crate") {}
+	~Crate() { DTORF("~Crate "); }
 public:
 	string setup() { return "Crate"; }
 };
@@ -370,17 +437,17 @@ public:
 	InjectionLine() {}
 	virtual ~InjectionLine() { DTORF("~abstract_factory::InjectionLine\n"); }
 public:
-	virtual IJM* createIJM(map<string,string>& order) {
-		return new IJM();
+	virtual IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM(bin);
 	}
 	virtual Mold* createMold(map<string,string>& order) {
 		return new Mold();
 	}
-	virtual ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new ConveyerBelt();
+	virtual ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new ConveyerBelt(bin);
 	}
 	virtual PackageBin* createPackageBin(map<string,string>& order) {
-		return new PackageBin();
+		return new PackageBin("needName");
 	}
 public:
 	static InjectionLine* createInjectionLine(map<string,string>& order);
@@ -388,14 +455,14 @@ public:
 class PilotOrder : public InjectionLine {
 public:	virtual ~PilotOrder() { DTORF("~PilotOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_110();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_110(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Aluminum(1);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new LinearBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new LinearBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new CardboardBox();
@@ -404,14 +471,14 @@ public:
 class SmallOrder : public InjectionLine {
 public:	virtual ~SmallOrder() { DTORF("~SmallOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_120();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_120(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Aluminum(2);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new YSplitBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new YSplitBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new CardboardBox();
@@ -420,14 +487,14 @@ public:
 class MediumOrder : public InjectionLine {
 public:	virtual ~MediumOrder() { DTORF("~MediumOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_210();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_210(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Steel(1);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new LinearBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new LinearBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new PallotBox();
@@ -437,14 +504,14 @@ public:
 class FastOrder : public InjectionLine {
 public:	virtual ~FastOrder() { DTORF("~FastOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_140();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_140(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Aluminum(4);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new VLevelBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new VLevelBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new PallotBox();
@@ -453,14 +520,14 @@ public:
 class LargeOrder : public InjectionLine {
 public:	virtual ~LargeOrder() { DTORF("~LargeOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_220();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_220(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Steel(2);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new YSplitBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new YSplitBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new Crate();
@@ -469,14 +536,14 @@ public:
 class HugeOrder : public InjectionLine {
 public:	virtual ~HugeOrder() { DTORF("~HugeOrder "); }
 public:
-	IJM* createIJM(map<string,string>& order) {
-		return new IJM_240();
+	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
+		return new IJM_240(bin);
 	}
 	Mold* createMold(map<string,string>& order) {
 		return new Steel(4);
 	}
-	ConveyerBelt* createConveyerBelt(map<string,string>& order) {
-		return new VLevelBelt();
+	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
+		return new VLevelBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
 		return new Crate();
@@ -507,20 +574,283 @@ InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 
 namespace bridge {			// DP 9.
 
+class Platform {
+public:
+	Platform() {}
+	virtual ~Platform() { DTORF("~bridge::Platform\n"); }
+public:
+	virtual string name() { return "name"; }
+	virtual string drill() { return "drill"; }
+	virtual string cut() { return "cut"; }
+	virtual string grind() { return "name"; }
+public:
+	static Platform* getPlatform(map<string,string>& order);
+};
+class HighCarbon : public Platform {
+public:
+	HighCarbon() {}
+	virtual ~HighCarbon() { DTORF("~HighCarbon "); }
+public:
+	string name() { return "HighCarbon"; }
+	string drill() { return "drill"; }
+	string cut() { return "cut"; }
+	string grind() { return "high speed grind"; }
+public:
+	static Platform* getPlatform(map<string,string>& order);
+};
+class Carbide : public Platform {
+public:
+	Carbide() {}
+	virtual ~Carbide() { DTORF("~Carbide "); }
+public:
+	string name() { return "Carbide"; }
+	string drill() { return "high speed drill"; }
+	string cut() { return "cross cut"; }
+	string grind() { return "layer grind"; }
+public:
+	static Platform* getPlatform(map<string,string>& order);
+};
+class DiamondTipped : public Platform {
+public:
+	DiamondTipped() {}
+	virtual ~DiamondTipped() { DTORF("~DiamondTipped "); }
+public:
+	string name() { return "DiamondTipped"; }
+	string drill() { return "precision drill"; }
+	string cut() { return "oil cooled cut"; }
+	string grind() { return "cartoid grind"; }
+public:
+	static Platform* getPlatform(map<string,string>& order);
+};
 // Seam Point - add another implementation.
+class EDM : public Platform {
+public:
+	EDM() {}
+	virtual ~EDM() { DTORF("~EDM "); }
+public:
+	string name() { return "EDM"; }
+	string drill() { return "static punch"; }
+	string cut() { return "static slice"; }
+	string grind() { return "static etch"; }
+public:
+	static Platform* getPlatform(map<string,string>& order);
+};
+
+Platform* Platform::getPlatform(map<string,string>& order) {
+	string metal = order["metal"];
+	string finish = order["finish"];
+
+	if(		metal == "aluminum")					return new HighCarbon;
+	else if(metal == "steel" && finish == "smooth")		return new HighCarbon;
+	else if(metal == "steel" && finish == "rippled")	return new Carbide;
+	else if(metal == "steel" && finish == "dimpled")	return new DiamondTipped;
+	// Seam Point - add another implementation.
+	else if(metal == "steel" && finish == "sanded")	return new EDM;
+	else if(metal == "steel" && finish == "satin")	return new EDM;
+
+	else {
+		cout << "*** Should never happen - Platform::getPlatform\n";
+		return new Platform;	// Should never happen.
+	}
+}
+
+class Shape {
+protected:
+	Platform* platform;
+public:
+	const string name;
+	const unsigned volume_cc;
+public:
+	Shape(Platform* platform, string name, unsigned volume_cc=0)
+	  : platform(platform), name(name), volume_cc(volume_cc) {}
+	virtual ~Shape() { DTORF("~bridge::Shape\n"); delete platform; }
+public:
+	virtual void mill(map<string,string>& order) {
+		cout << "    Unknown shape " << order["mold"] << ".\n";
+	}
+public:
+	static Shape* getShape(map<string,string>& order);
+};
+class Duck : public Shape {
+public:
+	Duck(Platform* platform) : Shape(platform, "duck", 35) {};
+	virtual ~Duck() { DTORF("~Duck "); }
+public:	// TODO: add anything to make these unique.
+	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
+		cout << "      using " << platform->name() << " tools (";
+		cout << platform->drill() << ", ";
+		cout << platform->cut() << ", and ";
+		cout << platform->grind() << ") ";
+		cout << "to mill " << order["metal"] << " block into ";
+		cout << order["cavities"] << " " << name << " shapes ";
+		cout << "with " << order["finish"] << " finish.\n";
+	}
+};
+class Car : public Shape {
+public:
+	Car(Platform* platform) : Shape(platform, "car", 40) {};
+	virtual ~Car() { DTORF("~Car "); }
+public:	// TODO: add anything to make these unique.
+	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
+		cout << "      using " << platform->name() << " tools (";
+		cout << platform->drill() << ", ";
+		cout << platform->cut() << ", and ";
+		cout << platform->grind() << ") ";
+		cout << "to mill " << order["metal"] << " block into ";
+		cout << order["cavities"] << " " << name << " shapes ";
+		cout << "with " << order["finish"] << " finish.\n";
+	}
+};
+class Hero : public Shape {
+public:
+	Hero(Platform* platform) : Shape(platform, "hero", 50) {};
+	virtual ~Hero() { DTORF("~Hero "); }
+public:	// TODO: add anything to make these unique.
+	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
+		cout << "      using " << platform->name() << " tools (";
+		cout << platform->drill() << ", ";
+		cout << platform->cut() << ", and ";
+		cout << platform->grind() << ") ";
+		cout << "to mill " << order["metal"] << " block into ";
+		cout << order["cavities"] << " " << name << " shapes ";
+		cout << "with " << order["finish"] << " finish.\n";
+	}
+};
 // Seam Point - add another abstraction.
+class Dino : public Shape {
+public:
+	Dino(Platform* platform) : Shape(platform, "dino", 35) {};
+	virtual ~Dino() { DTORF("~Dino "); }
+public:	// TODO: add anything to make these unique.
+	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
+		cout << "      using " << platform->name() << " tools (";
+		cout << platform->drill() << ", ";
+		cout << platform->cut() << ", and ";
+		cout << platform->grind() << ") ";
+		cout << "to mill " << order["metal"] << " block into ";
+		cout << order["cavities"] << " " << name << " shapes ";
+		cout << "with " << order["finish"] << " finish.\n";
+	}
+};
+
+Shape* Shape::getShape(map<string,string>& order) {
+	Platform* platform = Platform::getPlatform(order);
+
+	if(		order["mold"] == "duck")		return new Duck(platform);
+	else if(order["mold"] == "car")			return new Car(platform);
+	else if(order["mold"] == "hero")		return new Hero(platform);
+	// Seam Point - add another abstraction.
+	else if(order["mold"] == "dino")		return new Dino(platform);
+
+	else {
+		cout << "*** Should never happen - Shape::getShape\n";
+		return new Shape(platform, "default");
+	}
+}
 
 }
 
 namespace chain_of_resp {	// DP 8.
 
+using namespace bridge;
+
+class GetMold {
+protected:
+	GetMold* successor;
+public:
+	GetMold(GetMold* successor=0) : successor(successor) {}
+	virtual ~GetMold() { DTORF("~CofR::GetMold "); }
+public:
+	virtual Shape* from(map<string,string>& order) {
+		string place = order["moldLoc"];
+		string mold = order["mold"];
+		cout << "    <>Can't find place |" << place << "|";
+		cout << " to get |" << mold << "| mold from, ";
+		cout << "defaulting to duck from inventory.\n";
+		order["moldLoc"] = "inventory";
+		order["mold"]	 = "duck";
+
+		return Shape::getShape(order);
+	}
+};
+class Inventory : public GetMold {
+public:
+	Inventory(GetMold* successor=0) : GetMold(successor) {}
+	virtual ~Inventory() { DTORF("~Inventory "); delete successor; }
+public:
+	Shape* from(map<string,string>& order) {
+		string place = order["moldLoc"];
+		if(place == "inventory") {
+			cout << "    Pull " << order["mold"] << " mold from inventory.\n";
+			return Shape::getShape(order);
+		}
+		else if(successor != 0)
+			return successor->from(order);
+		else
+			return GetMold::from(order);	// Default.
+	}
+};
+class SisterCompany : public GetMold {
+public:
+	SisterCompany(GetMold* successor=0) : GetMold(successor) {}
+	virtual ~SisterCompany() { DTORF("~SisterCompany "); delete successor; }
+public:
+	Shape* from(map<string,string>& order) {
+		string place = order["moldLoc"];
+		if(place == "sisterCompany") {
+			cout << "    Borrow " << order["mold"] << " mold from sister company.\n";
+			return Shape::getShape(order);
+		}
+		else if(successor != 0)
+			return successor->from(order);
+		else
+			return GetMold::from(order);	// Default.
+	}
+};
+class Purchase : public GetMold {
+public:
+	Purchase(GetMold* successor=0) : GetMold(successor) {}
+	virtual ~Purchase() { DTORF("~Purchase "); delete successor; }
+public:
+	Shape* from(map<string,string>& order) {
+		string place = order["moldLoc"];
+		if(place == "purchase") {
+			cout << "    Acquire " << order["mold"] << " mold via purchase.\n";
+			return Shape::getShape(order);
+		}
+		else if(successor != 0)
+			return successor->from(order);
+		else
+			return GetMold::from(order);	// Default.
+	}
+};
+class Mill : public GetMold {
+public:
+	Mill(GetMold* successor=0) : GetMold(successor) {}
+	virtual ~Mill() { DTORF("~Mill "); delete successor; }
+public:
+	Shape* from(map<string,string>& order) {
+		string place = order["moldLoc"];
+		if(place == "mill") {
+			cout << "    Create " << order["mold"] << " mold from mill ";
+			cout << "with " << order["cavities"] << " cavities:\n";
+			Shape* shape = Shape::getShape(order);
+			shape->mill(order);
+			return shape;
+		}
+		else if(successor != 0)
+			return successor->from(order);
+		else
+			return GetMold::from(order);	// Default.
+	}
+};
 // Seam points - add another responder.
 
 }
 
 namespace decorator {		// DP 6 - done.
 
-class TagCavity {	// If the options are varying...
+class Cavity {	// If the options are varying...
 public:
 	const unsigned space_mm;
 private:
@@ -528,10 +858,10 @@ private:
 protected:
 	unsigned tags_mm;
 public:
-	TagCavity(unsigned width_mm=20)
+	Cavity(unsigned width_mm=20)
 	  : space_mm(width_mm), blank_mm(space_mm), tags_mm(0)
 	{}
-	virtual ~TagCavity() { DTORF("~decorator::TagCavity\n"); }
+	virtual ~Cavity() { DTORF("~dec::Cavity "); }
 public:
 	virtual unsigned width_mm() { return 0; }
 	virtual string list() { return ""; }
@@ -542,43 +872,43 @@ public:
 		return blank_mm;
 	}
 public:
-	static TagCavity* addTags(TagCavity* cavity, const string& list);
+	static Cavity* addTags(Cavity* cavity, const string& list);
 };
-class Blank : public TagCavity {
+class Blank : public Cavity {
 public:
-	Blank(unsigned width_mm=20) : TagCavity(width_mm) {}
+	Blank(unsigned width_mm=20) : Cavity(width_mm) {}
 	virtual ~Blank() { DTORF("~Blank "); }
 public:
 	virtual unsigned width_mm() { return 0; }
 	string list() { return ""; }
 };
-class Tags : public TagCavity {
+class Tags : public Cavity {
 protected:
-	TagCavity* delegate;
+	Cavity* delegate;
 public:
-	Tags(TagCavity* delegate) : delegate(delegate) {}
-	virtual ~Tags() { cout << "~Tags "; delete delegate; }
+	Tags(Cavity* delegate) : delegate(delegate) {}
+	virtual ~Tags() { DTORF("~Tags "); delete delegate; }
 };
 class ModelNumber : public Tags {
 public:
-	ModelNumber(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~ModelNumber() { cout << "~ModelNumber "; }
+	ModelNumber(Cavity* delegate) : Tags(delegate) {}
+	virtual ~ModelNumber() { DTORF("~ModelNumber "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "ModelNumber "; }
 };
 class Country : public Tags {
 public:
-	Country(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~Country() { cout << "~Country "; }
+	Country(Cavity* delegate) : Tags(delegate) {}
+	virtual ~Country() { DTORF("~Country "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Country "; }
 };
 class Date : public Tags {
 public:
-	Date(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~Date() { cout << "~Date "; }
+	Date(Cavity* delegate) : Tags(delegate) {}
+	virtual ~Date() { DTORF("~Date "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Date "; }
@@ -586,30 +916,30 @@ public:
 // Seam point - add another option.
 class IncCounter : public Tags {
 public:
-	IncCounter(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~IncCounter() { cout << "~IncCounter "; }
+	IncCounter(Cavity* delegate) : Tags(delegate) {}
+	virtual ~IncCounter() { DTORF("~IncCounter "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 4; }
 	string list() { return delegate->list() + "IncCounter "; }
 };
 class PartNumber : public Tags {
 public:
-	PartNumber(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~PartNumber() { cout << "~PartNumber "; }
+	PartNumber(Cavity* delegate) : Tags(delegate) {}
+	virtual ~PartNumber() { DTORF("~PartNumber "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "PartNumber "; }
 };
 class RecycleCode : public Tags {
 public:
-	RecycleCode(TagCavity* delegate) : Tags(delegate) {}
-	virtual ~RecycleCode() { cout << "~RecycleCode "; }
+	RecycleCode(Cavity* delegate) : Tags(delegate) {}
+	virtual ~RecycleCode() { DTORF("~RecycleCode "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 6; }
 	string list() { return delegate->list() + "RecycleCode "; }
 };
 
-TagCavity* TagCavity::addTags(TagCavity* cavity, const string& list) {
+Cavity* Cavity::addTags(Cavity* cavity, const string& list) {
 	char val[83] = {0};
 	const char*	remainingTokens = list.c_str();
 	while(remainingTokens) {
@@ -636,77 +966,68 @@ TagCavity* TagCavity::addTags(TagCavity* cavity, const string& list) {
 
 class Polymer {
 protected:
-	unsigned volume_m3;
+	unsigned volume_cc;
 public:
-	Polymer(unsigned volume_m3=0) : volume_m3(volume_m3) {}
-	virtual ~Polymer() { DTORF("~decorator::Polymer\n"); }
+	Polymer(unsigned volume_cc=0) : volume_cc(volume_cc) {}
+	virtual ~Polymer() { DTORF("~dec::Polymer "); }
 public:
 	virtual unsigned mix() { return 0; }
 	virtual string idNvol() { return ""; }
 protected:
 	 string volAsStr() {
 		char vol[80];
-		sprintf(vol, "(%d)", volume_m3);
+		sprintf(vol, "(%d)", volume_cc);
 		return vol;
 	}
 };
 class Plastic : public Polymer {
 public:
-	Plastic(unsigned volume_m3=0) : Polymer(volume_m3) {}
+	Plastic(unsigned volume_cc=0) : Polymer(volume_cc) {}
 	virtual ~Plastic() { DTORF("~Plastic "); }
 };
 class Additive : public Polymer {
 protected:
 	Polymer* delegate;
 public:
-	Additive(Polymer* delegate, unsigned volume_m3)
-	  : Polymer(volume_m3), delegate(delegate) {}
-	virtual ~Additive() { DTORF("~Polymer "); delete delegate; }
-};
-class Color : public Additive {
-public:
-	Color(Polymer* delegate, unsigned volume_m3=0)
-	  : Additive(delegate, volume_m3) {}
-	virtual ~Color() { DTORF("~Color "); }
-public:
-	unsigned mix() { return delegate->mix() + volume_m3; }
-	string idNvol() { return delegate->idNvol() + " Color" + volAsStr(); }
+	Additive(Polymer* delegate, unsigned volume_cc)
+	  : Polymer(volume_cc), delegate(delegate) {}
+	virtual ~Additive() { DTORF("~Additive "); delete delegate; }
 };
 class UVInhibiter : public Additive {
 public:
-	UVInhibiter(Polymer* delegate, unsigned volume_m3=0)
-	  : Additive(delegate, volume_m3) {}
+	UVInhibiter(Polymer* delegate, unsigned volume_cc=0)
+	  : Additive(delegate, volume_cc) {}
 	virtual ~UVInhibiter() { DTORF("~UVInhibiter "); }
 public:
-	unsigned mix() { return delegate->mix() + volume_m3; }
+	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " UVInhibiter" + volAsStr(); }
 };
 class AntiBacterial : public Additive {
 public:
-	AntiBacterial(Polymer* delegate, unsigned volume_m3=0)
-	  : Additive(delegate, volume_m3) {}
+	AntiBacterial(Polymer* delegate, unsigned volume_cc=0)
+	  : Additive(delegate, volume_cc) {}
 	virtual ~AntiBacterial() { DTORF("~AntiBacterial "); }
 public:
-	unsigned mix() { return delegate->mix() + volume_m3; }
+	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " AntiBacterial" + volAsStr(); }
 };
 class Hydrophilic : public Additive {
 public:
-	Hydrophilic(Polymer* delegate, unsigned volume_m3=0)
-	  : Additive(delegate, volume_m3) {}
+	Hydrophilic(Polymer* delegate, unsigned volume_cc=0)
+	  : Additive(delegate, volume_cc) {}
 	virtual ~Hydrophilic() { DTORF("~Hydrophilic "); }
 public:
-	unsigned mix() { return delegate->mix() + volume_m3; }
+	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " Hydrophilic" + volAsStr(); }
 };
 // Seam point - add another option.
 class MicroFibers : public Additive {
 public:
-	MicroFibers(Polymer* delegate, unsigned volume_m3=0)
-	  : Additive(delegate, volume_m3) {}
+	MicroFibers(Polymer* delegate, unsigned volume_cc=0)
+	  : Additive(delegate, volume_cc) {}
 	virtual ~MicroFibers() { DTORF("~MicroFibers "); }
 public:
-	unsigned mix() { return delegate->mix() + volume_m3; }
+	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " MicroFibers" + volAsStr(); }
 };
 
@@ -730,111 +1051,140 @@ Polymer* addAdditives(Polymer* additive, map<string,string>& order) {
 
 }
 
-namespace factory_method {	// DP 5 - done except for inheriting from Observer.
+namespace factory_method {	// DP 5 - done.
 
-class Packager {	// If the classes are varying...
+using namespace observer;
+
+class Packager : public BinObserver {	// If the classes are varying...
 public:
-	Packager() {}
-	virtual ~Packager() { DTORF("~factory_method::Packager\n"); }
+	Packager(BinSubject* bin) : BinObserver(bin) {}
+	virtual ~Packager() { DTORF("~factory_method::Packager "); }
 public:
 	virtual string wrap() { return "<packager>"; }
 public:
-	static Packager* makeObject(map<string,string>& map);
+	virtual void update(BinSubject* bin) {}
+public:
+	static Packager* makeObject(map<string,string>& map, BinSubject* bin);
 };
 class Bulk : public Packager {
 public:
-	Bulk() {}
+	Bulk(BinSubject* bin) : Packager(bin) {}
 	~Bulk() { DTORF("~Bulk "); }
 public:
 	string wrap() { return "Bulk"; }
 };
 class ShrinkWrap : public Packager {
 public:
-	ShrinkWrap() {}
+	ShrinkWrap(BinSubject* bin) : Packager(bin) {}
 	~ShrinkWrap() { DTORF("~ShrinkWrap "); }
 public:
 	string wrap() { return "ShrinkWrap"; }
+	void update(BinSubject* bin) {
+		cout << "        Shrink wrap packager paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 class HardPack : public Packager {
 public:
-	HardPack() {}
+	HardPack(BinSubject* bin) : Packager(bin) {}
 	~HardPack() { DTORF("~HardPack "); }
 public:
 	string wrap() { return "HardPack"; }
+	void update(BinSubject* bin) {
+		cout << "        Hard pack packager paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 // Seam point - add another class.
 class ZipLock : public Packager {
 public:
-	ZipLock() {}
+	ZipLock(BinSubject* bin) : Packager(bin) {}
 	~ZipLock() { DTORF("~ZipLock "); }
 public:
 	string wrap() { return "ZipLock"; }
+	void update(BinSubject* bin) {
+		cout << "        Ziplock packager paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 
-Packager* Packager::makeObject(map<string,string>& order) {
-	if(		order["packager"] == "Bulk")		return new Bulk();
-	else if(order["packager"] == "ShrinkWrap")	return new ShrinkWrap();
-	else if(order["packager"] == "HardPack")	return new HardPack();
+Packager* Packager::makeObject(map<string,string>& order, BinSubject* bin) {
+	if(		order["packager"] == "Bulk")		return new Bulk(bin);
+	else if(order["packager"] == "ShrinkWrap")	return new ShrinkWrap(bin);
+	else if(order["packager"] == "HardPack")	return new HardPack(bin);
 	// Seam point - add another class.
-	else if(order["packager"] == "ZipLock")		return new ZipLock();
+	else if(order["packager"] == "ZipLock")		return new ZipLock(bin);
 
 	else {
 		legacy_classes::defaulting(order, "packager", "Bulk");
-		return new Bulk();
+		return new Bulk(bin);
 	}
 }
 
 // Seam point - add another Observer.
 
-class Stuffer {	// If the classes are varying...
+class Stuffer : public BinObserver {	// If the classes are varying...
 public:
-	Stuffer() {}
-	virtual ~Stuffer() { DTORF("~factory_method::Stuffer\n"); }
+	Stuffer(BinSubject* bin) : BinObserver(bin) {}
+	virtual ~Stuffer() { DTORF("~factory_method::Stuffer "); }
 public:
 	virtual string fill() { return "<stuffer>"; }
+	void update(BinSubject* bin) {}
 public:
-	static Stuffer* makeObject(map<string,string>& map);
+	static Stuffer* makeObject(map<string,string>& map, BinSubject* bin);
 };
 class Air : public Stuffer {
 public:
-	Air() {}
+	Air(BinSubject* bin) : Stuffer(bin) {}
 	~Air() { DTORF("~Air "); }
 public:
 	string fill() { return "Air"; }
 };
 class Popcorn : public Stuffer {
 public:
-	Popcorn() {}
+	Popcorn(BinSubject* bin) : Stuffer(bin) {}
 	~Popcorn() { DTORF("~Popcorn "); }
 public:
 	string fill() { return "styrene popcorn"; }
+	void update(BinSubject* bin) {
+		cout << "        Popcorn stuffer paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 class Bubblewrap : public Stuffer {
 public:
-	Bubblewrap() {}
+	Bubblewrap(BinSubject* bin) : Stuffer(bin) {}
 	~Bubblewrap() { DTORF("~Bubblewrap "); }
 public:
 	string fill() { return "bubble wrap"; }
+	void update(BinSubject* bin) {
+		cout << "        Bubble wrap stuffer paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 // Seam point - add another class.
 class Foam : public Stuffer {
 public:
-	Foam() {}
+	Foam(BinSubject* bin) : Stuffer(bin) {}
 	~Foam() { DTORF("~Foam "); }
 public:
 	string fill() { return "expanding foam"; }
+	void update(BinSubject* bin) {
+		cout << "        Foam stuffer paused while ";
+		cout << bin->name << " package bin was swapped.\n";
+	}
 };
 
-Stuffer* Stuffer::makeObject(map<string,string>& order) {
-	if(		order["stuffer"] == "Air")	return new Air();
-	else if(order["stuffer"] == "Popcorn")	return new Popcorn();
-	else if(order["stuffer"] == "Bubblewrap")	return new Bubblewrap();
+Stuffer* Stuffer::makeObject(map<string,string>& order, BinSubject* bin) {
+	if(		order["stuffer"] == "Air")	return new Air(bin);
+	else if(order["stuffer"] == "Popcorn")	return new Popcorn(bin);
+	else if(order["stuffer"] == "Bubblewrap")	return new Bubblewrap(bin);
 	// Seam point - add another class.
-	else if(order["stuffer"] == "Foam")	return new Foam();
+	else if(order["stuffer"] == "Foam")	return new Foam(bin);
 
 	else {
 		legacy_classes::defaulting(order, "stuffer", "Air");
-		return new Air();
+		return new Air(bin);
 	}
 }
 
@@ -842,11 +1192,15 @@ Stuffer* Stuffer::makeObject(map<string,string>& order) {
 
 namespace template_method {	// DP 4.
 
-using namespace adapter;
-using namespace strategy;
-using namespace factory_method;
-using namespace decorator;
-using namespace abstract_factory;
+using namespace strategy;			// DP 1
+using namespace adapter;			// DP 2
+//              template_method;	// DP 3
+using namespace factory_method;		// DP 4
+using namespace decorator;			// DP 5
+//				observer;			// DP 6
+using namespace chain_of_resp;		// DP 7
+using namespace bridge;				// DP 8
+using namespace abstract_factory;	// DP 9
 
 class ProcessOrder_TM {	// Template Method (order processing steps).
 protected:
@@ -857,8 +1211,10 @@ private: // Heap objects.
 	strategy::RuntimeEstimate*		runtimeEst;
 	factory_method::Packager*		packager;
 	factory_method::Stuffer*		cushion;	// Specs 2.
-	decorator::TagCavity*			tagCavity;
-	decorator::Additive*			additives;
+	decorator::Cavity*				tags;
+	decorator::Polymer*				additives;
+	chain_of_resp::GetMold*			theMold;
+	bridge::Shape*					shape;
 	abstract_factory::InjectionLine*injectionLine;
 	abstract_factory::IJM*			ijm;
 	abstract_factory::Mold*			mold;
@@ -872,8 +1228,10 @@ public:
 		runtimeEst(0),
 		packager(0),
 		cushion(0),	// Specs 2.
-		tagCavity(0),
+		tags(0),
 		additives(0),
+		theMold(0),
+		shape(0),
 		injectionLine(0),
 		ijm(0),
 		mold(0),
@@ -881,15 +1239,17 @@ public:
 		bin(0)
 	{}
 	virtual ~ProcessOrder_TM() {
-		delete bin;
+		delete cushion;	// Specs 2.
+		delete packager;
 		delete belt;
 		delete mold;
 		delete ijm;
+		delete bin;
 		delete injectionLine;
-		delete additives;
-		delete tagCavity;
-		delete cushion;	// Specs 2.
-		delete packager;
+		delete shape;
+		delete theMold;		cout << endl;
+		delete additives;	cout << endl;
+		delete tags;		cout << endl;
 		delete runtimeEst;
 		delete cleaning;
 		DTORF("~ProcessOrder_TM\n");
@@ -919,12 +1279,17 @@ protected:
 
 		bin		= injectionLine->createPackageBin(order);			// Observer Subject.
 
-		ijm		= injectionLine->createIJM(order);		// Observer.
-		mold	= injectionLine->createMold(order);			// CofR, # of cavities.
-		belt	= injectionLine->createConveyerBelt(order);	// Observer.
+		ijm		= injectionLine->createIJM(order, bin);			// Observer.
+		mold	= injectionLine->createMold(order);				// CofR, # of cavities.
+		belt	= injectionLine->createConveyerBelt(order, bin);// Observer.
 
-		packager = Packager::makeObject(order);	// FM & O.
-		cushion = Stuffer::makeObject(order);	// FM & O - Specs 2.
+		packager = Packager::makeObject(order, bin);	// FM & O.
+		cushion = Stuffer::makeObject(order, bin);		// FM & O - Specs 2.
+
+		order["metal"] = mold->metal();
+		char str[80];
+		sprintf(str, "%d", mold->cavities());
+		order["cavities"] = str;
 
 		cout << "  Setup injection line for ";
 		cout << order["size"] << " order";
@@ -941,31 +1306,45 @@ protected:
 	}
 	void getMold(map<string,string>& order) { // CofR (mold location), Bridge (shape, milling platform).
 		cout << "  Process order:\n";
-		cout << "    Pull <shape> mold from <location>.\n";
+
+		theMold =
+			new Inventory(
+			// Seam point - add more mold sources.
+			new SisterCompany(
+			new Purchase(
+			// Seam point - mill likely location of last resort.
+			new Mill(
+			// ...
+			new GetMold(
+		)))));
+
+		shape = theMold->from(order);	// Volume_cc.
+//
+//		cout << "    Pull <shape> mold from <location>.\n";
 	}
 	void insertTags(map<string,string>& order) { // Decorator (tag list).
-		tagCavity = new Blank();
+		tags = new Blank();
 
 		string list = "";
 		if(order.find("tags") != order.end()) {
 			list = order["tags"];
-			tagCavity = TagCavity::addTags(tagCavity, list);
+			tags = Cavity::addTags(tags, list);
 		}
 
-		list = tagCavity->list();		// Strip trailing blank.
+		list = tags->list();		// Strip trailing blank.
 		int size = list.size();
 		char tagString[size+1];
 		strcpy(tagString, list.c_str());
 		if(size) tagString[size-1] = '\0';
 
 		cout << "    Insert tags [" << tagString << "]";
-		cout << " of width "<< tagCavity->width_mm() << "/";
-		cout << tagCavity->space_mm << " mm, blank tag is ";
-		cout << tagCavity->computeBlankWidth(tagCavity->width_mm()) << " mm.\n";
+		cout << " of width "<< tags->width_mm() << "/";
+		cout << tags->space_mm << " mm, blank tag is ";
+		cout << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
 	}
 	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {	// Polymorphic on new (colored) plastics.
-		unsigned shapeVol = 22;	// TODO: Replace with shape->volume_m3.
+		unsigned shapeVol = 22;	// TODO: Replace with shape->volume_cc.
 		if(order.find("color") != order.end())
 			colorVol = 0.1*shapeVol;
 		plasticDesc = order["plastic"];
@@ -973,16 +1352,14 @@ protected:
 		cout << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {	// Decorator (additive list).
-		Polymer* plastic = new Plastic();
-
-		Polymer* additives = addAdditives(plastic, order);
-
 		string colorDesc = "";
 		char str[80];
 		if(colorVol) {
 			sprintf(str, "(%d)", colorVol);
 			colorDesc = string(" ") + order["color"] + str;
 		}
+
+		additives = addAdditives(new Plastic, order);
 
 		unsigned shapeVol = 35; // TODO: Get from shape->vol();
 		unsigned cavities = 2;	// TODO: Get from mold->cavities();
@@ -1002,7 +1379,8 @@ protected:
 		int runSize = orderSize/2;
 		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
 
-		cout << "    Cycle <IJM> for " << order["plastic"] << " " << runSize << " times, ";
+		cout << "    Cycle " << ijm->setup() << " for " << order["plastic"];
+		cout << " " << runSize << " times, ";
 		cout << "estimated run time = " << (*runtimeEst)(order) << " hours.\n";
 	}
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
@@ -1010,7 +1388,7 @@ protected:
 		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void injectionCycle(map<string,string>& order) {	// Observer (bin full).
-		cout << "      When <packageBin> full, paused <IJM/Conveyer/OptionalPackager> while stuffed with <stuffer> packing & swapped.\n";
+		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {	// Adapter (plastic, mold metal).
 		cleaning->clean(order["metal"]);
