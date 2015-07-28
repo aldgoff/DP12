@@ -15,16 +15,21 @@ using namespace std;
 namespace final_solution {
 
 /* Design Patterns Chart
- * x 1 - Strategy: runtime estimate (domain: size)
- * x 2 - Adapter: cleaning mold (domains: plastic, metal)
- *   3 - Facade: milling mold
- * x 4 - Template Method: order processing, injection cycle (domain: plastic)
- * x 5 - Factory Method: packaging (domain: order), stuffing (domain: order) (Observer)
- * x 6 - Decorator: tags, additives (domain: order[tags,additives])
- * x 7 - Observer: bins(Subject) (IJM, conveyer belt, packager, & stuffer pause on full)
- * x 8 - ChainOfR: mold location (inventory, borrow, mill, purchase)
- * x 9 - Bridge: milling
- * x10 - Abstract Factory: IJM_X, mold(metal, cavities), conveyer belt, bins (domain: size)
+ * x 1 - Strategy: runtime estimate (domain: order[size]) (depends: cavities, legacy, etc.)
+ * x 2 - Adapter: cleaning tech (domain: order[plastic]) (depends: metal)
+ * x 3 - Template Method: injectionLine & process (domain: order[plastic]) (depends: 1,2,4,5,6,7,8,9))
+ * x 4 - Factory Methods: (Observer)
+ * 			packaging (domain: order[packager])
+ * 			stuffing (domain: order[stuffer])
+ * x 5 - Decorator:
+ * 			tags (domain: order[tags])
+ * 			additives (domain: order[<additives>])
+ * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, packager, & stuffer)
+ * x 7 - ChainOfR: (domain: order[moldLoc] - inventory, borrow, mill, purchase)
+ * x 8 - Bridge: mill
+ * 			Platform: (domains: metal, order[finish])
+ * 			Shape: (domain: order[mold])
+ * x 9 - Abstract Factory: IJM, mold(metal,cavities), conveyer belt, bins (domain: order[size])
  */
 
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
@@ -87,6 +92,8 @@ public:
 	virtual void clean(const string& metal) {
 		 cout << "  CleanMold base.\n";
 	}
+public:
+	static CleanMold* getCleaning(map<string,string>& order);
 };
 class ABS : public CleanMold {
 	legacy_classes::CleanABS plastic;
@@ -120,6 +127,21 @@ public: ~Synthetic() { DTORF("~Synthetic "); }
 	}
 };
 
+CleanMold* CleanMold::getCleaning(map<string,string>& order) {
+	if(		order["plastic"] == "ABS")				return new ABS;
+	else if(order["plastic"] == "Polypropylene")	return new Poly;
+	else if(order["plastic"] == "Polyethelene")		return new Poly;
+	else if(order["plastic"] == "PET")				return new PET;
+	// Seam point - add another plastic.
+	else if(order["plastic"] == "Styrene")			return new Synthetic;
+	else if(order["plastic"] == "Nylon66")			return new Synthetic;
+
+	else {
+		cout << "*** Should never happen - CleanMold::getCleaning.\n";
+		return new CleanMold;
+	}
+}
+
 }
 
 namespace strategy {		// DP 1 - done except for todos.
@@ -129,7 +151,7 @@ namespace strategy {		// DP 1 - done except for todos.
 // 3) Historical(50k):        runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
 // Seam point -
 // 4) Projection(100k): runTime = ijm->setupTime_mins()
-//							    + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
+//							    + (1 + 0.01*legacy::rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
 //						        + ijm->teardownTime_mins();
 
 class RuntimeEstimate {	// If the algorithms are varying...
@@ -142,7 +164,7 @@ public:
 protected:
 	void runTimeEst_hrs(map<string,string>& order) {
 		orderSize = atoi(order["size"].c_str());
-		cavities = atoi(order["cavities"].c_str());
+		cavities = atoi(order["cavities"].c_str());	// Added to order by TM.setupLine();
 		if(cavities <= 0)	cavities = 1;
 	}
 public:
@@ -169,7 +191,7 @@ public:
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
-		int volume_cc = atoi(order["volume"].c_str());
+		int volume_cc = atoi(order["volume"].c_str());	// TODO: Set volume.
 		int cycleTime = legacy_classes::cycleTime_sec(order["metal"], volume_cc);
 		return (orderSize/cavities)*cycleTime/3600;
 	}
@@ -205,22 +227,24 @@ public:
 };
 
 RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& order) {
-	int orderSize = atoi(order["size"].c_str());
+	int rteSizeTree = atoi(order["size"].c_str());
 
-	if(		orderSize <=  10000)	return new BackOfTheEnvelope;
-	else if(orderSize <=  25000)	return new Calculation;
-	else if(orderSize <=  50000)	return new Historical;
+	if(		rteSizeTree <=  10000)	return new BackOfTheEnvelope;
+	else if(rteSizeTree <=  25000)	return new Calculation;
+	else if(rteSizeTree <=  50000)	return new Historical;
 	// Seam point - add another runtime estimation algorithm.
-	else if(orderSize <= 100000)	return new Projection;
+	else if(rteSizeTree <= 100000)	return new Projection;
 
 	else {
+		cout << "    <>Using most sophisticated estimation algorithm";
+		cout << " for orders greater than 100000.\n";
 		return new Projection;
 	}
 }
 
 }
 
-namespace observer {		// DP 7.
+namespace observer {		// DP 6 - done.
 
 class BinSubject;
 class BinObserver;
@@ -270,7 +294,7 @@ void BinSubject::pause() {
 
 }
 
-namespace abstract_factory {// DP 10 - done.
+namespace abstract_factory {// DP 9 - done.
 
 using namespace observer;
 
@@ -551,19 +575,19 @@ public:
 };
 
 InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
-	unsigned size = atoi(order["size"].c_str());
+	unsigned mlSizeTree = atoi(order["size"].c_str());	// Mold Lifetime (ML).
 
-	if(		size <= 10000)		return new PilotOrder;
-	else if(size <= 20000)		return new SmallOrder;
+	if(		mlSizeTree <= 10000)		return new PilotOrder;
+	else if(mlSizeTree <= 20000)		return new SmallOrder;
 	// Seam point - add fast order.
-	else if(size <= 40000)		return new FastOrder;
-	else if(size <= 50000)		return new MediumOrder;
+	else if(mlSizeTree <= 40000)		return new FastOrder;
+	else if(mlSizeTree <= 50000)		return new MediumOrder;
 	// Seam point - add larger orders.
-	else if(size <= 100000)		return new LargeOrder;
-	else if(size <= 200000)		return new HugeOrder;
+	else if(mlSizeTree <= 100000)		return new LargeOrder;
+	else if(mlSizeTree <= 200000)		return new HugeOrder;
 
 	else {						// Defaulting to HugeOrder.
-		cout << "  <>Size exceeds mold lifetime |" << size << "|";
+		cout << "  <>Size exceeds mold lifetime |" << mlSizeTree << "|";
 		order["size"] = "200000";
 		cout << " defaulting to HugeOrder of " << order["size"] << ".\n";
 		return new HugeOrder;
@@ -572,12 +596,10 @@ InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 
 }
 
-namespace bridge {			// DP 9.
+namespace bridge {			// DP 8 - done.
 
 class Platform {
-public:
-	Platform() {}
-	virtual ~Platform() { DTORF("~bridge::Platform\n"); }
+public: virtual ~Platform() { DTORF("~bridge::Platform\n"); }
 public:
 	virtual string name() { return "name"; }
 	virtual string drill() { return "drill"; }
@@ -587,9 +609,7 @@ public:
 	static Platform* getPlatform(map<string,string>& order);
 };
 class HighCarbon : public Platform {
-public:
-	HighCarbon() {}
-	virtual ~HighCarbon() { DTORF("~HighCarbon "); }
+public: virtual ~HighCarbon() { DTORF("~HighCarbon "); }
 public:
 	string name() { return "HighCarbon"; }
 	string drill() { return "drill"; }
@@ -599,9 +619,7 @@ public:
 	static Platform* getPlatform(map<string,string>& order);
 };
 class Carbide : public Platform {
-public:
-	Carbide() {}
-	virtual ~Carbide() { DTORF("~Carbide "); }
+public: virtual ~Carbide() { DTORF("~Carbide "); }
 public:
 	string name() { return "Carbide"; }
 	string drill() { return "high speed drill"; }
@@ -611,9 +629,7 @@ public:
 	static Platform* getPlatform(map<string,string>& order);
 };
 class DiamondTipped : public Platform {
-public:
-	DiamondTipped() {}
-	virtual ~DiamondTipped() { DTORF("~DiamondTipped "); }
+public: virtual ~DiamondTipped() { DTORF("~DiamondTipped "); }
 public:
 	string name() { return "DiamondTipped"; }
 	string drill() { return "precision drill"; }
@@ -624,9 +640,7 @@ public:
 };
 // Seam Point - add another implementation.
 class EDM : public Platform {
-public:
-	EDM() {}
-	virtual ~EDM() { DTORF("~EDM "); }
+public: virtual ~EDM() { DTORF("~EDM "); }
 public:
 	string name() { return "EDM"; }
 	string drill() { return "static punch"; }
@@ -637,7 +651,7 @@ public:
 };
 
 Platform* Platform::getPlatform(map<string,string>& order) {
-	string metal = order["metal"];
+	string metal = order["metal"];	// Added to order by TM.setupLine().
 	string finish = order["finish"];
 
 	if(		metal == "aluminum")					return new HighCarbon;
@@ -649,8 +663,8 @@ Platform* Platform::getPlatform(map<string,string>& order) {
 	else if(metal == "steel" && finish == "satin")	return new EDM;
 
 	else {
-		cout << "*** Should never happen - Platform::getPlatform\n";
-		return new Platform;	// Should never happen.
+		cout << "*** Should never happen - Platform::getPlatform.\n";
+		return new Platform;
 	}
 }
 
@@ -665,8 +679,17 @@ public:
 	  : platform(platform), name(name), volume_cc(volume_cc) {}
 	virtual ~Shape() { DTORF("~bridge::Shape\n"); delete platform; }
 public:
-	virtual void mill(map<string,string>& order) {
-		cout << "    Unknown shape " << order["mold"] << ".\n";
+	void mill(map<string,string>& order) {
+		cout << "      using " << platform->name() << " tools (";
+		cout << platform->drill() << ", ";
+		cout << platform->cut() << ", and ";
+		cout << platform->grind() << ") ";
+		cout << "to mill " << order["metal"] << " block into ";
+		cout << order["cavities"] << " " << name << " shapes ";	// Added to order by TM.setupLine().
+		cout << "with " << order["finish"] << " finish.\n";
+	}
+	virtual void steps() {
+		cout << "steps: specify drill, cut and grind steps.\n";
 	}
 public:
 	static Shape* getShape(map<string,string>& order);
@@ -675,61 +698,37 @@ class Duck : public Shape {
 public:
 	Duck(Platform* platform) : Shape(platform, "duck", 35) {};
 	virtual ~Duck() { DTORF("~Duck "); }
-public:	// TODO: add anything to make these unique.
-	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
-		cout << "      using " << platform->name() << " tools (";
-		cout << platform->drill() << ", ";
-		cout << platform->cut() << ", and ";
-		cout << platform->grind() << ") ";
-		cout << "to mill " << order["metal"] << " block into ";
-		cout << order["cavities"] << " " << name << " shapes ";
-		cout << "with " << order["finish"] << " finish.\n";
+public:
+	virtual void steps() {
+		cout << "steps: D2C4G1.\n";
 	}
 };
 class Car : public Shape {
 public:
 	Car(Platform* platform) : Shape(platform, "car", 40) {};
 	virtual ~Car() { DTORF("~Car "); }
-public:	// TODO: add anything to make these unique.
-	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
-		cout << "      using " << platform->name() << " tools (";
-		cout << platform->drill() << ", ";
-		cout << platform->cut() << ", and ";
-		cout << platform->grind() << ") ";
-		cout << "to mill " << order["metal"] << " block into ";
-		cout << order["cavities"] << " " << name << " shapes ";
-		cout << "with " << order["finish"] << " finish.\n";
+public:
+	virtual void steps() {
+		cout << "steps: D2C8D1G3.\n";
 	}
 };
 class Hero : public Shape {
 public:
 	Hero(Platform* platform) : Shape(platform, "hero", 50) {};
 	virtual ~Hero() { DTORF("~Hero "); }
-public:	// TODO: add anything to make these unique.
-	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
-		cout << "      using " << platform->name() << " tools (";
-		cout << platform->drill() << ", ";
-		cout << platform->cut() << ", and ";
-		cout << platform->grind() << ") ";
-		cout << "to mill " << order["metal"] << " block into ";
-		cout << order["cavities"] << " " << name << " shapes ";
-		cout << "with " << order["finish"] << " finish.\n";
+public:
+	virtual void steps() {
+		cout << "steps: D1C1D1G7.\n";
 	}
 };
 // Seam Point - add another abstraction.
 class Dino : public Shape {
 public:
-	Dino(Platform* platform) : Shape(platform, "dino", 35) {};
+	Dino(Platform* platform) : Shape(platform, "dino", 30) {};
 	virtual ~Dino() { DTORF("~Dino "); }
-public:	// TODO: add anything to make these unique.
-	void mill(map<string,string>& order) {	// Simulated specific steps to mill shape.
-		cout << "      using " << platform->name() << " tools (";
-		cout << platform->drill() << ", ";
-		cout << platform->cut() << ", and ";
-		cout << platform->grind() << ") ";
-		cout << "to mill " << order["metal"] << " block into ";
-		cout << order["cavities"] << " " << name << " shapes ";
-		cout << "with " << order["finish"] << " finish.\n";
+public:
+	virtual void steps() {
+		cout << "steps: G5D2C1.\n";
 	}
 };
 
@@ -743,14 +742,14 @@ Shape* Shape::getShape(map<string,string>& order) {
 	else if(order["mold"] == "dino")		return new Dino(platform);
 
 	else {
-		cout << "*** Should never happen - Shape::getShape\n";
+		legacy_classes::defaulting(order, "mold", "duck");
 		return new Shape(platform, "default");
 	}
 }
 
 }
 
-namespace chain_of_resp {	// DP 8.
+namespace chain_of_resp {	// DP 7 - done.
 
 using namespace bridge;
 
@@ -762,16 +761,22 @@ public:
 	virtual ~GetMold() { DTORF("~CofR::GetMold "); }
 public:
 	virtual Shape* from(map<string,string>& order) {
-		string place = order["moldLoc"];
-		string mold = order["mold"];
-		cout << "    <>Can't find place |" << place << "|";
-		cout << " to get |" << mold << "| mold from, ";
-		cout << "defaulting to duck from inventory.\n";
-		order["moldLoc"] = "inventory";
-		order["mold"]	 = "duck";
+		cout << "    <>Can't find place |" << order["moldLoc"] << "|";
+		cout << " to get |" << order["mold"] << "| mold from";
+		cout << " with |" << order["finish"] << "| finish,";
+
+		if(order["moldLoc"] == "")	order["moldLoc"] = "inventory";
+		if(order["mold"]	== "")	order["mold"]	 = "duck";
+		if(order["finish"]	== "")	order["finish"]	 = "smooth";
+
+		cout << " defaulting to ";
+		cout << order["finish"] << " " << order["mold"];
+		cout << " from " << order["moldLoc"] << ".\n";
 
 		return Shape::getShape(order);
 	}
+public:
+	static GetMold* selectMold(map<string,string>& order);
 };
 class Inventory : public GetMold {
 public:
@@ -832,9 +837,10 @@ public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
 		if(place == "mill") {
-			cout << "    Create " << order["mold"] << " mold from mill ";
-			cout << "with " << order["cavities"] << " cavities:\n";
 			Shape* shape = Shape::getShape(order);
+			cout << "    Create " << order["mold"] << " mold from mill ";
+			cout << "with " << order["cavities"] << " cavities - ";	// Added to order by TM.setupLine().
+			shape->steps();
 			shape->mill(order);
 			return shape;
 		}
@@ -846,9 +852,21 @@ public:
 };
 // Seam points - add another responder.
 
+GetMold* GetMold::selectMold(map<string,string>& order) {
+	return	new Inventory(
+			// Seam point - add more mold sources.
+			new SisterCompany(
+			new Purchase(
+			// Seam point - mill likely location of last resort.
+			new Mill(
+			// ...
+			new GetMold(
+		)))));
 }
 
-namespace decorator {		// DP 6 - done.
+}
+
+namespace decorator {		// DP 5 - done.
 
 class Cavity {	// If the options are varying...
 public:
@@ -1051,7 +1069,7 @@ Polymer* addAdditives(Polymer* additive, map<string,string>& order) {
 
 }
 
-namespace factory_method {	// DP 5 - done.
+namespace factory_method {	// DP 4 - done.
 
 using namespace observer;
 
@@ -1170,8 +1188,8 @@ public:
 public:
 	string fill() { return "expanding foam"; }
 	void update(BinSubject* bin) {
-		cout << "        Foam stuffer paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << "        Foam stuffer triggered to fill ";
+		cout << bin->name << " package bin.\n";
 	}
 };
 
@@ -1190,7 +1208,7 @@ Stuffer* Stuffer::makeObject(map<string,string>& order, BinSubject* bin) {
 
 }
 
-namespace template_method {	// DP 4.
+namespace template_method {	// DP 3 - done.
 
 using namespace strategy;			// DP 1
 using namespace adapter;			// DP 2
@@ -1221,10 +1239,10 @@ private: // Heap objects.
 	abstract_factory::ConveyerBelt*	belt;
 	abstract_factory::PackageBin*	bin;
 public:
-	ProcessOrder_TM(CleanMold* cleaning) :
+	ProcessOrder_TM() :
 		colorVol(0),
 		// Heap objects to delete.
-		cleaning(cleaning),
+		cleaning(0),
 		runtimeEst(0),
 		packager(0),
 		cushion(0),	// Specs 2.
@@ -1307,20 +1325,9 @@ protected:
 	void getMold(map<string,string>& order) { // CofR (mold location), Bridge (shape, milling platform).
 		cout << "  Process order:\n";
 
-		theMold =
-			new Inventory(
-			// Seam point - add more mold sources.
-			new SisterCompany(
-			new Purchase(
-			// Seam point - mill likely location of last resort.
-			new Mill(
-			// ...
-			new GetMold(
-		)))));
+		theMold = GetMold::selectMold(order);
 
 		shape = theMold->from(order);	// Volume_cc.
-//
-//		cout << "    Pull <shape> mold from <location>.\n";
 	}
 	void insertTags(map<string,string>& order) { // Decorator (tag list).
 		tags = new Blank();
@@ -1344,7 +1351,7 @@ protected:
 	}
 	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {	// Polymorphic on new (colored) plastics.
-		unsigned shapeVol = 22;	// TODO: Replace with shape->volume_cc.
+		unsigned shapeVol = shape->volume_cc;
 		if(order.find("color") != order.end())
 			colorVol = 0.1*shapeVol;
 		plasticDesc = order["plastic"];
@@ -1361,14 +1368,14 @@ protected:
 
 		additives = addAdditives(new Plastic, order);
 
-		unsigned shapeVol = 35; // TODO: Get from shape->vol();
-		unsigned cavities = 2;	// TODO: Get from mold->cavities();
+		unsigned shapeVol = shape->volume_cc;
+		unsigned cavities = mold->cavities();
 		unsigned total = cavities*shapeVol;
 
 		unsigned plasticVol = shapeVol - colorVol - additives->mix();
 
 		cout << "      Recipe: " << plasticDesc << "(" << plasticVol << ")";
-		cout << colorDesc << additives->idNvol() << " = 35.\n";
+		cout << colorDesc << additives->idNvol() << " = " << shapeVol << ".\n";
 
 		cout << "      Volume: " << order["mold"] << "(" << shapeVol << ")";
 		cout << " * " << cavities << " cavities";
@@ -1376,7 +1383,7 @@ protected:
 	}
 	void runStats(map<string,string>& order) { // Strategy (order size).
 		int orderSize = atoi(order["size"].c_str());
-		int runSize = orderSize/2;
+		int runSize = orderSize/mold->cavities();
 		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
 
 		cout << "    Cycle " << ijm->setup() << " for " << order["plastic"];
@@ -1391,6 +1398,7 @@ protected:
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {	// Adapter (plastic, mold metal).
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 	// Seam point - add another constant step.
@@ -1401,27 +1409,21 @@ public:
 	static ProcessOrder_TM* getOrderProcess(map<string,string>& order);
 };
 class ABS : public ProcessOrder_TM {	// If the plastics are varying...
-public:
-	ABS() : ProcessOrder_TM(new adapter::ABS()) {}
-	~ABS() { DTORF("~ABS\n"); }
+public: ~ABS() { DTORF("~ABS\n"); }
 public:
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
 		cout << "      Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.\n";
 	}
 };
 class Poly : public ProcessOrder_TM {
-public:
-	Poly() : ProcessOrder_TM(new adapter::Poly()) {}
-	~Poly() { DTORF("~Poly\n"); }
+public: ~Poly() { DTORF("~Poly\n"); }
 public:
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
 		cout << "      Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.\n";
 	}
 };
 class PET : public ProcessOrder_TM {
-public:
-	PET() : ProcessOrder_TM(new adapter::PET()) {}
-	~PET() { DTORF("~PET\n"); }
+public: ~PET() { DTORF("~PET\n"); }
 public:
 	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
 		cout << "      Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.\n";
@@ -1429,9 +1431,7 @@ public:
 };
 // Seam point - add another polymorphic step (not in this version).
 class Synthetic : public ProcessOrder_TM {	// If the plastics are varying...
-public:
-	Synthetic() : ProcessOrder_TM(new adapter::Synthetic()) {}
-	~Synthetic() { DTORF("~Synthetic\n"); }
+public: ~Synthetic() { DTORF("~Synthetic\n"); }
 public:
 	// Seam point - convert a constant step into a polymorphic step.
 	virtual void loadBins(map<string,string>& order) {
