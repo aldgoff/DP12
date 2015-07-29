@@ -48,15 +48,20 @@ Injection cycles: (domain: plastics)
   ...
   Synthetics - Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject
 
-Run time estimates (hours): (domain: size) (Dependencies: cavities, legacy, metal, volume, IJM, plastics)
+Run time estimates (hours): (domain: size) (Dependencies: cavities, legacy, metal, volume, plastics)
   BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
-  Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, mold->volume);
-  Historical(50k):        runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
+  Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, shape->volume)/3600;
+  Historical(50k):
+    cycletime = legacy::cycleTime_sec(metal, shape->volume)
+    runTime = legacy::setupAvg_min + orderSize/cavities*cycletime + legacy::teardownAvg_min;
   Default to highest fidelty estimate.
   ...
-  Projection(100k): runTime = ijm->setupTime_mins()
-						    + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
-					        + ijm->teardownTime_mins();
+  Projection(100k): 
+    cycletime = legacy::cycleTime_sec(metal, shape->volume)
+    rejectRate_pcnt = if(PET) then legacy::rejectRateHigh_pcnt else legacy::rejectRateLow_pcnt
+    runTime = legacy::setupAvg_min
+            + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime
+            + legacy::teardownAvg_min;
   
 Mold locations: (domain: order["moldLoc"])
   Inventory (default)
@@ -76,19 +81,25 @@ Finishes:
   
 Milling Ops: (domain: metal, finish)
   Aluminum - High carbon
-  	drill
-  	cut
-  	high speed grind
-  Steel - Carbide
-  	high speed drill
-  	cross cut
-  	layer grind
+    drill
+    cut
+    high speed grind
+  Steel - finish
+    smooth - High carbon
+    rippled - Carbide
+      high speed drill
+      cross cut
+      layer grind
+    dimpled - Diamond tipped
+      precision drill
+      oiled cooled cut
+      cartoid grind
   ...
-  Steel (non satin finish) - Carbide
-  Steel (satin finish) - Diamond tipped
-  	precision drill
-  	oiled cooled cut
-  	cartoid grind
+    sanded - EDM
+      static punch
+      static slice
+      static etch
+    satin - EDM
 
 Tags: (domain: order["tags"])
   Blank (width determined by cavity space & sum of other tags' widths).
@@ -101,7 +112,7 @@ Tags: (domain: order["tags"])
   Recycle code (6 mm)
 
 Additives: (domain: order[<additives> <vol>])
-  UV inhibiters
+  UV inhibiter
   Anti-bacterial
   Hydrophilic
   ...
@@ -135,27 +146,27 @@ Conveyer belts: (domain: size)
   200,000 - V-level
 
 Package bins: (domain: size)
-  10,000 - Cardboard box (300,000 cc)
-  20,000 - Cardboard box
-  50,000 - Pallot box (1,000,000 cc)
+  10,000 - Cardboard box
+  20,000 - Shell box
+  50,000 - Pallot box
   ...
   40,000 - Pallot box
-  100,000 - Crate (5,000,000 cc)
+  100,000 - Pallot box
   200,000 - Crate
 
 Default to largest if size > max.
 
 Packagers: (domain: order["packager"])
-  bulk (default - does nothing, i.e., nothing to pause, so should not respond to update)
-  shrink wrap (10% reduction in bin capacity)
-  hard pack (20% reduction in bin capacity)
+  bulk (default - does nothing, i.e., nothing to pause, should not be in the Subject's update list.))
+  shrink wrap
+  hard pack
   ...
-  ziploc (25% reduction in bin capacity)
+  ziploc
 ......
 Stuffers: (another Observer) (domain: order["stuffer"])
-  Air (air - default, does nothing)
+  Air (default - does nothing, i.e., no fill to do, should not be in the Subject's update list.)
   Popcorn (styrene propcorn)
-  BubbleWrap (bubble wrap)
+  Bubblewrap (bubble wrap)
   Foam (expanding foam)
 
 Full bins:
@@ -193,10 +204,11 @@ Setup the injection run: (domain: plastic)
   	Stuffer
   Get and install the mold
   Insert tags into mold
-  Compute estimated run time
   Load plastic and color bins
   Load additive bins (if any)
+  Compute estimated run time
   Run the injection cycle till done
+  Simulate a full bin
   Clean the mold
   ...
   Ship to address (another step)

@@ -24,7 +24,7 @@ namespace final_solution {
  * x 5 - Decorator:
  * 			tags (domain: order[tags])
  * 			additives (domain: order[<additives>])
- * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, packager, & stuffer)
+ * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, (domain: (packager, stuffer))
  * x 7 - ChainOfR: (domain: order[moldLoc] - inventory, borrow, mill, purchase)
  * x 8 - Bridge: mill
  * 			Platform: (domains: metal, order[finish])
@@ -45,9 +45,11 @@ int cycleTime_sec(string metal, int volume_cc) {
 
 	return 20 + heatCapacityAdjustment + 0.1*volume_cc;
 }
+
 const int setupAvg_min = 118;
 const int teardownAvg_min = 54;
-const float rejectRate_pcnt = 1.3;
+const float rejectRateLow_pcnt = 0.2;
+const float rejectRateHigh_pcnt = 1.1;
 
 class CleanABS {
 public: ~CleanABS() { DTORF("~legacy_classes::CleanABS "); }
@@ -144,15 +146,7 @@ CleanMold* CleanMold::getCleaning(map<string,string>& order) {
 
 }
 
-namespace strategy {		// DP 1 - done except for todos.
-
-// 1) BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
-// 2) Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, mold->volume);
-// 3) Historical(50k):        runTime = setupAvg_min + orderSize/cavities*mold->cycletime + teardownAvg_min;
-// Seam point -
-// 4) Projection(100k): runTime = ijm->setupTime_mins()
-//							    + (1 + 0.01*legacy::rejectRate_pcnt)*orderSize/cavities*mold->cycletime()
-//						        + ijm->teardownTime_mins();
+namespace strategy {		// DP 1 - done.
 
 class RuntimeEstimate {	// If the algorithms are varying...
 protected:
@@ -191,12 +185,12 @@ public:
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
-		int volume_cc = atoi(order["volume"].c_str());	// TODO: Set volume.
+		int volume_cc = atoi(order["volume"].c_str());
 		int cycleTime = legacy_classes::cycleTime_sec(order["metal"], volume_cc);
 		return (orderSize/cavities)*cycleTime/3600;
 	}
 };
-class Historical : public RuntimeEstimate {	// TODO: mold->cycletime_sec().
+class Historical : public RuntimeEstimate {
 public:
 	Historical() {}
 	~Historical() { DTORF("~Historical "); }
@@ -204,12 +198,13 @@ public:
 	virtual int operator()(map<string,string>& order) {
 		using namespace legacy_classes;
 		RuntimeEstimate::runTimeEst_hrs(order);
-		int cycleTime = 30; // Get from mold->cycletime_sec();
+		int volume_cc = atoi(order["volume"].c_str());
+		int cycleTime = cycleTime_sec(order["metal"], volume_cc);
 		return (setupAvg_min + (orderSize/cavities)*cycleTime/60 + teardownAvg_min)/60;
 	}
 };
 // Seam point - add another algorithm.
-class Projection : public RuntimeEstimate {	// TODO: mold->cycletime_sec() & ijm->times_mins().
+class Projection : public RuntimeEstimate {
 public:
 	Projection() {}
 	~Projection() { DTORF("~Projection "); }
@@ -217,12 +212,12 @@ public:
 	virtual int operator()(map<string,string>& order) {
 		using namespace legacy_classes;
 		RuntimeEstimate::runTimeEst_hrs(order);
-		int cycleTime = 30; // Get from mold->cycletime_sec();
-		int setupTime_min    = setupAvg_min;	// Get from ijm->setupTime_mins();
-		int tearDownTime_min = teardownAvg_min;	// Get from ijm->tearDownTime_mins();
-		return (setupTime_min
+		int volume_cc = atoi(order["volume"].c_str());
+		int cycleTime = cycleTime_sec(order["metal"], volume_cc);
+		int rejectRate_pcnt = (order["plastic"] == "PET") ? rejectRateHigh_pcnt : rejectRateLow_pcnt;
+		return (setupAvg_min
 			 + (1 + 0.01*rejectRate_pcnt)*(orderSize/cavities)*cycleTime/60
-			 + tearDownTime_min)/60;
+			 + teardownAvg_min)/60;
 	}
 };
 
@@ -440,12 +435,19 @@ public:
 public:
 	string setup() { return "CardboardBox"; }
 };
-class PallotBox : public PackageBin {
+class ShellBox : public PackageBin {
 public:
-	PallotBox() : PackageBin("PallotBox") {}
-	~PallotBox() { DTORF("~PallotBox "); }
+	ShellBox() : PackageBin("ShellBox") {}
+	~ShellBox() { DTORF("~ShellBox "); }
 public:
-	string setup() { return "PallotBox"; }
+	string setup() { return "ShellBox"; }
+};
+class PalletBox : public PackageBin {
+public:
+	PalletBox() : PackageBin("PalletBox") {}
+	~PalletBox() { DTORF("~PalletBox "); }
+public:
+	string setup() { return "PalletBox"; }
 };
 // Seam point - add another package bin.
 class Crate : public PackageBin {
@@ -505,7 +507,7 @@ public:
 		return new YSplitBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
-		return new CardboardBox();
+		return new ShellBox();
 	}
 };
 class MediumOrder : public InjectionLine {
@@ -521,7 +523,7 @@ public:
 		return new LinearBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
-		return new PallotBox();
+		return new PalletBox();
 	}
 };
 // Seam point - add another family.
@@ -538,7 +540,7 @@ public:
 		return new VLevelBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
-		return new PallotBox();
+		return new ShellBox();
 	}
 };
 class LargeOrder : public InjectionLine {
@@ -554,7 +556,7 @@ public:
 		return new YSplitBelt(bin);
 	}
 	PackageBin* createPackageBin(map<string,string>& order) {
-		return new Crate();
+		return new PalletBox();
 	}
 };
 class HugeOrder : public InjectionLine {
@@ -663,8 +665,9 @@ Platform* Platform::getPlatform(map<string,string>& order) {
 	else if(metal == "steel" && finish == "satin")	return new EDM;
 
 	else {
-		cout << "*** Should never happen - Platform::getPlatform.\n";
-		return new Platform;
+		cout << "    Unknown metal " << metal << " or finish " << finish << ".\n";
+		cout << " Defaulting to DiamondTipped platform.\n";
+		return new DiamondTipped;
 	}
 }
 
@@ -677,7 +680,7 @@ public:
 public:
 	Shape(Platform* platform, string name, unsigned volume_cc=0)
 	  : platform(platform), name(name), volume_cc(volume_cc) {}
-	virtual ~Shape() { DTORF("~bridge::Shape\n"); delete platform; }
+	virtual ~Shape() { DTORF("~bridge::Shape "); delete platform; }
 public:
 	void mill(map<string,string>& order) {
 		cout << "      using " << platform->name() << " tools (";
@@ -685,7 +688,8 @@ public:
 		cout << platform->cut() << ", and ";
 		cout << platform->grind() << ") ";
 		cout << "to mill " << order["metal"] << " block into ";
-		cout << order["cavities"] << " " << name << " shapes ";	// Added to order by TM.setupLine().
+		string shape_s = order["cavities"]=="1" ? " shape " : " shapes ";
+		cout << order["cavities"] << " " << name << shape_s;	// Added to order by TM.setupLine().
 		cout << "with " << order["finish"] << " finish.\n";
 	}
 	virtual void steps() {
@@ -812,6 +816,7 @@ public:
 			return GetMold::from(order);	// Default.
 	}
 };
+// Seam points - insert another responder.
 class Purchase : public GetMold {
 public:
 	Purchase(GetMold* successor=0) : GetMold(successor) {}
@@ -850,7 +855,6 @@ public:
 			return GetMold::from(order);	// Default.
 	}
 };
-// Seam points - add another responder.
 
 GetMold* GetMold::selectMold(map<string,string>& order) {
 	return	new Inventory(
@@ -1084,13 +1088,7 @@ public:
 public:
 	static Packager* makeObject(map<string,string>& map, BinSubject* bin);
 };
-class Bulk : public Packager {
-public:
-	Bulk(BinSubject* bin) : Packager(bin) {}
-	~Bulk() { DTORF("~Bulk "); }
-public:
-	string wrap() { return "Bulk"; }
-};
+// class Bulk is the null class.
 class ShrinkWrap : public Packager {
 public:
 	ShrinkWrap(BinSubject* bin) : Packager(bin) {}
@@ -1127,15 +1125,15 @@ public:
 };
 
 Packager* Packager::makeObject(map<string,string>& order, BinSubject* bin) {
-	if(		order["packager"] == "Bulk")		return new Bulk(bin);
+	if(		order["packager"] == "Bulk")		return 0;	// Null, no Observer.
 	else if(order["packager"] == "ShrinkWrap")	return new ShrinkWrap(bin);
 	else if(order["packager"] == "HardPack")	return new HardPack(bin);
 	// Seam point - add another class.
 	else if(order["packager"] == "ZipLock")		return new ZipLock(bin);
 
 	else {
-		legacy_classes::defaulting(order, "packager", "Bulk");
-		return new Bulk(bin);
+		legacy_classes::defaulting(order, "packager", "None");
+		return 0;
 	}
 }
 
@@ -1151,13 +1149,7 @@ public:
 public:
 	static Stuffer* makeObject(map<string,string>& map, BinSubject* bin);
 };
-class Air : public Stuffer {
-public:
-	Air(BinSubject* bin) : Stuffer(bin) {}
-	~Air() { DTORF("~Air "); }
-public:
-	string fill() { return "Air"; }
-};
+// class Air is the null class.
 class Popcorn : public Stuffer {
 public:
 	Popcorn(BinSubject* bin) : Stuffer(bin) {}
@@ -1165,8 +1157,8 @@ public:
 public:
 	string fill() { return "styrene popcorn"; }
 	void update(BinSubject* bin) {
-		cout << "        Popcorn stuffer paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << "        Popcorn stuffer triggered to fill ";
+		cout << bin->name << " package bin.\n";
 	}
 };
 class Bubblewrap : public Stuffer {
@@ -1176,8 +1168,8 @@ public:
 public:
 	string fill() { return "bubble wrap"; }
 	void update(BinSubject* bin) {
-		cout << "        Bubble wrap stuffer paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << "        Bubble wrap stuffer triggered to fill ";
+		cout << bin->name << " package bin.\n";
 	}
 };
 // Seam point - add another class.
@@ -1194,15 +1186,15 @@ public:
 };
 
 Stuffer* Stuffer::makeObject(map<string,string>& order, BinSubject* bin) {
-	if(		order["stuffer"] == "Air")	return new Air(bin);
-	else if(order["stuffer"] == "Popcorn")	return new Popcorn(bin);
+	if(		order["stuffer"] == "Air")			return 0;	// Null, no Observer.
+	else if(order["stuffer"] == "Popcorn")		return new Popcorn(bin);
 	else if(order["stuffer"] == "Bubblewrap")	return new Bubblewrap(bin);
 	// Seam point - add another class.
 	else if(order["stuffer"] == "Foam")	return new Foam(bin);
 
 	else {
-		legacy_classes::defaulting(order, "stuffer", "Air");
-		return new Air(bin);
+		legacy_classes::defaulting(order, "stuffer", "None");
+		return 0;
 	}
 }
 
@@ -1220,13 +1212,13 @@ using namespace chain_of_resp;		// DP 7
 using namespace bridge;				// DP 8
 using namespace abstract_factory;	// DP 9
 
-class ProcessOrder_TM {	// Template Method (order processing steps).
+class ProcessOrder {	// Template Method (order processing steps).
 protected:
 	string plasticDesc;
 	unsigned colorVol;
 private: // Heap objects.
-	adapter::CleanMold*				cleaning;
 	strategy::RuntimeEstimate*		runtimeEst;
+	adapter::CleanMold*				cleaning;
 	factory_method::Packager*		packager;
 	factory_method::Stuffer*		cushion;	// Specs 2.
 	decorator::Cavity*				tags;
@@ -1239,11 +1231,11 @@ private: // Heap objects.
 	abstract_factory::ConveyerBelt*	belt;
 	abstract_factory::PackageBin*	bin;
 public:
-	ProcessOrder_TM() :
+	ProcessOrder() :
 		colorVol(0),
 		// Heap objects to delete.
-		cleaning(0),
 		runtimeEst(0),
+		cleaning(0),
 		packager(0),
 		cushion(0),	// Specs 2.
 		tags(0),
@@ -1256,7 +1248,7 @@ public:
 		belt(0),
 		bin(0)
 	{}
-	virtual ~ProcessOrder_TM() {
+	virtual ~ProcessOrder() {
 		delete cushion;	// Specs 2.
 		delete packager;
 		delete belt;
@@ -1270,7 +1262,7 @@ public:
 		delete tags;		cout << endl;
 		delete runtimeEst;
 		delete cleaning;
-		DTORF("~ProcessOrder_TM\n");
+		DTORF("~template_method::ProcessOrder\n");
 	}
 public:
 	void run(map<string,string>& order) {	// Template Method (plastic).
@@ -1279,9 +1271,9 @@ public:
 		insertTags(order);	 	// Decorator (tag list).
 		loadBins(order);		// Becomes polymorphic on new (colored) plastics.
 		loadAdditives(order);	// Decorator (additive list).
-		runStats(order);		// Strategy (order size).
-		cycleRecipe(order);		// TM polymorphic on plastic type.
-		injectionCycle(order);	// Observer (bin full).
+		estimate(order);		// Strategy (order size).
+		injectionCycle(order);		// TM polymorphic on plastic type.
+		simulateFullBin(order);	// Observer (bin full).
 		cleanMold(order);		// Adapter (plastic, mold metal).
 		// Seam point - add another constant step.
 		ship(order);			// Factory (stuffing).
@@ -1311,9 +1303,15 @@ protected:
 
 		cout << "  Setup injection line for ";
 		cout << order["size"] << " order";
-		cout << " with " << packager->wrap() << " packager";
+		if(packager || cushion)
+			cout << " with ";
+		if(packager)
+			cout << packager->wrap() << " packager";
 		// Seam line - add another observer machine (output bin stuffer).
-		cout << " and " << cushion->fill() << " stuffer";
+		if(packager && cushion)
+			cout << " and ";
+		if(cushion)
+		cout << cushion->fill() << " stuffer";
 		cout << ":\n";
 
 		cout << "    ";
@@ -1328,6 +1326,9 @@ protected:
 		theMold = GetMold::selectMold(order);
 
 		shape = theMold->from(order);	// Volume_cc.
+		char str[80];
+		sprintf(str, "%d", shape->volume_cc);
+		order["volume"] = str;
 	}
 	void insertTags(map<string,string>& order) { // Decorator (tag list).
 		tags = new Blank();
@@ -1356,7 +1357,9 @@ protected:
 			colorVol = 0.1*shapeVol;
 		plasticDesc = order["plastic"];
 		cout << "    Load plastic bin with " << plasticDesc;
-		cout << " and color bin with " << order["color"] << ".\n";
+		if(order.find("color") != order.end())
+			cout << " and color bin with " << order["color"];
+		cout << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {	// Decorator (additive list).
 		string colorDesc = "";
@@ -1370,31 +1373,34 @@ protected:
 
 		unsigned shapeVol = shape->volume_cc;
 		unsigned cavities = mold->cavities();
+		string cavityies = cavities==1 ? " cavity" : " cavities";
 		unsigned total = cavities*shapeVol;
 
 		unsigned plasticVol = shapeVol - colorVol - additives->mix();
 
 		cout << "      Recipe: " << plasticDesc << "(" << plasticVol << ")";
-		cout << colorDesc << additives->idNvol() << " = " << shapeVol << ".\n";
+		cout << colorDesc << additives->idNvol() << " = " << shapeVol << " cc.\n";
 
 		cout << "      Volume: " << order["mold"] << "(" << shapeVol << ")";
-		cout << " * " << cavities << " cavities";
+		cout << " * " << cavities << cavityies;
 		cout << " = " << total << " cc.\n";
 	}
-	void runStats(map<string,string>& order) { // Strategy (order size).
+	void estimate(map<string,string>& order) { // Strategy (order size).
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/mold->cavities();
 		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
+		unsigned runtime = (*runtimeEst)(order);
 
 		cout << "    Cycle " << ijm->setup() << " for " << order["plastic"];
 		cout << " " << runSize << " times, ";
-		cout << "estimated run time = " << (*runtimeEst)(order) << " hours.\n";
+		string hour_s = runtime==1 ? " hour" : " hours";
+		cout << "estimated run time = " << runtime << hour_s << ".\n";
 	}
-	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "      Close - heat to <temp> - inject at <pressure>";
+	virtual void injectionCycle(map<string,string>& order) {	// TM polymorphic on plastic type.
+		cout << "      Close - mix - heat to <temp> - inject at <pressure>";
 		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
 	}
-	void injectionCycle(map<string,string>& order) {	// Observer (bin full).
+	void simulateFullBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {	// Adapter (plastic, mold metal).
@@ -1406,31 +1412,31 @@ protected:
 		cout << "    Ship to \"" << order["address"] << "\".\n";
 	}
 public:
-	static ProcessOrder_TM* getOrderProcess(map<string,string>& order);
+	static ProcessOrder* getOrderProcess(map<string,string>& order);
 };
-class ABS : public ProcessOrder_TM {	// If the plastics are varying...
+class ABS : public ProcessOrder {	// If the plastics are varying...
 public: ~ABS() { DTORF("~ABS\n"); }
 public:
-	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "      Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.\n";
+	virtual void injectionCycle(map<string,string>& order) {	// TM polymorphic on plastic type.
+		cout << "      Close - mix - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.\n";
 	}
 };
-class Poly : public ProcessOrder_TM {
+class Poly : public ProcessOrder {
 public: ~Poly() { DTORF("~Poly\n"); }
 public:
-	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "      Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.\n";
+	virtual void injectionCycle(map<string,string>& order) {	// TM polymorphic on plastic type.
+		cout << "      Close - mix - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.\n";
 	}
 };
-class PET : public ProcessOrder_TM {
+class PET : public ProcessOrder {
 public: ~PET() { DTORF("~PET\n"); }
 public:
-	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "      Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.\n";
+	virtual void injectionCycle(map<string,string>& order) {	// TM polymorphic on plastic type.
+		cout << "      Close - mix - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.\n";
 	}
 };
 // Seam point - add another polymorphic step (not in this version).
-class Synthetic : public ProcessOrder_TM {	// If the plastics are varying...
+class Synthetic : public ProcessOrder {	// If the plastics are varying...
 public: ~Synthetic() { DTORF("~Synthetic\n"); }
 public:
 	// Seam point - convert a constant step into a polymorphic step.
@@ -1439,12 +1445,12 @@ public:
 		plasticDesc = order["color"] + string("-") + order["plastic"];
 		cout << "    Load plastic bin with " << plasticDesc << " pellets.\n";
 	}
-	virtual void cycleRecipe(map<string,string>& order) {	// TM polymorphic on plastic type.
-		cout << "      Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.\n";
+	virtual void injectionCycle(map<string,string>& order) {	// TM polymorphic on plastic type.
+		cout << "      Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.\n";
 	}
 };
 
-ProcessOrder_TM* ProcessOrder_TM::getOrderProcess(map<string,string>& order) {
+ProcessOrder* ProcessOrder::getOrderProcess(map<string,string>& order) {
 	if(		order["plastic"] == "ABS")				return new ABS;
 	else if(order["plastic"] == "Polypropylene")	return new Poly;
 	else if(order["plastic"] == "Polyethelene")		return new Poly;
@@ -1465,7 +1471,7 @@ void process(map<string,string>& order) {
 	using namespace legacy_classes;
 	using namespace template_method;
 
-	ProcessOrder_TM* processOrder = ProcessOrder_TM::getOrderProcess(order);
+	ProcessOrder* processOrder = ProcessOrder::getOrderProcess(order);
 
 	processOrder->run(order);
 
