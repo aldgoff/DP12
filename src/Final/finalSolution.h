@@ -8,10 +8,6 @@
 #ifndef FINAL_FINAL_SOLUTION_H_
 #define FINAL_FINAL_SOLUTION_H_
 
-#include <map>
-#include <list>
-using namespace std;
-
 namespace final_solution {
 
 /* Design Patterns Chart
@@ -24,12 +20,20 @@ namespace final_solution {
  * x 5 - Decorator:
  * 			tags (domain: order[tags])
  * 			additives (domain: order[<additives>])
- * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, (domain: (packager, stuffer))
+ * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, (domains: packager, stuffer)
  * x 7 - ChainOfR: (domain: order[moldLoc] - inventory, borrow, mill, purchase)
  * x 8 - Bridge: mill
  * 			Platform: (domains: metal, order[finish])
  * 			Shape: (domain: order[mold])
  * x 9 - Abstract Factory: IJM, mold(metal,cavities), conveyer belt, bins (domain: order[size])
+ */
+
+/* Command line execution:
+ * From C:\Users\adgoff\git\DP12>
+ * Debug\DP12.exe final solution src\Final\In\orders_2.txt > src\Final\Out\solution2.out
+ * [design|DtoO|original|OtoS|solution] [orders_1.txt|orders_2.txt]
+ * [design1.out|original1.out|original2.out|solution2.out]
+ * [design1Base.out|original1Base.out|solution2Base.out]
  */
 
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
@@ -48,8 +52,8 @@ int cycleTime_sec(string metal, int volume_cc) {
 
 const int setupAvg_min = 118;
 const int teardownAvg_min = 54;
-const float rejectRateLow_pcnt = 0.2;
-const float rejectRateHigh_pcnt = 1.1;
+const float rejectRateLow_pcnt = 0.4;
+const float rejectRateHigh_pcnt = 1.2;
 
 class CleanABS {
 public: ~CleanABS() { DTORF("~legacy_classes::CleanABS "); }
@@ -214,7 +218,7 @@ public:
 		RuntimeEstimate::runTimeEst_hrs(order);
 		int volume_cc = atoi(order["volume"].c_str());
 		int cycleTime = cycleTime_sec(order["metal"], volume_cc);
-		int rejectRate_pcnt = (order["plastic"] == "PET") ? rejectRateHigh_pcnt : rejectRateLow_pcnt;
+		float rejectRate_pcnt = (order["plastic"] == "PET") ? rejectRateHigh_pcnt : rejectRateLow_pcnt;
 		return (setupAvg_min
 			 + (1 + 0.01*rejectRate_pcnt)*(orderSize/cavities)*cycleTime/60
 			 + teardownAvg_min)/60;
@@ -665,9 +669,12 @@ Platform* Platform::getPlatform(map<string,string>& order) {
 	else if(metal == "steel" && finish == "satin")	return new EDM;
 
 	else {
-		cout << "    Unknown metal " << metal << " or finish " << finish << ".\n";
-		cout << " Defaulting to DiamondTipped platform.\n";
-		return new DiamondTipped;
+		cout << "    <>Unknown metal |" << metal << "| or finish |" << finish << "|.";
+		order["metal"]  = "steel";
+		order["finish"] = "smooth";
+		cout << " Defaulting to " << order["metal"] << " and " << order["finish"];
+		cout << " with HighCarbon platform.\n";
+		return new HighCarbon;
 	}
 }
 
@@ -746,8 +753,10 @@ Shape* Shape::getShape(map<string,string>& order) {
 	else if(order["mold"] == "dino")		return new Dino(platform);
 
 	else {
-		legacy_classes::defaulting(order, "mold", "duck");
-		return new Shape(platform, "default");
+		cout << "    <>Unknown " << "mold" << " |" << order["mold"] << "|";
+		order["mold"] = "duck";
+		cout << " defaulting to '" << order["mold"] << "'.\n";
+		return new Duck(platform);
 	}
 }
 
@@ -765,11 +774,12 @@ public:
 	virtual ~GetMold() { DTORF("~CofR::GetMold "); }
 public:
 	virtual Shape* from(map<string,string>& order) {
+		Shape* shape = Shape::getShape(order);
 		cout << "    <>Can't find place |" << order["moldLoc"] << "|";
 		cout << " to get |" << order["mold"] << "| mold from";
 		cout << " with |" << order["finish"] << "| finish,";
 
-		if(order["moldLoc"] == "")	order["moldLoc"] = "inventory";
+		order["moldLoc"] = "inventory";
 		if(order["mold"]	== "")	order["mold"]	 = "duck";
 		if(order["finish"]	== "")	order["finish"]	 = "smooth";
 
@@ -777,7 +787,7 @@ public:
 		cout << order["finish"] << " " << order["mold"];
 		cout << " from " << order["moldLoc"] << ".\n";
 
-		return Shape::getShape(order);
+		return shape;
 	}
 public:
 	static GetMold* selectMold(map<string,string>& order);
@@ -790,8 +800,9 @@ public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
 		if(place == "inventory") {
+			Shape* shape = Shape::getShape(order);
 			cout << "    Pull " << order["mold"] << " mold from inventory.\n";
-			return Shape::getShape(order);
+			return shape;
 		}
 		else if(successor != 0)
 			return successor->from(order);
@@ -807,8 +818,9 @@ public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
 		if(place == "sisterCompany") {
+			Shape* shape = Shape::getShape(order);
 			cout << "    Borrow " << order["mold"] << " mold from sister company.\n";
-			return Shape::getShape(order);
+			return shape;
 		}
 		else if(successor != 0)
 			return successor->from(order);
@@ -825,8 +837,9 @@ public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
 		if(place == "purchase") {
+			Shape* shape = Shape::getShape(order);
 			cout << "    Acquire " << order["mold"] << " mold via purchase.\n";
-			return Shape::getShape(order);
+			return shape;
 		}
 		else if(successor != 0)
 			return successor->from(order);
@@ -1468,7 +1481,6 @@ ProcessOrder* ProcessOrder::getOrderProcess(map<string,string>& order) {
 }
 
 void process(map<string,string>& order) {
-	using namespace legacy_classes;
 	using namespace template_method;
 
 	ProcessOrder* processOrder = ProcessOrder::getOrderProcess(order);

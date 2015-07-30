@@ -8,9 +8,6 @@
 #ifndef FINAL_FINAL_DESIGN_H_
 #define FINAL_FINAL_DESIGN_H_
 
-#include <map>
-using namespace std;
-
 namespace final_design {
 
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
@@ -18,22 +15,36 @@ const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
 
 namespace legacy_classes {	// Can't change these.
 
+int cycleTime_sec(string metal, int volume_cc) {
+	int heatCapacityAdjustment = 0;
+
+	if(		metal == "aluminum")	heatCapacityAdjustment = -2;
+	else if(metal == "steel")		heatCapacityAdjustment = +5;
+
+	return 20 + heatCapacityAdjustment + 0.1*volume_cc;
+}
+
+const int setupAvg_min = 118;
+const int teardownAvg_min = 54;
+const float rejectRateLow_pcnt = 0.2;
+const float rejectRateHigh_pcnt = 1.1;
+
 class CleanABS {
-public: ~CleanABS() { DTORF("~CleanABS "); }
+public: ~CleanABS() { DTORF("~legacy_classes::CleanABS "); }
 	void clean() {
 		cout << "    Clean ABS mold: soak in alcohol, rinse with water, dry.\n";
 	}
 };
 
 class CleanPolys {
-public: ~CleanPolys() { DTORF("~CleanPolys "); }
+public: ~CleanPolys() { DTORF("~legacy_classes::CleanPolys "); }
 	void prepForReuse() {
 		cout << "    Clean Poly mold: rinse with acetone, dry.\n";
 	}
 };
 
 class PETCleanup {
-public: ~PETCleanup() { DTORF("~PETCleanup "); }
+public: ~PETCleanup() { DTORF("~legacy_classes::PETCleanup "); }
 	void carbonize() { // Use only on stainless steel.
 		cout << "    Clean PET steel mold: heat to 895 C.\n";
 	}
@@ -63,13 +74,13 @@ namespace strategy {		// DP 1.
 
 }
 
-namespace observer {		// DP 7.
+namespace observer {		// DP 6.
 
 // Seam point - add another listener.
 
 }
 
-namespace abstract_factory {// DP 10.
+namespace abstract_factory {// DP 9.
 
 // Seam point - add another type 1.
 // Seam point - add another type 2.
@@ -80,32 +91,32 @@ namespace abstract_factory {// DP 10.
 
 }
 
-namespace bridge {			// DP 9.
+namespace bridge {			// DP 8.
 
 // Seam Point - add another implementation.
 // Seam Point - add another abstraction.
 
 }
 
-namespace chain_of_resp {	// DP 8.
+namespace chain_of_resp {	// DP 7.
 
 // Seam points - add another responder.
 
 }
 
-namespace decorator {		// DP 6.
+namespace decorator {		// DP 5.
 
 // Seam point - add another option.
 
 }
 
-namespace factory_method {	// DP 5.
+namespace factory_method {	// DP 4.
 
 // Seam point - add another class.
 
 }
 
-namespace template_method {	// DP 4.
+namespace template_method {	// DP 3.
 
 // Seam point - add another polymorphic step.
 // Seam point - add another constant step.

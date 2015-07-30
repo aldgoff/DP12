@@ -41,7 +41,7 @@
  * 22.	Add EDM milling
  x 23.	Make sure dtor instrumentation deletes in opposite to creation order
  * 24.	Keep the final, and all the clues
- - 25.	Student's email original specs solution at start of Part 2 final
+ * 25.	Student's email original specs solution at start of Part 2 final
  * 26.	More framework friendly and realistic defaults
  * 27.	Use design patterns in the architecture of the class code
  * 28.	Be clearer about the final file names
@@ -56,8 +56,6 @@
  * 37.	Fully decouple the decision logic
  * 38.	Eliminate the Hello/Aloha requirement.
  * 39.  Spell nylon correctly.
- - 40.  Change mold to shape.
- - 41.  Change moldLoc to mold.
  */
 
 #endif /* FINAL_LESSONSLEARNED_H_ */

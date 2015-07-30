@@ -11,7 +11,8 @@
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Process order:
-    <>Can't find place || to get || mold from with || finish, defaulting to smooth duck from inventory.
+    <>Unknown mold || defaulting to 'duck'.
+    <>Can't find place || to get |duck| mold from with || finish, defaulting to smooth duck from inventory.
     Insert tags [] of width 0/20 mm, blank tag is 20 mm.
     Load plastic bin with ABS.
       Recipe: ABS(35) = 35 cc.
@@ -281,7 +282,7 @@
     Load plastic bin with violet-Styrene pellets.
       Recipe: violet-Styrene(30) = 30 cc.
       Volume: dino(30) * 2 cavities = 60 cc.
-    Cycle IJM_220 for Styrene 50000 times, estimated run time = 391 hours.
+    Cycle IJM_220 for Styrene 50000 times, estimated run time = 393 hours.
       Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
       Whenever PalletBox package bin was full...
         IJM_220 paused while PalletBox package bin was swapped.
@@ -329,7 +330,7 @@
       Recipe: gray-Nylon66(30) = 30 cc.
       Volume: dino(30) * 4 cavities = 120 cc.
     <>Using most sophisticated estimation algorithm for orders greater than 100000.
-    Cycle IJM_240 for Nylon66 50000 times, estimated run time = 391 hours.
+    Cycle IJM_240 for Nylon66 50000 times, estimated run time = 393 hours.
       Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
       Whenever Crate package bin was full...
         IJM_240 paused while Crate package bin was swapped.
@@ -383,7 +384,7 @@
       Recipe: white-Nylon66(22) UVInhibiter(2) AntiBacterial(1) Hydrophilic(2) MicroFibers(3) = 30 cc.
       Volume: dino(30) * 4 cavities = 120 cc.
     <>Using most sophisticated estimation algorithm for orders greater than 100000.
-    Cycle IJM_240 for Nylon66 50000 times, estimated run time = 391 hours.
+    Cycle IJM_240 for Nylon66 50000 times, estimated run time = 393 hours.
       Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
       Whenever Crate package bin was full...
         IJM_240 paused while Crate package bin was swapped.

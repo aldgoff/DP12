@@ -1,3 +1,4 @@
+
 <<< final design >>>
 1:
 	orderNum	= 1
@@ -7,48 +8,50 @@
 	orderNum	= 2
 	comment		= Example order - one of everything.
 	size		= 10000
-	packager	= Bulk
+	mold		= duck
+	color		= red
 	plastic		= ABS
 	moldLoc		= inventory
-	mold		= duck
 	tags		= ModelNumber
-	color		= red
-	UVInhibiter	= 6
+	UVInhibiter	= 2
+	packager	= Bulk
 	endOfOrder
 3:
 	orderNum		= 3
 	comment			= Max order - next of singles, all of everything else (orig secs).
 	size			= 20000
-	packager		= ShrinkWrap
+	mold			= car
+	color			= orange
 	plastic			= Polypropylene
 	moldLoc			= mill
-	mold			= car
 	finish			= smooth
 	tags			= ModelNumber Country Date
-	color			= orange
-	UVInhibiter		= 6
+	UVInhibiter		= 2
 	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
 	endOfOrder
 4:
 	orderNum	= 4
 	comment		= Next of singles or last.
 	size		= 50000
-	packager	= HardPack
+	mold		= hero
+	color		= yellow
 	plastic		= Polyethelene
 	moldLoc		= mill
-	mold		= hero
 	finish		= rippled
-	color		= yellow
+	packager	= HardPack
 	endOfOrder
 5:
 	orderNum	= 5
 	comment		= Next of singles or last.
 	size		= 50000
-	packager	= HardPack
+	mold		= hero
+	color		= green
 	plastic		= PET
 	moldLoc		= mill
-	mold		= hero
-	finish		= rippled
-	color		= green
+	finish		= dimpled
+	packager	= HardPack
 	endOfOrder
+
 
