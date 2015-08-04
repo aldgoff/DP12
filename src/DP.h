@@ -29,6 +29,8 @@ enum DtorFlags {
 	Final			= 0x10,
 };
 
+#define COUNT(x) (sizeof(x)/sizeof(*x))
+
 /* Seam point index
  * path/file/namespace/class/method
  * --------------------------------
@@ -58,14 +60,17 @@ public:
 		string opt = "";
 		if(!last)
 			opt = args[1];
+
 		if(opt == "l")		lecture();
 		else if(opt == "ll")	lectureLegacy();
 		else if(opt == "lp")	lectureProblem();
 		else if(opt == "ls")	lectureSolution();
+
 		else if(opt == "h")	homework();
 		else if(opt == "hl")	homeworkLegacy();
 		else if(opt == "hp")	homeworkProblem();
 		else if(opt == "hs")	homeworkSolution();
+
 		else {
 			lecture();
 			homework();
@@ -101,6 +106,10 @@ public:
 	}
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << design_pattern::homework::solution >>\n";
+	}
+	// Seam point - add another matrix entry point.
+	virtual void skeleton() {
+		cout << seqNo << ") << design_pattern::skeleton >>\n";
 	}
 };
 // Seam point - add another design pattern header (strategy.h, adapter.h, etc.).
@@ -150,6 +159,19 @@ public:
 	}
 };
 // Seam point - add another matrix command (lectures, homework, pairs, etc.).
+class SkeletonObserver : public MatrixObserver {
+public:
+	SkeletonObserver(ObserverSubject* subject)
+		: MatrixObserver(subject, "skeletons") {
+	}
+	virtual ~SkeletonObserver() {
+		DTOR("~SkeletonObserver ", Architecture);
+	}
+public:
+	void matrix(DPObserver* command) {
+		command->skeleton();
+	}
+};
 
 class ObserverSubject {
 public:

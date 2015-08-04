@@ -80,6 +80,62 @@ void demo(int seqNo) {
 
 } // homework
 
+namespace skeleton {
+
+struct Wrapped1 { string thisWay() { return "this way"; } };
+struct Wrapped2 { string thatWay() { return "that way"; } };
+struct Wrapped3 { string yourWay() { return "your way"; } };
+
+class Adapter {	// If the interfaces are varying...
+public: virtual ~Adapter() {}
+public:
+	virtual void run() { cout << "  Oops!\n"; }
+public:
+	static Adapter* decisionLogic(const string& data) ;
+};
+class Interface1 : public Adapter {
+	Wrapped1 wrapped;
+public:
+	void run() {
+		cout << "  Interface1: wrapped " << wrapped.thisWay() << ".\n";
+	}
+};
+class Interface2 : public Adapter {
+	Wrapped2 wrapped;
+public:
+	void run() {
+		cout << "  Interface2: wrapped " << wrapped.thatWay() << ".\n";
+	}
+};
+class Interface3 : public Adapter {
+	Wrapped3 wrapped;
+public:
+	void run() {
+		cout << "  Interface3: wrapped " << wrapped.yourWay() << ".\n";
+	}
+};
+
+Adapter* Adapter::decisionLogic(const string& data) {
+	if(		data == "Interface1")	return new Interface1;
+	else if(data == "Interface2")	return new Interface2;
+	else if(data == "Interface3")	return new Interface3;
+
+	else {
+		return new Adapter;	// Or throw exception, or a default, or an ABC.
+	}
+}
+
+void demo(int seqNo) {
+	string data[] = { "Interface1", "Interface2", "Interface3", "oops" };
+	for(size_t i=0; i<COUNT(data); i++) {
+		Adapter* interface = Adapter::decisionLogic(data[i]);
+		interface->run();
+	}
+	cout << endl;
+}
+
+} // skeleton
+
 class AdapterObserver : public observer::DPObserver {
 public:
 	AdapterObserver(observer::ObserverSubject* subject, int seqNo)
@@ -109,6 +165,10 @@ public:
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << adapter::homework::solution >>\n";
 		homework::solution::demo(seqNo);
+	}
+	virtual void skeleton() {
+		cout << seqNo << ") << adapter::skeleton >>\n";
+		skeleton::demo(seqNo);
 	}
 };
 

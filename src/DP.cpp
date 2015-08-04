@@ -11,6 +11,7 @@
 #include "dptemplate.h"
 #include "Lectures/strategy.h"
 #include "Lectures/adapter.h"
+#include "Lectures/templateMethod.h"
 #include "Lectures/state.h"
 #include "Lectures/headfirst.h"
 // Seam point - add another design pattern include (strategy.h, adapter.h, etc.).
@@ -48,6 +49,7 @@ void ObserverSubject::init() {
 	int i=0;
 	new strategy::StrategyObserver(this, ++i);
 	new adapter::AdapterObserver(this, ++i);
+	new template_method::TemplateMethodObserver(this, ++i);
 	new state::StateObserver(this, ++i);
 	new headfirst::HeadfirstObserver(this, ++i);
 	// Seam point - add another design pattern command.
@@ -57,6 +59,7 @@ void ObserverSubject::init() {
 	new LectureObserver(this);
 	new HomeworkObserver(this);
 	// Seam point - add another matrix command.
+	new SkeletonObserver(this);
 }
 
 }

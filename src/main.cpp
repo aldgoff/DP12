@@ -14,7 +14,7 @@ int main(int argc, char* args[]) {
 
 	observer::ObserverSubject* command = new observer::ObserverSubject();
 
-	command->init();
+	command->init();	// Design pattern and matrix classes register themselves.
 
 	if(argc == 1) {				// Give user list of understood args.
 		command->listDPs();

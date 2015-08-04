@@ -60,6 +60,59 @@ namespace homework {
 
 } // homework
 
+namespace skeleton {
+
+class Strategy {	// If the algorithms are varying...
+public:	virtual ~Strategy() {}
+public:
+	virtual void compute() { cout << "  Oops!\n"; }
+public:
+	static Strategy* decisionLogic(const string& criteria);
+	// Seam point - add another client.
+};
+class Algorithm1 : public Strategy {
+public:
+	void compute() { cout << "  Algorithm1\n"; }
+};
+class Algorithm2 : public Strategy {
+public:
+	void compute() { cout << "  Algorithm2\n"; }
+};
+class Algorithm3 : public Strategy {
+public:
+	void compute() { cout << "  Algorithm3\n"; }
+};
+// Seam point - add another algorithm.
+
+Strategy* Strategy::decisionLogic(const string& criteria) {
+	if(		criteria == "Algorithm1")	return new Algorithm1;
+	else if(criteria == "Algorithm2")	return new Algorithm2;
+	else if(criteria == "Algorithm3")	return new Algorithm3;
+
+	else {
+		return new Strategy;	// Or throw exception, or a default, or an ABC.
+	}
+}
+
+void demo(int seqNo) {
+	string criteria[] = { "Algorithm1", "Algorithm2", "Algorithm3", "oops" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Strategy* algorithm = Strategy::decisionLogic(criteria[i]);
+		algorithm->compute();
+	}
+	cout << endl;
+}
+
+void demo1(int seqNo) {	// Weak - hides decision logic.
+	Strategy* algorithms[] = { new Algorithm1, new Algorithm2, new Algorithm3 };
+	for(size_t i=0; i<COUNT(algorithms); i++) {
+		algorithms[i]->compute();
+	}
+	cout << endl;
+}
+
+} // skeleton
+
 class StrategyObserver : public observer::DPObserver {
 public:
 	StrategyObserver(observer::ObserverSubject* subject, int seqNo)
@@ -89,6 +142,10 @@ public:
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << strategy::homework::solution >>\n";
 		homework::solution::demo(seqNo);
+	}
+	virtual void skeleton() {
+		cout << seqNo << ") << strategy::skeleton >>\n";
+		skeleton::demo(seqNo);
 	}
 };
 
