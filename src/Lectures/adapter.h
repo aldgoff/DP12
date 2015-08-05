@@ -82,65 +82,145 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-struct Wrapped1 { string thisWay() { return "this way"; } };
-struct Wrapped2 { string thatWay() { return "that way"; } };
-struct Wrapped3 { string yourWay() { return "your way"; } };
+struct Wrapped1 { string thisWay() { return "this way.\n"; } };
+struct Wrapped2 { string thatWay() { return "that way.\n"; } };
+struct Wrapped3 { string yourWay() { return "your way.\n"; } };
+
+class Adapter {	// If the interfaces are varying...
+public: virtual ~Adapter() {}
+public:
+	virtual void run() {}
+};
+class Interface1 : public Adapter {
+	Wrapped1 wrapped;
+public:
+	void run() { cout << "  Interface1: wrapped " << wrapped.thisWay(); }
+};
+class Interface2 : public Adapter {
+	Wrapped2 wrapped;
+public:
+	void run() { cout << "  Interface2: wrapped " << wrapped.thatWay(); }
+};
+class Interface3 : public Adapter {
+	Wrapped3 wrapped;
+public:
+	void run() { cout << "  Interface3: wrapped " << wrapped.yourWay(); }
+};
+// Seam point - add another interface.
+
+void demo(int seqNo) {
+	Adapter* interfaces[] = { new Interface1, new Interface2, new Interface3 };
+	for(size_t i=0; i<COUNT(interfaces); i++) {
+		interfaces[i]->run();
+	}
+	cout << endl;
+}
+
+namespace TM {
+
+struct Wrapped1 { string thisWay() { return "this way.\n"; } };
+struct Wrapped2 { string thatWay() { return "that way.\n"; } };
+struct Wrapped3 { string yourWay() { return "your way.\n"; } };
 
 class Adapter {	// If the interfaces are varying...
 public: virtual ~Adapter() {}
 public:
 	virtual void run() { cout << "  Oops!\n"; }
 public:
-	static Adapter* decisionLogic(const string& data) ;
+	static Adapter* makeObject(const string& criteria) ;
 };
 class Interface1 : public Adapter {
 	Wrapped1 wrapped;
 public:
-	void run() {
-		cout << "  Interface1: wrapped " << wrapped.thisWay() << ".\n";
-	}
+	void run() { cout << "  Interface1: wrapped " << wrapped.thisWay(); }
 };
 class Interface2 : public Adapter {
 	Wrapped2 wrapped;
 public:
-	void run() {
-		cout << "  Interface2: wrapped " << wrapped.thatWay() << ".\n";
-	}
+	void run() { cout << "  Interface2: wrapped " << wrapped.thatWay(); }
 };
 class Interface3 : public Adapter {
 	Wrapped3 wrapped;
 public:
-	void run() {
-		cout << "  Interface3: wrapped " << wrapped.yourWay() << ".\n";
-	}
+	void run() { cout << "  Interface3: wrapped " << wrapped.yourWay(); }
 };
+// Seam point - add another interface.
 
-Adapter* Adapter::decisionLogic(const string& data) {
-	if(		data == "Interface1")	return new Interface1;
-	else if(data == "Interface2")	return new Interface2;
-	else if(data == "Interface3")	return new Interface3;
-
-	else {
-		return new Adapter;	// Or throw exception, or a default, or an ABC.
-	}
+Adapter* Adapter::makeObject(const string& criteria) {
+	if(		criteria == "Interface1")	return new Interface1;
+	else if(criteria == "Interface2")	return new Interface2;
+	else if(criteria == "Interface3")	return new Interface3;
+	else { return new Adapter; }	// Opts: null, exception, base, default, ABC.
 }
 
-void demo(int seqNo) {
-	string data[] = { "Interface1", "Interface2", "Interface3", "oops" };
-	for(size_t i=0; i<COUNT(data); i++) {
-		Adapter* interface = Adapter::decisionLogic(data[i]);
+void demo(int seqNo) {	// Decouples client from creation.
+	string criteria[] = { "Interface1", "Interface2", "Interface3", "oops" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Adapter* interface = Adapter::makeObject(criteria[i]);
 		interface->run();
 	}
 	cout << endl;
 }
 
+} // TM
+
 } // skeleton
 
-class AdapterObserver : public observer::DPObserver {
+namespace recognition {
+
+struct Pot { string boil() { return "  boil in water\n"; } };
+struct Lamp { string expose() { return "  5 min shine\n"; } };
+struct Bath { string emerse() { return "  3 min soak\n"; } };
+struct Carbonize { string burn() { return "  grill\n"; } };
+
+class Sanitation {
+public: virtual ~Sanitation() {}
 public:
-	AdapterObserver(observer::ObserverSubject* subject, int seqNo)
+	virtual void clean() {}
+public:
+	static Sanitation* makeObject(const string& criteria) ;
+};
+class Heat : public Sanitation {
+	Pot pot;
+public:
+	void clean() { cout << pot.boil(); }
+};
+class UV : public Sanitation {
+	Lamp lamp;
+public:
+	void clean() { cout << lamp.expose(); }
+};
+class Ozone : public Sanitation {
+	Bath bath;
+public:
+	void clean() { cout << bath.emerse(); }
+};
+// Seam point - add another sanitation.
+
+Sanitation* Sanitation::makeObject(const string& criteria) {
+	if(		criteria == "Pathogen")	return new Heat;
+	else if(criteria == "Virus")	return new UV;
+	else if(criteria == "ExtraTerrestrial")	return new Ozone;
+
+	else { throw "Infected!"; }	// Exception.
+}
+
+void demo() {	// Decouples client from creation.
+	string criteria[] = { "Pathogen", "Virus", "ExtraTerrestrial" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sanitation* purify = Sanitation::makeObject(criteria[i]);
+		purify->clean();
+	}
+	cout << endl;
+}
+
+} // recognition
+
+class Observer : public observer::DPObserver {
+public:
+	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "adapter") {}
-	virtual ~AdapterObserver() { DTOR("~AdapterObserver ", Architecture); }
+	virtual ~Observer() { DTOR("~AdapterObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << adapter::lecture::legacy >>\n";
@@ -169,6 +249,11 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << adapter::skeleton >>\n";
 		skeleton::demo(seqNo);
+		skeleton::TM::demo(seqNo);
+	}
+	virtual void recognition() {
+		cout << seqNo << ") << adapter::recognition >>\n";
+		recognition::demo();
 	}
 };
 

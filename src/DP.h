@@ -111,6 +111,9 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << design_pattern::skeleton >>\n";
 	}
+	virtual void recognition() {
+		cout << seqNo << ") << design_pattern::recognition >>\n";
+	}
 };
 // Seam point - add another design pattern header (strategy.h, adapter.h, etc.).
 
@@ -170,6 +173,19 @@ public:
 public:
 	void matrix(DPObserver* command) {
 		command->skeleton();
+	}
+};
+class RecognitionObserver : public MatrixObserver {
+public:
+	RecognitionObserver(ObserverSubject* subject)
+		: MatrixObserver(subject, "recognition") {
+	}
+	virtual ~RecognitionObserver() {
+		DTOR("~RecognitionObserver ", Architecture);
+	}
+public:
+	void matrix(DPObserver* command) {
+		command->recognition();
 	}
 };
 

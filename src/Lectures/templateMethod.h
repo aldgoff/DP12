@@ -1,14 +1,14 @@
 /*
  * templateMethod.h
  *
- *  Created on: Aug 2, 2015
+ *  Created on: Aug 3, 2015
  *      Author: aldgoff
  *
  * Varies: If the steps are varying, use the Template Method pattern.
  *
- * Desc:
+ * Desc: Define the skeleton of an algorithm.
  *
- * Category: whatever
+ * Category: Behavioral
  *
  *  URLs:
  *  	http://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Design_Patterns#TemplateMethod
@@ -60,7 +60,7 @@ public:
 public:
 	void run() {}
 };
-// Seam point - add another Derived.
+// Seam point - add another step.
 
 TemplateMethod* TemplateMethod::decisionLogic(const string& criteria) {
 	if(		criteria == "whatever")	return new TemplateMethod;
@@ -129,10 +129,10 @@ public:
 protected:
 	string sameStep1() { return "step1"; }
 	string sameStep2() { return "step2"; }
-	virtual string diffStep3() {return "oops!"; }
+	virtual string diffStep3() { return "oops!"; }
 	string sameStep4() { return "step4"; }
 public:
-	static TemplateMethod* decisionLogic(const string& criteria);
+	static TemplateMethod* makeObject(const string& criteria);
 };
 class DiffStep1 : public TemplateMethod {
 public:
@@ -146,22 +146,22 @@ class DiffStep3 : public TemplateMethod {
 public:
 	string diffStep3() { return "DiffStep3.step3"; }
 };
-// Seam point - add another derived.
+// Seam point - add another step.
 
-TemplateMethod* TemplateMethod::decisionLogic(const string& criteria) {
+TemplateMethod* TemplateMethod::makeObject(const string& criteria) {
 	if(		criteria == "DiffStep1")	return new DiffStep1;
 	else if(criteria == "DiffStep2")	return new DiffStep2;
 	else if(criteria == "DiffStep3")	return new DiffStep3;
 
 	else {
-		return new TemplateMethod;	// Or throw exception, default, or an ABC.
+		return new TemplateMethod;	// Opts: null, exception, base, default, ABC.
 	}
 }
 
-void demo(int seqNo) {
+void demo(int seqNo) {	// Decouples client from creation.
 	string criteria[] = { "DiffStep1", "DiffStep2", "DiffStep3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		TemplateMethod* steps = TemplateMethod::decisionLogic(criteria[i]);
+		TemplateMethod* steps = TemplateMethod::makeObject(criteria[i]);
 		steps->run();
 	}
 	cout << endl;
@@ -169,11 +169,63 @@ void demo(int seqNo) {
 
 } // skeleton
 
-class TemplateMethodObserver : public observer::DPObserver {
+namespace recognition {
+
+class Process {
+public: virtual ~Process() {}
 public:
-	TemplateMethodObserver(observer::ObserverSubject* subject, int seqNo)
+	void test() {
+		cout << "  test - " << init();
+		cout << " - " << start();
+		cout << " - " << validate();
+		cout << " - " << stop();
+		cout << endl;
+	}
+protected:
+	string init() { return "initialize"; }
+	string start() { return "start"; }
+	virtual string validate()=0;
+	string stop() { return "stop"; }
+public:
+	static Process* makeObject(const string& criteria);
+};
+class Audio : public Process {
+public:
+	string validate() { return "Audio"; }
+};
+class CSME : public Process {
+public:
+	string validate() { return "CSME"; }
+};
+class WFST : public Process {
+public:
+	string validate() { return "WFST"; }
+};
+// Seam point - add another test sequence.
+
+Process* Process::makeObject(const string& criteria) {
+	if(		criteria == "Music")	return new Audio;
+	else if(criteria == "Security")	return new CSME;
+	else if(criteria == "Speech")	return new WFST;
+	else { return 0; }	// ABC.
+}
+
+void demo() {	// Decouples client from creation.
+	string criteria[] = { "Music", "Security", "Speech" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Process* sequence = Process::makeObject(criteria[i]);
+		sequence->test();
+	}
+	cout << endl;
+}
+
+} // recognition
+
+class Observer : public observer::DPObserver {
+public:
+	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "templateMethod") {}
-	virtual ~TemplateMethodObserver() { DTOR("~TemplateMethodObserver ", Architecture); }
+	virtual ~Observer() { DTOR("~TemplateMethodObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << template_method::lecture::legacy >>\n";
@@ -202,6 +254,10 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << template_method::skeleton >>\n";
 		skeleton::demo(seqNo);
+	}
+	virtual void recognition() {
+		cout << seqNo << ") << template_method::recognition >>\n";
+		recognition::demo();
 	}
 };
 
