@@ -134,24 +134,24 @@ protected:
 public:
 	static TemplateMethod* makeObject(const string& criteria);
 };
-class DiffStep1 : public TemplateMethod {
+class Diff1Step3 : public TemplateMethod {
 public:
-	string diffStep3() { return "DiffStep1.step3"; }
+	string diffStep3() { return "Diff1.step3"; }
 };
-class DiffStep2 : public TemplateMethod {
+class Diff2Step3 : public TemplateMethod {
 public:
-	string diffStep3() { return "DiffStep2.step3"; }
+	string diffStep3() { return "Diff2.step3"; }
 };
-class DiffStep3 : public TemplateMethod {
+class Diff3Step3 : public TemplateMethod {
 public:
-	string diffStep3() { return "DiffStep3.step3"; }
+	string diffStep3() { return "Diff3.step3"; }
 };
 // Seam point - add another step.
 
 TemplateMethod* TemplateMethod::makeObject(const string& criteria) {
-	if(		criteria == "DiffStep1")	return new DiffStep1;
-	else if(criteria == "DiffStep2")	return new DiffStep2;
-	else if(criteria == "DiffStep3")	return new DiffStep3;
+	if(		criteria == "Diff1Step3")	return new Diff1Step3;
+	else if(criteria == "Diff2Step3")	return new Diff2Step3;
+	else if(criteria == "Diff3Step3")	return new Diff3Step3;
 
 	else {
 		return new TemplateMethod;	// Opts: null, exception, base, default, ABC.
@@ -159,7 +159,7 @@ TemplateMethod* TemplateMethod::makeObject(const string& criteria) {
 }
 
 void demo(int seqNo) {	// Decouples client from creation.
-	string criteria[] = { "DiffStep1", "DiffStep2", "DiffStep3", "oops" };
+	string criteria[] = { "Diff1Step3", "Diff2Step3", "Diff3Step3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		TemplateMethod* steps = TemplateMethod::makeObject(criteria[i]);
 		steps->run();
