@@ -67,6 +67,7 @@ void ObserverSubject::init() {
 	// Seam point - add another matrix command.
 	new SkeletonObserver(this);
 	new RecognitionObserver(this);
+	new RefactoringObserver(this);
 }
 
 }

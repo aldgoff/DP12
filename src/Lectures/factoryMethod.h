@@ -202,6 +202,114 @@ void demo() {	// Decouples client from creation.
 
 } // recognition
 
+namespace refactoring {
+
+namespace bad { // Do two things...
+
+struct Trailer {
+	void roll() { cout << "  Trailer rolling.\n"; }
+	void park() { cout << "  Trailer parking.\n"; }
+};
+struct CTainer {
+	void ship() { cout << "  CTainer shipping.\n"; }
+	void store() { cout << "  CTainer storing.\n"; }
+};
+struct Warehouse {
+	void stock() { cout << "  Warehouse stocked.\n"; }
+	void lock() { cout << "  Warehouse locked.\n"; }
+};
+
+void clientCode(int criteria) {
+	switch(criteria) {
+	case 0:	{ Trailer trailer;
+		trailer.roll();
+		trailer.park();
+		} break;
+	case 1:	{ CTainer ctainer;
+		ctainer.ship();
+		ctainer.store();
+		} break;
+	case 2:	{ Warehouse warehouse;
+		warehouse.stock();
+		warehouse.lock();
+		} break;
+	default: cout << "  Oops!\n"; break;
+	}
+}
+
+void demo() {
+	cout << "  refactoring::bad::demo().\n";
+	int test[] = { 0, 1, 2, 3 };
+	for(size_t i=0; i<COUNT(test); i++) {
+		clientCode(test[i]);
+	}
+	cout << endl;
+}
+
+} // bad
+
+namespace good { // Do two things...
+
+class FactoryMethod {
+public: virtual ~FactoryMethod() {}
+public:
+	virtual void doTwoThings() { cout << "  Oops!\n"; }
+public:
+	static FactoryMethod* makeObject(string& criteria);
+};
+class Trailer_FM : public FactoryMethod {
+public:
+	void doTwoThings() {
+		bad::Trailer trailer;
+		trailer.roll();
+		trailer.park();
+	}
+};
+class CTainer_FM : public FactoryMethod {
+public:
+	void doTwoThings() {
+		bad::CTainer ctainer;
+		ctainer.ship();
+		ctainer.store();
+	}
+};
+class Warehouse_FM : public FactoryMethod {
+public:
+	void doTwoThings() {
+		bad::Warehouse warehouse;
+		warehouse.stock();
+		warehouse.lock();
+	}
+};
+// Seam point - add another class.
+
+FactoryMethod* FactoryMethod::makeObject(string& criteria) {
+	if(criteria == "Trailer")	return new Trailer_FM;
+	if(criteria == "CTainer")	return new CTainer_FM;
+	if(criteria == "Warehouse")	return new Warehouse_FM;
+	// Seam point - insert another criteria.
+	else { return new FactoryMethod; }
+}
+
+void clientCode(FactoryMethod* type) {
+	type->doTwoThings();
+}
+
+void demo() {
+	cout << "  refactoring::good::demo().\n";
+	string criteria[] = {"Trailer","CTainer","Warehouse","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		FactoryMethod* type = FactoryMethod::makeObject(criteria[i]);
+		clientCode(type);
+		delete type;
+	}
+	cout << endl;
+}
+
+} // good
+
+} // refactoring
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -239,6 +347,11 @@ public:
 	virtual void recognition() {
 		cout << seqNo << ") << factory_method::recognition >>\n";
 		recognition::demo();
+	}
+	virtual void refactoring() {
+		cout << seqNo << ") << factory_method::refactoring >>\n";
+		refactoring::bad::demo();
+		refactoring::good::demo();
 	}
 };
 

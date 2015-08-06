@@ -141,7 +141,7 @@ DPTemplate* DPTemplate::makeObject(const string& criteria) {
 	}
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo() {	// Decouples client from creation.
 	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		DPTemplate* derived = DPTemplate::makeObject(criteria[i]);
@@ -151,6 +151,121 @@ void demo(int seqNo) {	// Decouples client from creation.
 }
 
 } // skeleton
+
+namespace recognition {
+
+class DPTemplate {	// If the deriveds are varying...
+public: virtual ~DPTemplate() {}
+public:
+	virtual void run() {}
+public:
+	static DPTemplate* makeObject(const string& criteria);
+};
+class Derived : public DPTemplate {
+public:
+	void run() {}
+};
+// Seam point - add another derived.
+
+DPTemplate* DPTemplate::makeObject(const string& criteria) {
+	if(		criteria == "Derived1")	return new DPTemplate;
+	else if(criteria == "Derived2")	return new DPTemplate;
+	else if(criteria == "Derived3")	return new DPTemplate;
+
+	else {
+		return new DPTemplate;	// Opts: null, exception, base, default, ABC.
+	}
+}
+
+void demo() {	// Decouples client from creation.
+	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		DPTemplate* derived = DPTemplate::makeObject(criteria[i]);
+		derived->run();
+	}
+	cout << endl;
+}
+
+} // recognition
+
+namespace refactoring {
+
+namespace bad {
+
+void clientCode(int criteria) {
+	switch(criteria) {
+	case 0:	{
+		} break;
+	case 1:	{
+		} break;
+	case 2:	{
+		} break;
+	default: cout << "  Oops!\n"; break;
+	}
+}
+
+void demo() {
+	cout << "  refactoring::bad::demo().\n";
+	int test[] = { 0, 1, 2, 3 };
+	for(size_t i=0; i<COUNT(test); i++) {
+		clientCode(test[i]);
+	}
+	cout << endl;
+}
+
+} // bad
+
+namespace good {
+
+class DesignPattern {
+public: virtual ~DesignPattern() {}
+public:
+	virtual void method() { cout << "  Oops!\n"; }
+public:
+	static DesignPattern* makeObject(const string& criteria);
+};
+class Derived1 : public DesignPattern {
+public:
+	void method() {}
+};
+class Derived2 : public DesignPattern {
+public:
+	void method() {}
+};
+class Derived3 : public DesignPattern {
+public:
+	void method() {}
+};
+// Seam point - add another class.
+
+DesignPattern* DesignPattern::makeObject(const string& criteria) {
+	if(criteria == "Derived1")	return new Derived1;
+	if(criteria == "Derived2")	return new Derived2;
+	if(criteria == "Derived3")	return new Derived3;
+	// Seam point - insert another criteria.
+	else {
+		return new DesignPattern;
+	}
+}
+
+void clientCode(DesignPattern* type) {
+	type->method();
+}
+
+void demo() {
+	cout << "  refactoring::good::demo().\n";
+	string criteria[] = {"Derived1","Derived2","Derived3","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		DesignPattern* type = DesignPattern::makeObject(criteria[i]);
+		clientCode(type);
+		delete type;
+	}
+	cout << endl;
+}
+
+} // good
+
+} // refactoring
 
 class Observer : public observer::DPObserver {
 public:
@@ -184,7 +299,16 @@ public:
 	}
 	virtual void skeleton() {
 		cout << seqNo << ") << dp_template::skeleton >>\n";
-		skeleton::demo(seqNo);
+		skeleton::demo();
+	}
+	virtual void recognition() {
+		cout << seqNo << ") << dp_template::recognition >>\n";
+		recognition::demo();
+	}
+	virtual void refactoring() {
+		cout << seqNo << ") << dp_template::refactoring >>\n";
+		refactoring::bad::demo();
+		refactoring::good::demo();
 	}
 };
 

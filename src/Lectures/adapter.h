@@ -216,6 +216,93 @@ void demo() {	// Decouples client from creation.
 
 } // recognition
 
+namespace refactoring {
+
+namespace bad {
+
+struct TwoQuarter { void twoStep() { cout << "  2 steps\n"; } };
+struct ThreeQuarter { void threeStep() { cout << "  3 steps\n"; } };
+struct FourQuarter { void fourStep() { cout << "  4 steps\n"; } };
+
+void clientCode(int criteria) {
+	switch(criteria) {
+	case 0: { TwoQuarter beg; beg.twoStep();	 } break;
+	case 1: { ThreeQuarter beg; beg.threeStep(); } break;
+	case 2: { FourQuarter beg; beg.fourStep();	 } break;
+	default: cout << "  Stumble!\n";
+	}
+}
+
+void demo() {
+	cout << "  refactoring::bad::demo().\n";
+	int test[] = { 0, 1, 2, 3 };
+	for(size_t i=0; i<COUNT(test); i++) {
+		clientCode(test[i]);
+	}
+	cout << endl;
+}
+
+} // bad
+
+namespace good {
+
+struct TwoQuarter { void twoStep() { cout << "  2 steps\n"; } };
+struct ThreeQuarter { void threeStep() { cout << "  3 steps\n"; } };
+struct FourQuarter { void fourStep() { cout << "  4 steps\n"; } };
+
+class Adapter {
+public: virtual ~Adapter() {}
+public:
+	virtual void sequence() { cout << "  Stumble!\n"; }
+public:
+	static Adapter* makeObject(const string& criteria);
+};
+class TwoStep : public Adapter {
+	TwoQuarter	twoQtr;
+public:
+	void sequence() { twoQtr.twoStep(); }
+};
+class ThreeStep : public Adapter {
+	ThreeQuarter	threeQtr;
+public:
+	void sequence() { threeQtr.threeStep(); }
+};
+class FourStep : public Adapter {
+	FourQuarter	fourQtr;
+public:
+	void sequence() { fourQtr.fourStep(); }
+};
+// Seam point - add another dance.
+
+Adapter* Adapter::makeObject(const string& criteria) {
+	if(		criteria == "Polka")	 return new TwoStep;
+	else if(criteria == "Waltz")	 return new ThreeStep;
+	else if(criteria == "Foxtrot")	 return new FourStep;
+	// Seam point - insert another dance.
+	else {
+		return new Adapter;
+	}
+}
+
+void clientCode(Adapter* dance) {	// Obeys open/closed principle.
+	dance->sequence();				// Trivial to understand.
+}
+
+void demo() {	// Separates use from creation.
+	cout << "  refactoring::good::demo().\n";
+	string criteria[] = {"Polka","Waltz","Foxtrot","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Adapter* dance = Adapter::makeObject(criteria[i]);
+		clientCode(dance);
+		delete dance;
+	}
+	cout << endl;
+}
+
+} // good
+
+} // refactoring
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -254,6 +341,11 @@ public:
 	virtual void recognition() {
 		cout << seqNo << ") << adapter::recognition >>\n";
 		recognition::demo();
+	}
+	virtual void refactoring() {
+		cout << seqNo << ") << adapter::refactoring >>\n";
+		refactoring::bad::demo();
+		refactoring::good::demo();
 	}
 };
 
