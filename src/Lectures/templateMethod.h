@@ -221,6 +221,131 @@ void demo() {	// Decouples client from creation.
 
 } // recognition
 
+namespace refactoring {
+
+namespace bad {
+
+void soak() { cout << "    soak"; }
+void wash() { cout << " - wash"; }
+void boil() { cout << " - boil"; }		// Sterilize 1.
+void ozone() { cout << " - ozone"; }	// Sterilize 2.
+void uv() { cout << " - uv"; }			// Sterilize 3.
+void rinse() { cout << " - rinse.\n"; }
+
+void clientCode_A(int criteria) {	// Clutter.
+	soak();
+	wash();
+	switch(criteria) {
+	case 0:	boil(); break;	// Sterilize 1.
+	case 1:	ozone(); break;	// Sterilize 2.
+	case 2:	uv(); break;	// Sterilize 3.
+	default: cout << " - Oops!"; break;	// Sterilize ?.
+	}
+	rinse();
+}
+
+void clientCode_B(int criteria) {	// Duplication.
+	switch(criteria) {
+	case 0:
+		soak();
+		wash();
+		boil();		// Sterilize 1.
+		rinse();
+		break;
+	case 1:
+		soak();
+		wash();
+		ozone();	// Sterilize 2.
+		rinse();
+		break;
+	case 2:
+		soak();
+		wash();
+		uv();		// Sterilize 3.
+		rinse();
+		break;
+	default:
+		soak();
+		wash();
+		cout << " = Oops!";	// Sterilize ?.
+		rinse();
+		break;
+	}
+}
+
+void demo() {
+	cout << "  refactoring::bad::demo().\n";
+	int test[] = { 0, 1, 2, 3 };
+	for(size_t i=0; i<COUNT(test); i++)
+		clientCode_A(test[i]);
+	cout << endl;
+	for(size_t i=0; i<COUNT(test); i++)
+		clientCode_B(test[i]);
+	cout << endl;
+}
+
+} // bad
+
+namespace good {
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	void run() { soak(); wash(); sanitize(); rinse(); }
+public:
+	void soak() { cout << "    soak"; }
+	void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	else { return new Sterilize; }
+}
+
+void clientCode_A(Sterilize* clean) { clean->run(); }
+void clientCode_B(Sterilize* clean) { clean->run(); }
+
+void demo() {
+	cout << "  refactoring::good::demo().\n";
+	string criteria[] = { "Boil", "Ozone", "UV", "oops" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode_A(clean);
+		delete clean;
+	}
+	cout << endl;
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode_B(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+} // good
+
+} // refactoring
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -258,6 +383,11 @@ public:
 	virtual void recognition() {
 		cout << seqNo << ") << template_method::recognition >>\n";
 		recognition::demo();
+	}
+	virtual void refactoring() {
+		cout << seqNo << ") << template_method::refactoring >>\n";
+		refactoring::bad::demo();
+		refactoring::good::demo();
 	}
 };
 

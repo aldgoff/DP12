@@ -239,9 +239,9 @@ public:
 // Seam point - add another class.
 
 DesignPattern* DesignPattern::makeObject(const string& criteria) {
-	if(criteria == "Derived1")	return new Derived1;
-	if(criteria == "Derived2")	return new Derived2;
-	if(criteria == "Derived3")	return new Derived3;
+	if(		criteria == "Derived1")	return new Derived1;
+	else if(criteria == "Derived2")	return new Derived2;
+	else if(criteria == "Derived3")	return new Derived3;
 	// Seam point - insert another criteria.
 	else {
 		return new DesignPattern;

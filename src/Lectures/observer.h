@@ -160,14 +160,14 @@ public:
 };
 // Seam point - add another listener.
 
-void Subject::notify() {
+void Subject::notify() {	// The client code.
 	list<Observer*>::iterator it;
 	for(it=observers.begin(); it!=observers.end(); ++it) {
 		(*it)->update();
 	}
 }
 
-void demo(int seqNo) {
+void demo(int seqNo) {	// Client needs to know about the derived classes.
 	Subject subject;
 	new Listener1(subject), new Listener2(subject), new Listener3(subject);
 	subject.notify();
