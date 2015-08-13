@@ -116,10 +116,10 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-class TemplateMethod {	// If the steps are varying...
+class TemplateMethod { // If the steps are varying...
 public: virtual ~TemplateMethod() {}
 public:
-	virtual void run() {
+	void run() {
 		cout << "  run - " << sameStep1();
 		cout << " - " << sameStep2();
 		cout << " - " << diffStep3();
@@ -132,7 +132,7 @@ protected:
 	virtual string diffStep3() { return "oops!"; }
 	string sameStep4() { return "step4"; }
 public:
-	static TemplateMethod* makeObject(const string& criteria);
+	static TemplateMethod* makeObject(string& criteria);
 };
 class Diff1Step3 : public TemplateMethod {
 public:
@@ -148,18 +148,19 @@ public:
 };
 // Seam point - add another step.
 
-TemplateMethod* TemplateMethod::makeObject(const string& criteria) {
+TemplateMethod* TemplateMethod::makeObject(string& criteria) {
 	if(		criteria == "Diff1Step3")	return new Diff1Step3;
 	else if(criteria == "Diff2Step3")	return new Diff2Step3;
 	else if(criteria == "Diff3Step3")	return new Diff3Step3;
-
-	else {
-		return new TemplateMethod;	// Opts: null, exception, base, default, ABC.
-	}
+	// Seam point - insert another step.
+	else {							// Options:
+		return new TemplateMethod;	// null, exception,
+	}								// base, default, ABC.
 }
 
 void demo(int seqNo) {	// Decouples client from creation.
-	string criteria[] = { "Diff1Step3", "Diff2Step3", "Diff3Step3", "oops" };
+	string criteria[] = { "Diff1Step3", "Diff2Step3",
+						  "Diff3Step3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		TemplateMethod* steps = TemplateMethod::makeObject(criteria[i]);
 		steps->run();

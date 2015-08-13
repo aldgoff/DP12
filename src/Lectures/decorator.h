@@ -125,7 +125,7 @@ class Base : public Component {	// Base object to be decorated.
 public:
 	void behavior() { cout << "  Base"; }
 };
-class Decorator : public Component {	// If the options are varying...
+class Decorator : public Component { // If the options are varying...
 protected:
 	Component* decorator;
 public:
@@ -133,7 +133,7 @@ public:
 public:
 	void behavior() {}
 public:
-	static Component* makeObject(Component* thing, const string& criteria);
+	static Component* makeObject(Component* thing, string& criteria);
 };
 class Option1 : public Decorator {
 public:
@@ -155,16 +155,16 @@ public:
 };
 // Seam point - add another option.
 
-Component* Decorator::makeObject(Component* thing, const string& criteria) {
+Component* Decorator::makeObject(Component* thing, string& criteria) {
 	if(		criteria == "Option1")	return new Option1(thing);
 	else if(criteria == "Option2")	return new Option2(thing);
 	else if(criteria == "Option3")	return new Option3(thing);
-
-	else { return thing; }	// Typically: warning, exception or log.
+	else { return thing; }	// Return current decorator.
 }
 
 void demo(int seqNo) {	// Decouples client from creation.
-	string criteria[] = { "Option1", /*"Option2",*/ "Option3", "oops" };
+	string criteria[] = { "Option1", /*"Option2",*/
+						  "Option3", "oops" };
 	Component* thing = new Base;
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		thing = Decorator::makeObject(thing, criteria[i]);

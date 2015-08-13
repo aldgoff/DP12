@@ -121,7 +121,7 @@ public: virtual ~FactoryMethod() {}
 public:
 	virtual void run() { cout << "  Oops!\n"; }
 public:
-	static FactoryMethod* makeObject(const string& criteria);
+	static FactoryMethod* makeObject(string& criteria);
 };
 class Type1 : public FactoryMethod {
 public:
@@ -137,14 +137,14 @@ public:
 };
 // Seam point - add another class.
 
-FactoryMethod* FactoryMethod::makeObject(const string& criteria) {
+FactoryMethod* FactoryMethod::makeObject(string& criteria) {
 	if(		criteria == "Type1")	return new Type1;
 	else if(criteria == "Type2")	return new Type2;
 	else if(criteria == "Type3")	return new Type3;
-
-	else {
-		return new FactoryMethod;	// Opts: null, exception, base, default, ABC.
-	}
+	// Seam point - insert another class.
+	else {							// Options:
+		return new FactoryMethod;	// null, exception,
+	}								// base, default, ABC.
 }
 
 void demo(int seqNo) {	// Decouples client from creation.
@@ -182,17 +182,17 @@ public:
 // Seam point - add another car.
 
 Car* Car::makeObject(const string& criteria) {
-	if(		criteria == "ChickMagnet")	return new Mercedes;
+	if(		criteria == "Safety")	return new Mercedes;
 	else if(criteria == "Status")	return new BMW;
 	else if(criteria == "Electric")	return new Tesla;
-
+	// Seam point - insert another car.
 	else {
 		return 0;	// Null.
 	}
 }
 
 void demo() {	// Decouples client from creation.
-	string criteria[] = { "ChickMagnet", "Status", "Electric" };
+	string criteria[] = { "Safety", "Status", "Electric" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Car* type = Car::makeObject(criteria[i]);
 		type->drive();

@@ -82,82 +82,96 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-struct Wrapped1 { string thisWay() { return "this way.\n"; } };
-struct Wrapped2 { string thatWay() { return "that way.\n"; } };
-struct Wrapped3 { string yourWay() { return "your way.\n"; } };
+struct Legacy1 {string thisWay() {return "this way.\n";}};
+struct Legacy2 {string thatWay() {return "that way.\n";}};
+struct Legacy3 {string yourWay() {return "your way.\n";}};
 
-class Adapter {	// If the interfaces are varying...
+class Adapter { // If the interfaces are varying...
 public: virtual ~Adapter() {}
 public:
-	virtual void run() {}
+	virtual void myWay() {}
 };
 class Interface1 : public Adapter {
-	Wrapped1 wrapped;
+	Legacy1 wrapped;
 public:
-	void run() { cout << "  Interface1: wrapped " << wrapped.thisWay(); }
+	void myWay() { cout << "  Interface1: wrapped "
+						<< wrapped.thisWay(); }
 };
 class Interface2 : public Adapter {
-	Wrapped2 wrapped;
+	Legacy2 wrapped;
 public:
-	void run() { cout << "  Interface2: wrapped " << wrapped.thatWay(); }
+	void myWay() { cout << "  Interface2: wrapped "
+						<< wrapped.thatWay(); }
 };
 class Interface3 : public Adapter {
-	Wrapped3 wrapped;
+	Legacy3 wrapped;
 public:
-	void run() { cout << "  Interface3: wrapped " << wrapped.yourWay(); }
+	void myWay() { cout << "  Interface3: wrapped "
+						<< wrapped.yourWay(); }
 };
 // Seam point - add another interface.
 
 void demo(int seqNo) {
-	Adapter* interfaces[] = { new Interface1, new Interface2, new Interface3 };
+	Adapter* interfaces[] = {
+		new Interface1,
+		new Interface2,
+		new Interface3
+	};
 	for(size_t i=0; i<COUNT(interfaces); i++) {
-		interfaces[i]->run();
+		interfaces[i]->myWay();
 	}
 	cout << endl;
 }
 
 namespace TM {
 
-struct Wrapped1 { string thisWay() { return "this way.\n"; } };
-struct Wrapped2 { string thatWay() { return "that way.\n"; } };
-struct Wrapped3 { string yourWay() { return "your way.\n"; } };
+struct Legacy1 {string thisWay() {return "this way.\n";}};
+struct Legacy2 {string thatWay() {return "that way.\n";}};
+struct Legacy3 {string yourWay() {return "your way.\n";}};
 
-class Adapter {	// If the interfaces are varying...
+class Adapter { // If the interfaces are varying...
 public: virtual ~Adapter() {}
 public:
-	virtual void run() { cout << "  Oops!\n"; }
+	virtual void myWay() { cout << "  Oops!\n"; }
 public:
-	static Adapter* makeObject(const string& criteria) ;
+	static Adapter* makeObject(string& criteria);
 };
 class Interface1 : public Adapter {
-	Wrapped1 wrapped;
+	Legacy1 wrapped;
 public:
-	void run() { cout << "  Interface1: wrapped " << wrapped.thisWay(); }
+	void myWay() { cout << "  Interface1: wrapped "
+						<< wrapped.thisWay(); }
 };
 class Interface2 : public Adapter {
-	Wrapped2 wrapped;
+	Legacy2 wrapped;
 public:
-	void run() { cout << "  Interface2: wrapped " << wrapped.thatWay(); }
+	void myWay() { cout << "  Interface2: wrapped "
+						<< wrapped.thatWay(); }
 };
 class Interface3 : public Adapter {
-	Wrapped3 wrapped;
+	Legacy3 wrapped;
 public:
-	void run() { cout << "  Interface3: wrapped " << wrapped.yourWay(); }
+	void myWay() { cout << "  Interface3: wrapped "
+						<< wrapped.yourWay(); }
 };
 // Seam point - add another interface.
 
-Adapter* Adapter::makeObject(const string& criteria) {
+Adapter* Adapter::makeObject(string& criteria) {
 	if(		criteria == "Interface1")	return new Interface1;
 	else if(criteria == "Interface2")	return new Interface2;
 	else if(criteria == "Interface3")	return new Interface3;
-	else { return new Adapter; }	// Opts: null, exception, base, default, ABC.
+	// Seam point - insert another interface.
+	else {						// Options:
+		return new Adapter;		// null, exception,
+	}							// base, default, ABC.
 }
 
 void demo(int seqNo) {	// Decouples client from creation.
-	string criteria[] = { "Interface1", "Interface2", "Interface3", "oops" };
+	string criteria[] = { "Interface1", "Interface2",
+						  "Interface3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Adapter* interface = Adapter::makeObject(criteria[i]);
-		interface->run();
+		interface->myWay();
 	}
 	cout << endl;
 }

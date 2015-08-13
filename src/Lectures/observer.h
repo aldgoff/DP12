@@ -127,7 +127,7 @@ public:
 public:
 	void notify();
 };
-class Observer {	// If the listeners are varying...
+class Observer { // If the listeners are varying...
 protected:
 	Subject& subject;
 public:
@@ -161,15 +161,17 @@ public:
 // Seam point - add another listener.
 
 void Subject::notify() {	// The client code.
-	list<Observer*>::iterator it;
-	for(it=observers.begin(); it!=observers.end(); ++it) {
+	list<Observer*>::iterator it=observers.begin();
+	for(; it!=observers.end(); ++it) {
 		(*it)->update();
 	}
 }
 
-void demo(int seqNo) {	// Client needs to know about the derived classes.
+void demo(int seqNo) { // Client knows the derived classes.
 	Subject subject;
-	new Listener1(subject), new Listener2(subject), new Listener3(subject);
+	new Listener1(subject);
+	new Listener2(subject);
+	new Listener3(subject);
 	subject.notify();
 	cout << endl;
 }
