@@ -184,8 +184,8 @@ class Resident;
 class CatInTheHat {
 	list<Resident*>	residents;
 public:
-	void join(Resident* res) { residents.push_back(res); }
-	void sunder(Resident* res) { residents.remove(res); }
+	void attach(Resident* res) { residents.push_back(res); }
+	void detach(Resident* res) { residents.remove(res); }
 public:
 	void makesMischief();
 };
@@ -194,10 +194,10 @@ protected:
 	CatInTheHat& perp;
 public:
 	Resident(CatInTheHat& demon) : perp(demon) {
-		perp.join(this);
+		perp.attach(this);
 	}
 	virtual ~Resident() {
-		perp.sunder(this);
+		perp.detach(this);
 	}
 public:
 	virtual void respond() {}

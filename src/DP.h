@@ -117,6 +117,9 @@ public:
 	virtual void refactoring() {
 		cout << seqNo << ") << design_pattern::refactoring >>\n";
 	}
+	virtual void practicalIssues() {
+		cout << seqNo << ") << design_pattern::practicalIssues >>\n";
+	}
 };
 // Seam point - add another design pattern header (strategy.h, adapter.h, etc.).
 
@@ -202,6 +205,19 @@ public:
 public:
 	void matrix(DPObserver* command) {
 		command->refactoring();
+	}
+};
+class PracticalIssuesObserver : public MatrixObserver {
+public:
+	PracticalIssuesObserver(ObserverSubject* subject)
+		: MatrixObserver(subject, "practicalIssues") {
+	}
+	virtual ~PracticalIssuesObserver() {
+		DTOR("~PracticalIssuesObserver ", Architecture);
+	}
+public:
+	void matrix(DPObserver* command) {
+		command->practicalIssues();
 	}
 };
 

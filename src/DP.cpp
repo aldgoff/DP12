@@ -68,6 +68,7 @@ void ObserverSubject::init() {
 	new SkeletonObserver(this);
 	new RecognitionObserver(this);
 	new RefactoringObserver(this);
+	new PracticalIssuesObserver(this);
 }
 
 }
