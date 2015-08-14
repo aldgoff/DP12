@@ -853,7 +853,7 @@ void clientCode_N(int logic) {	// In file N.
 
 void demo() {
 	cout << "  practical_issues::story_5::demo().\n";
-	int test[] = { 1, 2, 3, 0 };
+	int test[] = { 1, 2, 3, 4, 0 };
 	int indi[] = { 7, 8, 9 };
 	for(size_t i=0; i<COUNT(test); i++) {	 // Independent.
 		clientCode_A(test[i]);	// traversal (correlates:)
@@ -868,6 +868,125 @@ void demo() {
 }
 
 } // story_5
+
+namespace refactor_5 {	// Refactor with Strategy design pattern.
+
+class Strategy {
+public: virtual ~Strategy() {}
+public:
+	virtual void traverse() { cout << "  Oops"; }
+	virtual void parse() { cout << " - oops"; }
+	virtual void swarm() { cout << " - oops!\n"; }
+public:
+	static Strategy* makeObject(int criteria);
+};
+class Scheme1 : public Strategy {
+public:
+	void traverse() { cout << "  Pre-order traversal"; }
+	void parse() { cout << " - heap parse"; }
+	void swarm() { cout << " - preHeap swarm.\n"; }
+};
+class Scheme2 : public Strategy {
+public:
+	void traverse() { cout << "  In-order traversal"; }
+	void parse() { cout << " - token parse"; }
+	void swarm() { cout << " - inToken swarm.\n"; }
+};
+class Scheme3 : public Strategy {
+public:
+	void traverse() { cout << "  Post-order traversal"; }
+	void parse() { cout << " - predictive parse"; }
+	void swarm() { cout << " - postPredict swarm.\n"; }
+};
+// Seam point - add another strategy.
+class Scheme4 : public Strategy {
+public:
+	void traverse() { cout << "  Sample traversal"; }
+	void parse() { cout << " - neural parse"; }
+	void swarm() { cout << " - sampleNeural swarm.\n"; }
+};
+
+Strategy* Strategy::makeObject(int criteria) {
+	switch(criteria) {
+	case 1:	return new Scheme1;
+	case 2:	return new Scheme2;
+	case 3:	return new Scheme3;
+	// Seam point - insert another criteria.
+	case 4:	return new Scheme4;
+	default: return new Strategy; }
+}
+
+class Maleficent {	// Strategy pattern.
+public: virtual ~Maleficent() {}
+public:
+	virtual void tuck() { cout << "    Number"; }
+	virtual void nip() { cout << " - nipN maleficent.\n"; }
+public:
+	static Maleficent* makeObject(int logic);
+};
+class Mal1 : public Maleficent {
+public:
+	void tuck() { cout << "    Seven"; }
+	void nip() { cout << " - nip7 maleficent.\n"; }
+};
+class Mal2 : public Maleficent {
+public:
+	void tuck() { cout << "    Eight"; }
+	void nip() { cout << " - nip8 maleficent.\n"; }
+};
+class Mal3 : public Maleficent {
+public:
+	void tuck() { cout << "    Nine"; }
+	void nip() { cout << " - nip9 maleficent.\n"; }
+};
+// Seam point - add another maleficent strategy.
+
+Maleficent* Maleficent::makeObject(int logic) {
+	switch(logic) {
+	case 7:	return new Mal1;
+	case 8:	return new Mal2;
+	case 9:	return new Mal3;
+	// Seam point - insert another logic.
+	default: return new Maleficent; }
+}
+
+void clientCode_A(Strategy* algorithm) {	// In file A.
+	algorithm->traverse();
+}
+void clientCode_B(Strategy* algorithm) {	// In file B.
+	algorithm->parse();
+}
+void clientCode_C(Strategy* algorithm) {	// In file C.
+	algorithm->swarm();
+}
+void clientCode_M(Maleficent* algorithm) {	// In file M.
+	algorithm->tuck();
+}
+void clientCode_N(Maleficent* algorithm) {	// In file N.
+	algorithm->nip();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_5::demo().\n";
+	int criteria[] = { 1, 2, 3, 4, 0 };
+	int logic[] = { 7, 8, 9 };
+	for(size_t i=0; i<COUNT(criteria); i++) {	// Correlated:
+		Strategy* scheme = Strategy::makeObject(criteria[i]);
+		clientCode_A(scheme);	// traversal
+		clientCode_B(scheme);	// parse
+		clientCode_C(scheme);	// swarm
+		delete scheme;
+		for(size_t j=0; j<COUNT(logic); j++) {	// Independent.
+			Maleficent* obj = Maleficent::makeObject(logic[j]);
+			clientCode_M(obj);	// tuck (correlates:)
+			clientCode_N(obj);	// nip
+			delete obj;
+		}
+	}
+	cout << endl;
+}
+
+} // refactor_5
 
 } // practical_issues
 
@@ -927,6 +1046,7 @@ public:
 		practical_issues::refactor_3::demo();
 		practical_issues::refactor_4::demo();
 		practical_issues::story_5::demo();
+		practical_issues::refactor_5::demo();
 	}
 };
 

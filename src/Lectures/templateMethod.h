@@ -347,6 +347,369 @@ void demo() {
 
 } // refactoring
 
+namespace practical_issues {
+
+namespace story_1 {
+
+void soak() { cout << "    soak"; }
+void wash() { cout << " - wash"; }
+void boil() { cout << " - boil"; }		// Sterilize 1.
+void ozone() { cout << " - ozone"; }	// Sterilize 2.
+void uv() { cout << " - uv"; }			// Sterilize 3.
+void rinse() { cout << " - rinse.\n"; }
+
+void clientCode_A(const string& criteria) {	// Clutter.
+	soak();
+	wash();
+	if(		criteria == "Boil")		boil();
+	else if(criteria == "Ozone")	ozone();
+	else if(criteria == "UV")		uv();
+	// Seam point - insert another criteria.
+	else { cout << " - Oops!"; }
+	rinse();
+}
+
+void clientCode_B(const string& criteria) {	// Duplication.
+	if(criteria == "Boil") {
+		soak();
+		wash();
+		boil();		// Sterilize 1.
+		rinse();
+		}
+	else if(criteria == "Ozone") {
+		soak();
+		wash();
+		ozone();	// Sterilize 2.
+		rinse();
+		}
+	else if(criteria == "UV") {
+		soak();
+		wash();
+		uv();		// Sterilize 3.
+		rinse();
+		}
+	else {
+		soak();
+		wash();
+		cout << " = Oops!";	// Sterilize ?.
+		rinse();
+	}
+}
+
+void demo() {
+	cout << "  practical_issues::story_1::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++)
+		clientCode_A(criteria[i]);
+	cout << endl;
+	for(size_t i=0; i<COUNT(criteria); i++)
+		clientCode_B(criteria[i]);
+	cout << endl;
+}
+
+}
+
+namespace refactor_1 {	// TM
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	void run() { soak(); wash(); sanitize(); rinse(); }
+public:
+	void soak() { cout << "    soak"; }
+	void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_1::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
+namespace refactor_2 {	// Add another sanitize method (bleach).
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	void run() { soak(); wash(); sanitize(); rinse(); }
+public:
+	void soak() { cout << "    soak"; }
+	void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+class Bleach : public Sterilize {
+public:
+	void sanitize() { cout << " - bleach"; }
+};
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	if(criteria == "Bleach")	return new Bleach;
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_2::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","Bleach","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
+namespace refactor_3 {	// Add constant step (polish).
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	void run() { soak(); wash(); sanitize(); rinse(); polish(); }
+public:
+	void soak() { cout << "    soak"; }
+	void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse"; }
+	void polish() { cout << " - polish.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+class Bleach : public Sterilize {
+public:
+	void sanitize() { cout << " - bleach"; }
+};
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	if(criteria == "Bleach")	return new Bleach;
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_3::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","Bleach","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
+namespace refactor_4 {	// Make a constant step variable (wash -> agitate).
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	void run() { soak(); wash(); sanitize(); rinse(); polish(); }
+public:
+	void soak() { cout << "    soak"; }
+	virtual void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse"; }
+	void polish() { cout << " - polish.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+class Bleach : public Sterilize {
+public:
+	void wash() { cout << " - agitate"; }
+	void sanitize() { cout << " - bleach"; }
+};
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	if(criteria == "Bleach")	return new Bleach;
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_4::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","Bleach","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
+namespace refactor_5 {	// Acceleration (run: sand abrasion, steel wool finish).
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {}
+public:
+	virtual void run() { soak(); wash(); sanitize(); rinse(); polish(); }
+public:
+	void soak() { cout << "    soak"; }
+	virtual void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { cout << " - rinse"; }
+	void polish() { cout << " - polish.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+class Bleach : public Sterilize {
+public:
+	void wash() { cout << " - agitate"; }
+	void sanitize() { cout << " - bleach"; }
+};
+// Seam point - add another class.
+class Abrasion : public Sterilize {
+public:
+	void run() {
+		cout << "    run";
+		cout << " - sand abrasion";
+		cout << " - steel wool finish.\n";
+	}
+};
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	if(criteria == "Bleach")	return new Bleach;
+	// Seam point - insert another criteria.
+	if(criteria == "Abrasion")	return new Abrasion;
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo() {
+	cout << "  practical_issues::refactor_5::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","Bleach","Abrasion"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		clientCode(clean);
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
+}
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -389,6 +752,15 @@ public:
 		cout << seqNo << ") << template_method::refactoring >>\n";
 		refactoring::bad::demo();
 		refactoring::good::demo();
+	}
+	virtual void practicalIssues() {
+		cout << seqNo << ") << template_method::practical_issues >>\n";
+		practical_issues::story_1::demo();
+		practical_issues::refactor_1::demo();
+		practical_issues::refactor_2::demo();
+		practical_issues::refactor_3::demo();
+		practical_issues::refactor_4::demo();
+		practical_issues::refactor_5::demo();
 	}
 };
 
