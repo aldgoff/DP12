@@ -15,6 +15,9 @@
 #include "Lectures/templateMethod.h"
 #include "Lectures/decorator.h"
 #include "Lectures/observer.h"
+#include "Lectures/chainOfResp.h"
+#include "Lectures/bridge.h"
+#include "Lectures/abstractFactory.h"
 
 #include "Lectures/state.h"
 #include "Lectures/headfirst.h"
@@ -56,6 +59,9 @@ void ObserverSubject::init() {
 	new template_method::Observer(this, ++i);
 	new decorator::Observer(this, ++i);
 	new observer::Observer(this, ++i);
+	new chain_of_resp::Observer(this, ++i);
+	new bridge::Observer(this, ++i);
+	new abstract_factory::Observer(this, ++i);
 	// Seam point - add another design pattern command.
 	new state::StateObserver(this, ++i);
 	new headfirst::HeadfirstObserver(this, ++i);

@@ -708,6 +708,114 @@ void demo() {
 
 }
 
+namespace refactor_6 {	// Acceleration (rinse has different criteria).
+
+class Strategy {
+public:
+	virtual ~Strategy() {}
+public:
+	virtual void algorithm() { cout << " - rinse"; }
+public:
+	static Strategy* makeObject(string& logic);
+};
+class Tap : public Strategy {
+public:
+	void algorithm() { cout << " - rinse(tap)"; }
+};
+class Distilled : public Strategy {
+public:
+	void algorithm() { cout << " - rinse(distilled)"; }
+};
+class FuelCell : public Strategy {
+public:
+	void algorithm() { cout << " - rinse(fuel-cell)"; }
+};
+// Seam point - add another rinse algorithm.
+
+Strategy* Strategy::makeObject(string& logic) {
+	if(logic == "Tap")			return new Tap;
+	if(logic == "Distilled")	return new Distilled;
+	if(logic == "FuelCell")		return new FuelCell;
+	// Seam point - insert another logic.
+	else { return new Strategy; }
+}
+
+class Sterilize {	// Template Method design pattern.
+public:
+	Strategy* strategy;
+public:
+	Sterilize() : strategy(0) {}
+	virtual ~Sterilize() { delete strategy; }
+public:
+	virtual void run() { soak(); wash(); sanitize(); rinse(); polish(); }
+public:
+	void soak() { cout << "    soak"; }
+	virtual void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}//Sterilize.
+	void rinse() { strategy->algorithm(); }
+	void polish() { cout << " - polish.\n"; }
+public:
+	static Sterilize* makeObject(const string& criteria);
+};
+class Boil : public Sterilize {
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public:
+	void sanitize() { cout << " - uv"; }
+};
+class Bleach : public Sterilize {
+public:
+	void wash() { cout << " - agitate"; }
+	void sanitize() { cout << " - bleach"; }
+};
+// Seam point - add another class.
+class Abrasion : public Sterilize {
+public:
+	void run() {
+		cout << "    run";
+		cout << " - sand abrasion";
+		cout << " - steel wool finish.\n";
+	}
+};
+
+Sterilize* Sterilize::makeObject(const string& criteria) {
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	if(criteria == "Bleach")	return new Bleach;
+	// Seam point - insert another criteria.
+	if(criteria == "Abrasion")	return new Abrasion;
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) {
+	clean->run();
+}
+
+void demo(int seqNo) {	// Test variations.
+	cout << seqNo << ") << template_method::practical_issues >>\n";
+	cout << "  practical_issues::refactor_6::demo().\n";
+	string criteria[] = {"Boil","Ozone","UV","Bleach","Abrasion"};
+	string logic[] = {"Tap","Distilled","FuelCell"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Sterilize* clean = Sterilize::makeObject(criteria[i]);
+		for(size_t j=0; j<COUNT(logic); j++) {
+			clean->strategy = Strategy::makeObject(logic[j]);
+			clientCode(clean);
+		}
+		delete clean;
+	}
+	cout << endl;
+}
+
+}
+
 }
 
 class Observer : public observer::DPObserver {
@@ -761,6 +869,7 @@ public:
 		practical_issues::refactor_3::demo();
 		practical_issues::refactor_4::demo();
 		practical_issues::refactor_5::demo();
+		practical_issues::refactor_6::demo(seqNo);
 	}
 };
 
