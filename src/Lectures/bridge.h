@@ -211,34 +211,64 @@ void demo() {	// Test variation.
 
 namespace recognition {
 
-class Bridge {	// If the abstractions and implementations are varying...
-public: virtual ~Bridge() {}
-public:
-	virtual void run() {}
-public:
-	static Bridge* makeObject(const string& criteria);
+class Display { // If the display tech is varying...
+public: virtual ~Display() {}
+	virtual string render() { return "Oops"; }
+	static Display* makeObject(string& crit);
 };
-class Derived : public Bridge {
-public:
-	void run() {}
-};
-// Seam point - add another derived.
-
-Bridge* Bridge::makeObject(const string& criteria) {
-	if(		criteria == "Derived1")	return new Bridge;
-	else if(criteria == "Derived2")	return new Bridge;
-	else if(criteria == "Derived3")	return new Bridge;
-
-	else {
-		return new Bridge;	// Opts: null, exception, base, default, ABC.
-	}
+class Raster : public Display {
+	public: string render() { return "Raster"; } };
+class Vector : public Display {
+	public: string render() { return "Vector"; } };
+class Hologram : public Display {
+	public: string render() { return "Hologram";}};
+// Seam point - add another display.
+Display* Display::makeObject(string& crit) {
+	if(crit == "Raster")	return new Raster;
+	if(crit == "Vector")	return new Vector;
+	if(crit == "Hologram")	return new Hologram;
+	// Seam point - insert another criteria.
+	return new Display;	// Base.
 }
 
-void demo() {	// Decouples client from creation.
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		Bridge* derived = Bridge::makeObject(criteria[i]);
-		derived->run();
+class Shape { // If the shapes are varying...
+protected: Display* dis;
+public: Shape(Display* dis=0) : dis(dis) {}
+	virtual ~Shape() {}
+	virtual string draw() { return "Oops"; }
+	static Shape* makeObject(string& crit, Display* plat);
+};
+class Duck : public Shape {
+public: Duck(Display* dis) : Shape(dis) {}
+	string draw() { return "Draw duck via " + dis->render(); }
+};
+class Hero : public Shape {
+public: Hero(Display* dis) : Shape(dis) {}
+	string draw() { return "Draw hero via " + dis->render(); }
+};
+class Dino : public Shape {
+public: Dino(Display* dis) : Shape(dis) {}
+	string draw() { return "Draw dino via " + dis->render(); }
+};
+// Seam point - add another shape.
+Shape* Shape::makeObject(string& crit, Display* plat) {
+	if(crit == "Duck")	return new Duck(plat);
+	if(crit == "Hero")	return new Hero(plat);
+	if(crit == "Dino")	return new Dino(plat);
+	// Seam point - insert another criteria.
+	return new Shape;	// Base.
+}
+
+void demo() {	// Test variations.
+	string image[] = {"Duck","Hero","Dino","oops"};
+	string render[] = {"Raster","Vector","Hologram","oops"};
+	for(size_t i=0; i<COUNT(image); i++) {
+		for(size_t j=0; j<COUNT(render); j++) {
+			Display* dis = Display::makeObject(render[j]);
+			Shape* shape = Shape::makeObject(image[i], dis);
+			cout << "  " << shape->draw() << ".\n";
+			delete dis; delete shape;
+		}
 	}
 	cout << endl;
 }

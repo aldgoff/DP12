@@ -180,34 +180,58 @@ void demo() {	// Decouples client from creation.
 
 namespace recognition {
 
-class ChainOfResp {	// If the responders are varying...
-public: virtual ~ChainOfResp() {}
+class ChainOfCommand {
+protected:
+	ChainOfCommand* superior;
 public:
-	virtual void run() {}
+	ChainOfCommand(ChainOfCommand* superior=0) : superior(superior) {}
+	virtual ~ChainOfCommand() {}
 public:
-	static ChainOfResp* makeObject(const string& criteria);
+	virtual void passTheBuck(string& criteria) { cout<<"  Political.\n";}
+	static ChainOfCommand* setup();
 };
-class Derived : public ChainOfResp {
+class Major : public ChainOfCommand {
 public:
-	void run() {}
-};
-// Seam point - add another responder.
-
-ChainOfResp* ChainOfResp::makeObject(const string& criteria) {
-	if(		criteria == "Derived1")	return new ChainOfResp;
-	else if(criteria == "Derived2")	return new ChainOfResp;
-	else if(criteria == "Derived3")	return new ChainOfResp;
-
-	else {
-		return new ChainOfResp;	// Opts: null, exception, base, default, ABC.
+	Major(ChainOfCommand* superior) : ChainOfCommand(superior) {}
+	void passTheBuck(string& criteria) {
+		if(criteria == "Engage")	cout << "  Ready, aim, fire.\n";
+		else 						superior->passTheBuck(criteria);
 	}
+};
+class Colonal : public ChainOfCommand {
+public:
+	Colonal(ChainOfCommand* superior) : ChainOfCommand(superior) {}
+	void passTheBuck(string& criteria) {
+		if(criteria == "Tactical")	cout << "  Tactical.\n";
+		else 						superior->passTheBuck(criteria);
+	}
+};
+class General : public ChainOfCommand {
+public:
+	General(ChainOfCommand* superior) : ChainOfCommand(superior) {}
+	void passTheBuck(string& criteria) {
+		if(criteria == "Strategic")	cout << "  Strategic.\n";
+		else 						superior->passTheBuck(criteria);
+	}
+};
+// Seam point - add another officer.
+
+ChainOfCommand* ChainOfCommand::setup() {
+	return
+		new Major(
+		new Colonal(
+		new General(
+		new ChainOfCommand
+	)));
 }
 
-void demo() {	// Decouples client from creation.
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
+void demo() {
+	string criteria[] = { "Engage", "Tactical",
+						  "Strategic", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		ChainOfResp* responder = ChainOfResp::makeObject(criteria[i]);
-		responder->run();
+		ChainOfCommand* officer
+			= ChainOfCommand::setup();
+		officer->passTheBuck(criteria[i]);
 	}
 	cout << endl;
 }

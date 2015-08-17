@@ -220,34 +220,101 @@ void demo() {	// Test variation.
 
 namespace recognition {
 
-class AbstractFactory {	// If the families are varying...
-public: virtual ~AbstractFactory() {}
-public:
-	virtual void run() {}
-public:
-	static AbstractFactory* makeObject(const string& criteria);
+class Menu {	// If the menus are varying...
+public: virtual ~Menu() {}
+public:	virtual void id()=0;
 };
-class Derived : public AbstractFactory {
-public:
-	void run() {}
+class MenuMac : public Menu {
+public:	void id() { cout << "  Menu Mac.\n"; }
 };
-// Seam point - add another abstract factory.
+class MenuUnix : public Menu {
+public:	void id() { cout << "  Menu Unix.\n"; }
+};
+class MenuMicro : public Menu {
+public:	void id() { cout << "  Menu Micro.\n"; }
+};
 
-AbstractFactory* AbstractFactory::makeObject(const string& criteria) {
-	if(		criteria == "Derived1")	return new AbstractFactory;
-	else if(criteria == "Derived2")	return new AbstractFactory;
-	else if(criteria == "Derived3")	return new AbstractFactory;
+class Window {	// If the windows are varying...
+public: virtual ~Window() {}
+public:	virtual void id()=0;
+};
+class WindowMac : public Window {
+public:	void id() { cout << "  Window Mac.\n"; }
+};
+class WindowUnix : public Window {
+public:	void id() { cout << "  Window Unix.\n"; }
+};
+class WindowMicro : public Window {
+public:	void id() { cout << "  Window Micro.\n"; }
+};
 
-	else {
-		return new AbstractFactory;	// Opts: null, exception, base, default, ABC.
-	}
+class Touch {	// If touch interface is varying...
+public: virtual ~Touch() {}
+public:	virtual void id()=0;
+};
+class TouchMac : public Touch {
+public:	void id() { cout << "  Touch Mac.\n"; }
+};
+class TouchUnix : public Touch {
+public:	void id() { cout << "  Touch Unix.\n"; }
+};
+class TouchMicro : public Touch {
+public:	void id() { cout << "  Touch Micro.\n"; }
+};
+
+class OS {	// If the operating system is varying...
+public: virtual ~OS() {}
+public:
+	virtual Menu* create_menus()=0;
+	virtual Window* create_windows()=0;
+	virtual Touch* create_touch()=0;
+public:
+	static OS* makeObject(string& criteria);
+};
+class Mac : public OS {
+public:
+	Menu* create_menus() { return new MenuMac; }
+	Window* create_windows() { return new WindowMac; }
+	Touch* create_touch() { return new TouchMac; }
+};
+class Unix : public OS {
+public:
+	Menu* create_menus() { return new MenuUnix; }
+	Window* create_windows() { return new WindowUnix; }
+	Touch* create_touch() { return new TouchUnix; }
+};
+class Micro : public OS {
+public:
+	Menu* create_menus() { return new MenuMicro; }
+	Window* create_windows() { return new WindowMicro; }
+	Touch* create_touch() { return new TouchMicro; }
+};
+// Seam point - add another operating system.
+
+OS* OS::makeObject(string& criteria) {
+	if(criteria == "Mac")	return new Mac;
+	if(criteria == "Unix")	return new Unix;
+	if(criteria == "Micro")	return new Micro;
+	// Seam point - insert another criteria.
+	return 0;	// ABC null.
 }
 
-void demo() {	// Decouples client from creation.
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
+void demo() {	// Test variation.
+	string criteria[] = { "Mac", "Unix", "Micro", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		AbstractFactory* factory = AbstractFactory::makeObject(criteria[i]);
-		factory->run();
+		OS* factory = OS::makeObject(criteria[i]);
+		if(!factory) {
+			cout << "  Oops!\n\n";
+			return;
+		}
+
+		Menu* menus = factory->create_menus();
+		Window* windows = factory->create_windows();
+		Touch* touch = factory->create_touch();
+
+		menus->id();
+		windows->id();
+		touch->id();
 	}
 	cout << endl;
 }
