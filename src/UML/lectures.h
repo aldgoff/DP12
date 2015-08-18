@@ -33,22 +33,22 @@ public:
 	void compute() { cout << "  Algorithm3\n"; }
 };
 
-class Base {	// If the algorithms are varying...
-public:	virtual ~Base() {}
+class Sort {	// If the algorithms are varying...
+public:	virtual ~Sort() {}
 public:
-	virtual void method() {}
+	virtual void order() {}
 };
-class Derived1 : public Base {
+class Linear : public Sort {
 public:
-	void method() { cout << "  Derived1\n"; }
+	void order() { cout << "  Linear\n"; }
 };
-class Derived2 : public Base {
+class Parallel : public Sort {
 public:
-	void method() { cout << "  Derived2\n"; }
+	void order() { cout << "  Parallel\n"; }
 };
-class Derived3 : public Base {
+class Asymptotic : public Sort {
 public:
-	void method() { cout << "  Derived3\n"; }
+	void order() { cout << "  Asymptotic\n"; }
 };
 
 } // k
@@ -87,24 +87,22 @@ struct Ion { string reaction() { return "your way.\n"; } };
 class SciFi {	// If the interfaces are varying...
 public: virtual ~SciFi() {}
 public:
-	virtual void method() {}
+	virtual void makeItSo() {}
 };
 class FTL : public SciFi {
 	WarpDrive warp;
 public:
-	///
-	/// \return void
-	void method() { cout << "  FTL: warp " << warp.bend(); }
+	void makeItSo() { cout << "  FTL: warp " << warp.bend(); }
 };
 class Scoot : public SciFi {
 	Impulse impulse;
 public:
-	void method() { cout << "  Scoot: impulse " << impulse.push(); }
+	void makeItSo() { cout << "  Scoot: impulse " << impulse.push(); }
 };
 class Lumber : public SciFi {
 	Ion thrust;
 public:
-	void method() { cout << "  Lumber: thrust " << thrust.reaction(); }
+	void makeItSo() { cout << "  Lumber: thrust " << thrust.reaction(); }
 };
 
 } // iam
@@ -131,24 +129,24 @@ public:
 	void methods() { cout << "  Type3\n"; }
 };
 
-class Base {	// If the classes are varying...
-public: virtual ~Base() {}
+class Politician {	// If the classes are varying...
+public: virtual ~Politician() {}
 public:
-	virtual void methods() { cout << "  Oops!\n"; }
+	virtual void promises() { cout << "  Oops!\n"; }
 public:
-	static Base* makeObject(const string& criteria);
+	static Politician* makeObject(const string& criteria);
 };
-class Derived1 : public Base {
+class Republican : public Politician {
 public:
-	void methods() { cout << "  Derived1\n"; }
+	void promises() { cout << "  Republican\n"; }
 };
-class Derived2 : public Base {
+class Democrat : public Politician {
 public:
-	void methods() { cout << "  Derived2\n"; }
+	void promises() { cout << "  Democrat\n"; }
 };
-class Derived3 : public Base {
+class Indpendent : public Politician {
 public:
-	void methods() { cout << "  Derived3\n"; }
+	void promises() { cout << "  Indpendent\n"; }
 };
 
 } // mam
@@ -189,8 +187,8 @@ public:
 	string diffStep3() { return "Diff3.step3"; }
 };
 
-class Base {	// If the steps are varying...
-public: virtual ~Base() {}
+class Game {	// If the steps are varying...
+public: virtual ~Game() {}
 public:
 	virtual void run() {
 		cout << "  run - " << open();
@@ -201,25 +199,25 @@ public:
 		cout << endl;
 	}
 protected:
-	string open() { return "step1"; }
-	string setup() { return "step2"; }
+	string open() { return "open"; }
+	string setup() { return "setup"; }
 	virtual string play() { return "oops!"; }
-	string score() { return "step4"; }
-	string putaway() { return "step5"; }
+	string score() { return "score"; }
+	string putaway() { return "putaway"; }
 public:
-	static Base* makeObject(const string& criteria);
+	static Game* makeObject(const string& criteria);
 };
-class Derived1 : public Base {
+class Checkers : public Game {
 public:
-	string play() { return "Derived1.step3"; }
+	string play() { return "Checkers.play"; }
 };
-class Derived2 : public Base {
+class Chess : public Game {
 public:
-	string play() { return "Derived2.step3"; }
+	string play() { return "Chess.play"; }
 };
-class Derived3 : public Base {
+class Go : public Game {
 public:
-	string play() { return "Derived3.step3"; }
+	string play() { return "Go.play"; }
 };
 
 } // tam
@@ -231,11 +229,11 @@ public: virtual ~Component() {}
 public:
 	virtual void behavior()=0;
 };
-class Base : public Component {	// Base object to be decorated.
+class Base : public Component {		// Base object to be decorated.
 public:
 	void behavior() { cout << "  Base"; }
 };
-class Decorator : public Component {	// If the options are varying...
+class Decorator : public Component {// If the options are varying...
 protected:
 	Component* decorator;
 public:
@@ -356,7 +354,7 @@ public:
 	void volunteer(Hobbit* obs) { hobbits.push_back(obs); }
 	void runaway(Hobbit* obs) { hobbits.remove(obs); }
 public:
-	void speek();
+	void speak();
 };
 class Hobbit {	// If the listeners are varying...
 protected:
@@ -395,13 +393,423 @@ public:
 
 namespace q { // Chain of Responsibility
 
+class ChainOfResponsibility {	// If the responders are varying...
+protected:
+	ChainOfResponsibility* successor;
+public:
+	ChainOfResponsibility(ChainOfResponsibility* successor=0) : successor(successor) {}
+	virtual ~ChainOfResponsibility() { delete successor; }
+public:
+	virtual void delegate(const string& criteria) {
+		cout << "  I give up, unknown responder.";
+	}
+public:
+	static ChainOfResponsibility* setupChain();
+};
+class Responder1 : public ChainOfResponsibility {
+public:
+	Responder1(ChainOfResponsibility* successor=0) : ChainOfResponsibility(successor) {}
+public:
+	void delegate(const string& criteria) {
+		if(criteria == "Responder1")	cout << "  Responder1 handling.\n";
+		else							successor->delegate(criteria);
+	}
+};
+class Responder2 : public ChainOfResponsibility {
+public:
+	Responder2(ChainOfResponsibility* successor=0) : ChainOfResponsibility(successor) {}
+public:
+	void delegate(const string& criteria) {
+		if(criteria == "Responder2")	cout << "  Responder2 handling.\n";
+		else							successor->delegate(criteria);
+	}
+};
+class Responder3 : public ChainOfResponsibility {
+public:
+	Responder3(ChainOfResponsibility* successor=0) : ChainOfResponsibility(successor) {}
+public:
+	void delegate(const string& criteria) {
+		if(criteria == "Responder3")	cout << "  Responder3 handling.\n";
+		else							successor->delegate(criteria);
+	}
+};
+
+ChainOfResponsibility* ChainOfResponsibility::setupChain() {
+	return
+		new Responder1(
+		new Responder2(
+		new Responder3(
+		new ChainOfResponsibility
+	)));
+}
+
+class Language {	// If the responders are varying...
+protected:
+	Language* successor;
+public:
+	Language(Language* successor=0) : successor(successor) {}
+	virtual ~Language() { delete successor; }
+public:
+	virtual void checkGrammar(const string& criteria) {
+		cout << "  I give up, unknown language.";
+	}
+public:
+	static Language* setupChain();
+};
+class English : public Language {
+public:
+	English(Language* successor=0) : Language(successor) {}
+public:
+	void checkGrammar(const string& criteria) {
+		if(criteria == "English")	cout << "  Parsing English.\n";
+		else						successor->checkGrammar(criteria);
+	}
+};
+class French : public Language {
+public:
+	French(Language* successor=0) : Language(successor) {}
+public:
+	void checkGrammar(const string& criteria) {
+		if(criteria == "French")	cout << "  Parsing French.\n";
+		else						successor->checkGrammar(criteria);
+	}
+};
+class German : public Language {
+public:
+	German(Language* successor=0) : Language(successor) {}
+public:
+	void checkGrammar(const string& criteria) {
+		if(criteria == "German")	cout << "  Parsing German.\n";
+		else						successor->checkGrammar(criteria);
+	}
+};
+
+Language* Language::setupChain() {
+	return
+		new English(
+		new French(
+		new German(
+		new Language
+	)));
+}
+
 } // cam
 
 namespace r { // Bridge
 
+class Implementation {	// If the implementations are varying...
+public: virtual ~Implementation() {}
+public:
+	virtual void execute() {}
+public:
+	static Implementation* makeObject(const string& criteria);
+};
+class Implement1 : public Implementation {
+public:
+	void execute() {}
+};
+class Implement2 : public Implementation {
+public:
+	void execute() {}
+};
+class Implement3 : public Implementation {
+public:
+	void execute() {}
+};
+
+Implementation* Implementation::makeObject(const string& criteria) {
+	if(criteria == "Implement1")	return new Implement1;
+	if(criteria == "Implement2")	return new Implement2;
+	if(criteria == "Implement3")	return new Implement3;
+	return new Implementation;
+}
+
+class Abstraction {	// If the abstractions are varying...
+protected:
+	Implementation* implement;
+public:
+	Abstraction(Implementation* implement=0) : implement(implement) {}
+	virtual ~Abstraction() { delete implement; }
+public:
+	virtual void run() {}
+public:
+	static Abstraction* makeObject(const string& criteria, Implementation* implement);
+};
+class Abstract1 : public Abstraction {
+public:
+	Abstract1(Implementation* implement) : Abstraction(implement) {}
+public:
+	void run() { implement->execute(); }
+};
+class Abstract2 : public Abstraction {
+public:
+	Abstract2(Implementation* implement) : Abstraction(implement) {}
+public:
+	void run() { implement->execute(); }
+};
+class Abstract3 : public Abstraction {
+public:
+	Abstract3(Implementation* implement) : Abstraction(implement) {}
+public:
+	void run() { implement->execute(); }
+};
+
+Abstraction* Abstraction::makeObject(const string& criteria, Implementation* implement) {
+	if(criteria == "Abstract1")	return new Abstract1(implement);
+	if(criteria == "Abstract2")	return new Abstract2(implement);
+	if(criteria == "Abstract3")	return new Abstract3(implement);
+	return new Abstraction;
+}
+
+class Light {	// If the implementations are varying...
+public: virtual ~Light() {}
+public:
+	virtual void shine() {}
+public:
+	static Light* makeObject(const string& criteria);
+};
+class Incandescent : public Light {
+public:
+	void shine() {}
+};
+class Halogen : public Light {
+public:
+	void shine() {}
+};
+class LED : public Light {
+public:
+	void shine() {}
+};
+
+Light* Light::makeObject(const string& criteria) {
+	if(criteria == "Incandescent")	return new Incandescent;
+	if(criteria == "Halogen")	return new Halogen;
+	if(criteria == "LED")	return new LED;
+	return new Light;
+}
+
+class Mood {	// If the abstractions are varying...
+protected:
+	Light* light;
+public:
+	Mood(Light* light=0) : light(light) {}
+	virtual ~Mood() { delete light; }
+public:
+	virtual void illuminate() {}
+public:
+	static Mood* makeObject(const string& criteria, Light* implement);
+};
+class Daylight : public Mood {
+public:
+	Daylight(Light* implement) : Mood(implement) {}
+public:
+	void illuminate() { light->shine(); }
+};
+class Disco : public Mood {
+public:
+	Disco(Light* implement) : Mood(implement) {}
+public:
+	void illuminate() { light->shine(); }
+};
+class Romantic : public Mood {
+public:
+	Romantic(Light* implement) : Mood(implement) {}
+public:
+	void illuminate() { light->shine(); }
+};
+
+Mood* Mood::makeObject(const string& criteria, Light* implement) {
+	if(criteria == "Daylight")	return new Daylight(implement);
+	if(criteria == "Disco")	return new Disco(implement);
+	if(criteria == "Romantic")	return new Romantic(implement);
+	return new Mood;
+}
+
 } // bam
 
 namespace s { // Abstract Factory
+
+class Type1 {
+public: virtual ~Type1() {}
+public:
+	virtual void run() {}
+};
+class Type1A : public Type1 {
+public:
+	void run() {}
+};
+class Type1B : public Type1 {
+public:
+	void run() {}
+};
+class Type1C : public Type1 {
+public:
+	void run() {}
+};
+
+class Type2 {
+public: virtual ~Type2() {}
+public:
+	virtual void calc() {}
+};
+class Type2A : public Type2 {
+public:
+	void calc() {}
+};
+class Type2B : public Type2 {
+public:
+	void calc() {}
+};
+class Type2C : public Type2 {
+public:
+	void calc() {}
+};
+
+class Type3 {
+public: virtual ~Type3() {}
+public:
+	virtual void compute() {}
+};
+class Type3A : public Type3 {
+public:
+	void compute() {}
+};
+class Type3B : public Type3 {
+public:
+	void compute() {}
+};
+class Type3C : public Type3 {
+public:
+	void compute() {}
+};
+
+class AbstractFactory {	// If whole families are varying...
+public: virtual ~AbstractFactory() {}
+public:
+	virtual Type1* createType1() { return new Type1; }
+	virtual Type2* createType2() { return new Type2; }
+	virtual Type3* createType3() { return new Type3; }
+public:
+	static AbstractFactory* makeObject(const string& criteria);
+};
+class FamilyA : public AbstractFactory {
+public:
+	Type1* createType1() { return new Type1A; }
+	Type2* createType2() { return new Type2A; }
+	Type3* createType3() { return new Type3A; }
+};
+class FamilyB : public AbstractFactory {
+public:
+	Type1* createType1() { return new Type1B; }
+	Type2* createType2() { return new Type2B; }
+	Type3* createType3() { return new Type3B; }
+};
+class FamilyC : public AbstractFactory {
+public:
+	Type1* createType1() { return new Type1C; }
+	Type2* createType2() { return new Type2C; }
+	Type3* createType3() { return new Type3C; }
+};
+
+AbstractFactory* AbstractFactory::makeObject(const string& criteria) {
+	if(criteria == "FamilyA")	return new FamilyA;
+	if(criteria == "FamilyB")	return new FamilyB;
+	if(criteria == "FamilyC")	return new FamilyC;
+	return new AbstractFactory;
+}
+
+} // fam
+
+namespace t { // Abstract Factory
+
+class IJM {
+public: virtual ~IJM() {}
+public:
+	virtual void run() {}
+};
+class IJM1 : public IJM {
+public:
+	void run() {}
+};
+class IJM2 : public IJM {
+public:
+	void run() {}
+};
+class IJM4 : public IJM {
+public:
+	void run() {}
+};
+
+class Belt {
+public: virtual ~Belt() {}
+public:
+	virtual void calc() {}
+};
+class Linear : public Belt {
+public:
+	void calc() {}
+};
+class YSplit : public Belt {
+public:
+	void calc() {}
+};
+class VSplit : public Belt {
+public:
+	void calc() {}
+};
+
+class Box {
+public: virtual ~Box() {}
+public:
+	virtual void compute() {}
+};
+class Cardboard : public Box {
+public:
+	void compute() {}
+};
+class Pallot : public Box {
+public:
+	void compute() {}
+};
+class Crate : public Box {
+public:
+	void compute() {}
+};
+
+class InjectionLine {	// If whole families are varying...
+public: virtual ~InjectionLine() {}
+public:
+	virtual IJM* createIJM() { return new IJM; }
+	virtual Belt* createBelt() { return new Belt; }
+	virtual Box* createBox() { return new Box; }
+public:
+	static InjectionLine* makeObject(const string& criteria);
+};
+class Cavity1 : public InjectionLine {
+public:
+	IJM* createIJM() { return new IJM1; }
+	Belt* createBelt() { return new Linear; }
+	Box* createBox() { return new Cardboard; }
+};
+class Cavity2 : public InjectionLine {
+public:
+	IJM* createIJM() { return new IJM2; }
+	Belt* createBelt() { return new YSplit; }
+	Box* createBox() { return new Pallot; }
+};
+class Cavity4 : public InjectionLine {
+public:
+	IJM* createIJM() { return new IJM4; }
+	Belt* createBelt() { return new VSplit; }
+	Box* createBox() { return new Crate; }
+};
+
+InjectionLine* InjectionLine::makeObject(const string& criteria) {
+	if(criteria == "Cavity1")	return new Cavity1;
+	if(criteria == "Cavity2")	return new Cavity2;
+	if(criteria == "Cavity4")	return new Cavity4;
+	return new InjectionLine;
+}
 
 } // fam
 
