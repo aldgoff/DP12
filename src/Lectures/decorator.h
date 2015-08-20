@@ -116,60 +116,61 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-class Component {
-public: virtual ~Component() {}
+class ABC {
+public: virtual ~ABC() {}
 public:
 	virtual void behavior()=0;
 };
-class Base : public Component {	// Base object to be decorated.
+class Base : public ABC {	// Base object to be decorated.
 public:
 	void behavior() { cout << "  Base"; }
 };
-class Decorator : public Component { // If the options are varying...
+class Decorator : public ABC { // If options are varying...
 protected:
-	Component* decorator;
+	ABC* decorator;
 public:
-	Decorator(Component* decorator) : decorator(decorator) {}
-public:
+	Decorator(ABC* decorator) : decorator(decorator) {}
+	~Decorator() { delete decorator; }
 	void behavior() {}
 public:
-	static Component* makeObject(Component* thing, string& criteria);
+	static ABC* makeObject(ABC* decorator, string& criteria);
 };
 class Option1 : public Decorator {
 public:
-	Option1(Component* decorator) : Decorator(decorator) {}
+	Option1(ABC* decorator) : Decorator(decorator) {}
 public:
-	void behavior() { decorator->behavior(); cout << " Opt1"; }
+	void behavior() { decorator->behavior(); cout << " Opt1";}
 };
 class Option2 : public Decorator {
 public:
-	Option2(Component* decorator) : Decorator(decorator) {}
+	Option2(ABC* decorator) : Decorator(decorator) {}
 public:
-	void behavior() { decorator->behavior(); cout << " Opt2"; }
+	void behavior() { decorator->behavior(); cout << " Opt2";}
 };
 class Option3 : public Decorator {
 public:
-	Option3(Component* decorator) : Decorator(decorator) {}
+	Option3(ABC* decorator) : Decorator(decorator) {}
 public:
-	void behavior() { decorator->behavior(); cout << " Opt3"; }
+	void behavior() { decorator->behavior(); cout << " Opt3";}
 };
 // Seam point - add another option.
 
-Component* Decorator::makeObject(Component* thing, string& criteria) {
-	if(		criteria == "Option1")	return new Option1(thing);
-	else if(criteria == "Option2")	return new Option2(thing);
-	else if(criteria == "Option3")	return new Option3(thing);
-	else { return thing; }	// Return current decorator.
+ABC* Decorator::makeObject(ABC* decorator, string& criteria){
+	if(criteria == "Option1") return new Option1(decorator);
+	if(criteria == "Option2") return new Option2(decorator);
+	if(criteria == "Option3") return new Option3(decorator);
+	return decorator;	// Return current decorator.
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Option1", /*"Option2",*/
 						  "Option3", "oops" };
-	Component* thing = new Base;
+	ABC* thing = new Base;
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		thing = Decorator::makeObject(thing, criteria[i]);
 	}
 	thing->behavior();	cout << "\n";
+	delete thing;
 	cout << endl;
 }
 
@@ -224,7 +225,7 @@ Vehicle* Accessory::create(Vehicle* car, string& criteria) {
 	else { return car; }	// Do nothing.
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	string criteria[] = { "Music", "View", "Hip" };
 	Vehicle* car = new Car;
 	for(size_t i=0; i<COUNT(criteria); i++)

@@ -158,7 +158,7 @@ TemplateMethod* TemplateMethod::makeObject(string& criteria) {
 	}								// base, default, ABC.
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Diff1Step3", "Diff2Step3",
 						  "Diff3Step3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
@@ -211,7 +211,7 @@ Process* Process::makeObject(const string& criteria) {
 	else { return 0; }	// ABC.
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	string criteria[] = { "Music", "Security", "Speech" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Process* sequence = Process::makeObject(criteria[i]);

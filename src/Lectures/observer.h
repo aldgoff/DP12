@@ -117,14 +117,12 @@ void demo(int seqNo) {
 namespace skeleton {
 
 class Observer;
-class Subject;
 
 class Subject {
 	list<Observer*>	observers;
 public:
 	void attach(Observer* obs) { observers.push_back(obs); }
 	void detach(Observer* obs) { observers.remove(obs); }
-public:
 	void notify();
 };
 class Observer { // If the listeners are varying...
@@ -169,9 +167,9 @@ void Subject::notify() {	// The client code.
 
 void demo(int seqNo) { // Client knows the derived classes.
 	Subject subject;
-	new Listener1(subject);
-	new Listener2(subject);
-	new Listener3(subject);
+	Listener1 listen1(subject);
+	Listener2 listen2(subject);
+	Listener3 listen3(subject);
 	subject.notify();
 	cout << endl;
 }

@@ -47,7 +47,7 @@ namespace solution {
 class FactoryMethod {	// If the classes are varying...
 public:
 	FactoryMethod() {}
-	virtual ~FactoryMethod() { DTOR("~FactoryMethodObserver\n", Architecture); }
+	virtual ~FactoryMethod() { DTOR("~FactoryMethodObserver\n", Lecture); }
 public:
 	virtual void run() {}
 public:
@@ -56,7 +56,7 @@ public:
 class Derived : public FactoryMethod {
 public:
 	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Architecture); }
+	virtual ~Derived() { DTOR("~Derived ", Lecture); }
 public:
 	void run() {}
 };
@@ -116,42 +116,52 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-class FactoryMethod {	// If the classes are varying...
-public: virtual ~FactoryMethod() {}
+class FactoryMethod { // If the classes are varying...
+public: virtual ~FactoryMethod() {
+		DTOR("~FactoryMethod\n", Lecture);
+	}
 public:
-	virtual void run() { cout << "  Oops!\n"; }
+	virtual void run() { cout << "  Oops!  "; }
 public:
 	static FactoryMethod* makeObject(string& criteria);
 };
 class Type1 : public FactoryMethod {
+public: ~Type1() {
+		DTOR("  ~Type1 ", Lecture);
+	}
 public:
-	void run() { cout << "  Type1\n"; }
+	void run() { cout << "  Type1"; }
 };
 class Type2 : public FactoryMethod {
+public: ~Type2() {
+		DTOR("  ~Type2 ", Lecture);
+	}
 public:
-	void run() { cout << "  Type2\n"; }
+	void run() { cout << "  Type2"; }
 };
 class Type3 : public FactoryMethod {
+public: ~Type3() {
+		DTOR("  ~Type3 ", Lecture);
+	}
 public:
-	void run() { cout << "  Type3\n"; }
+	void run() { cout << "  Type3"; }
 };
 // Seam point - add another class.
 
 FactoryMethod* FactoryMethod::makeObject(string& criteria) {
-	if(		criteria == "Type1")	return new Type1;
-	else if(criteria == "Type2")	return new Type2;
-	else if(criteria == "Type3")	return new Type3;
+	if(criteria == "Type1")	return new Type1;
+	if(criteria == "Type2")	return new Type2;
+	if(criteria == "Type3")	return new Type3;
 	// Seam point - insert another class.
-	else {							// Options:
-		return new FactoryMethod;	// null, exception,
-	}								// base, default, ABC.
+	return new FactoryMethod;	// Base, default, null, exception.
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Type1", "Type2", "Type3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		FactoryMethod* type = FactoryMethod::makeObject(criteria[i]);
 		type->run();
+		delete type;
 	}
 	cout << endl;
 }
@@ -191,7 +201,7 @@ Car* Car::makeObject(const string& criteria) {
 	}
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	string criteria[] = { "Safety", "Status", "Electric" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Car* type = Car::makeObject(criteria[i]);
@@ -314,7 +324,7 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "factoryMethod") {}
-	virtual ~Observer() { DTOR("~FactoryMethodObserver ", Architecture); }
+	virtual ~Observer() { DTOR("~FactoryMethodObserver ", Lecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << factory_method::lecture::legacy >>\n";

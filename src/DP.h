@@ -18,7 +18,7 @@
 #include <set>
 using namespace std;
 
-const unsigned flags = 0x10;	// Dtor instrumentation controlled by bit flags.
+const unsigned flags = 0x02;	// Dtor instrumentation controlled by bit flags.
 #define DTOR(x, flag) if(flag & flags) { cout << x; }
 enum DtorFlags {
 	Architecture	= 0x01,

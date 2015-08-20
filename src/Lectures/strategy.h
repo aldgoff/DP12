@@ -63,25 +63,37 @@ namespace homework {
 namespace skeleton {
 
 class Strategy { // If the algorithms are varying...
-public:	virtual ~Strategy() {}
+public:
+	virtual ~Strategy() {
+		DTOR("~Strategy\n", Lecture);
+	}
 public:
 	virtual void compute() {}
 };
 class Algorithm1 : public Strategy {
+public: ~Algorithm1() {
+		DTOR("  ~Algorithm1 ", Lecture);
+	}
 public:
 	void compute() { cout << "  Algorithm1\n"; }
 };
 class Algorithm2 : public Strategy {
+public: ~Algorithm2() {
+		DTOR("  ~Algorithm2 ", Lecture);
+	}
 public:
 	void compute() { cout << "  Algorithm2\n"; }
 };
 class Algorithm3 : public Strategy {
+public: ~Algorithm3() {
+		DTOR("  ~Algorithm3 ", Lecture);
+	}
 public:
 	void compute() { cout << "  Algorithm3\n"; }
 };
 // Seam point - add another algorithm.
 
-void demo(int seqNo) {
+void demo(int seqNo) {	// Test variations.
 	Strategy* algorithms[] = {
 		new Algorithm1,
 		new Algorithm2,
@@ -89,6 +101,9 @@ void demo(int seqNo) {
 	};
 	for(size_t i=0; i<COUNT(algorithms); i++) {
 		algorithms[i]->compute();
+	}
+	for(size_t i=0; i<COUNT(algorithms); i++) {
+		delete algorithms[i];
 	}
 	cout << endl;
 }
@@ -126,7 +141,7 @@ Strategy* Strategy::makeObject(string& criteria) {
 	}							// base, default, ABC.
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Algorithm1", "Algorithm2",
 						  "Algorithm3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
@@ -178,7 +193,7 @@ Fit* Fit::makeObject(const string& criteria) {
 	else { return new Spline; }	// Default.
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	string criteria[] = {"BackOfTheEnvelope","QuickAndDirty","Exact"};
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Fit* fit = Fit::makeObject(criteria[i]);
@@ -189,7 +204,7 @@ void demo() {	// Decouples client from creation.
 
 } // recognition
 
-namespace refactoring {
+namespace refactoring {	// Deprecated.
 
 namespace bad {
 
@@ -268,7 +283,7 @@ void clientCode_B(Strategy* algorithm) {	// In file B.
 	algorithm->parse();
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	cout << "  refactoring::good::demo().\n";
 	string criteria[] = {"Scheme1","Scheme2","Scheme3","oops"};
 	for(size_t i=0; i<COUNT(criteria); i++) {	// Correlated:
@@ -994,7 +1009,7 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "strategy") {}
-	virtual ~Observer() { DTOR("~StrategyObserver ", Architecture); }
+	virtual ~Observer() { DTOR("~StrategyObserver ", Lecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << strategy::lecture::legacy >>\n";

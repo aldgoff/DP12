@@ -167,7 +167,7 @@ ChainOfResp* ChainOfResp::setupChain() {
 	)));
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	int criteria[] = { 1, 2, 3, 0 };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		ChainOfResp* responder = ChainOfResp::setupChain();

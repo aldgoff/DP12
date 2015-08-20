@@ -82,36 +82,59 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-struct Legacy1 {string thisWay() {return "this way.\n";}};
-struct Legacy2 {string thatWay() {return "that way.\n";}};
-struct Legacy3 {string yourWay() {return "your way.\n";}};
+struct Legacy1 {string thisWay() {return "this way.\n";}
+	~Legacy1() {
+		DTOR("~Legacy1 ", Lecture);
+	}
+};
+struct Legacy2 {string thatWay() {return "that way.\n";}
+	~Legacy2() {
+		DTOR("~Legacy2 ", Lecture);
+	}
+};
+struct Legacy3 {string yourWay() {return "your way.\n";}
+	~Legacy3() {
+		DTOR("~Legacy3 ", Lecture);
+	}
+};
 
 class Adapter { // If the interfaces are varying...
-public: virtual ~Adapter() {}
+public: virtual ~Adapter() {
+		DTOR("~Adapter\n", Lecture);
+	}
 public:
 	virtual void myWay() {}
 };
 class Interface1 : public Adapter {
 	Legacy1 wrapped;
+public: ~Interface1() {
+		DTOR("  ~Interface1 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface1: wrapped "
 						<< wrapped.thisWay(); }
 };
 class Interface2 : public Adapter {
 	Legacy2 wrapped;
+public: ~Interface2() {
+		DTOR("  ~Interface2 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface2: wrapped "
 						<< wrapped.thatWay(); }
 };
 class Interface3 : public Adapter {
 	Legacy3 wrapped;
+public: ~Interface3() {
+		DTOR("  ~Interface3 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface3: wrapped "
 						<< wrapped.yourWay(); }
 };
 // Seam point - add another interface.
 
-void demo(int seqNo) {
+void demo(int seqNo) {	// Test variations.
 	Adapter* interfaces[] = {
 		new Interface1,
 		new Interface2,
@@ -119,6 +142,9 @@ void demo(int seqNo) {
 	};
 	for(size_t i=0; i<COUNT(interfaces); i++) {
 		interfaces[i]->myWay();
+	}
+	for(size_t i=0; i<COUNT(interfaces); i++) {
+		delete interfaces[i];
 	}
 	cout << endl;
 }
@@ -166,7 +192,7 @@ Adapter* Adapter::makeObject(string& criteria) {
 	}							// base, default, ABC.
 }
 
-void demo(int seqNo) {	// Decouples client from creation.
+void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Interface1", "Interface2",
 						  "Interface3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
@@ -219,7 +245,7 @@ Sanitation* Sanitation::makeObject(const string& criteria) {
 	else { throw "Infected!"; }	// Exception.
 }
 
-void demo() {	// Decouples client from creation.
+void demo() {	// Test variations.
 	string criteria[] = { "Pathogen", "Virus", "ExtraTerrestrial" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Sanitation* purify = Sanitation::makeObject(criteria[i]);
@@ -321,7 +347,7 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "adapter") {}
-	virtual ~Observer() { DTOR("~AdapterObserver ", Architecture); }
+	virtual ~Observer() { DTOR("~AdapterObserver ", Lecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << adapter::lecture::legacy >>\n";
