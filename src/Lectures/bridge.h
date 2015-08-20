@@ -117,34 +117,42 @@ void demo(int seqNo) {
 namespace skeleton {
 
 class Platform { // If the implementations are varying...
-public: virtual ~Platform() {}
+public: virtual ~Platform() {
+		DTOR("~Platform ", Lecture);
+	}
 public:
 	virtual string execute() { return "Oops"; }
 public:
 	static Platform* makeObject(string& crit);
 };
 class Platform1 : public Platform {
+public: ~Platform1() {
+		DTOR(" ~Platform1 ", Lecture);
+	}
 public:
 	string execute() { return "Platform1"; }
 };
 class Platform2 : public Platform {
+public: ~Platform2() {
+		DTOR(" ~Platform2 ", Lecture);
+	}
 public:
 	string execute() { return "Platform2"; }
 };
 class Platform3 : public Platform {
+public: ~Platform3() {
+		DTOR(" ~Platform3 ", Lecture);
+	}
 public:
 	string execute() { return "Platform3"; }
 };
 // Seam point - add another implementation.
-
 Platform* Platform::makeObject(string& crit) {
-	if(		crit == "Platform1")	return new Platform1;
-	else if(crit == "Platform2")	return new Platform2;
-	else if(crit == "Platform3")	return new Platform3;
+	if(crit == "Platform1")	return new Platform1;
+	if(crit == "Platform2")	return new Platform2;
+	if(crit == "Platform3")	return new Platform3;
 	// Seam point - insert another criteria.
-	else {						// Options:
-		return new Platform;	// null, exception,
-	}							// base, default, ABC.
+	return new Platform; // Base, default, null, exception.
 }
 
 class Abstraction { // If the abstractions are varying...
@@ -152,13 +160,18 @@ protected:
 	Platform* platform;
 public:
 	Abstraction(Platform* platform=0) : platform(platform) {}
-	virtual ~Abstraction() {}
+	virtual ~Abstraction() { delete platform;
+		DTOR("~Abstraction\n", Lecture);
+	}
 public:
 	virtual string execute() { return "Oops"; }
 public:
 	static Abstraction* makeObject(string& crit, Platform* plat);
 };
 class Abstract1 : public Abstraction {
+public: ~Abstract1() {
+		DTOR("  ~Abstract1", Lecture);
+	}
 public:
 	Abstract1(Platform* platform) : Abstraction(platform) {}
 public:
@@ -167,6 +180,9 @@ public:
 	}
 };
 class Abstract2 : public Abstraction {
+public: ~Abstract2() {
+		DTOR("  ~Abstract2", Lecture);
+	}
 public:
 	Abstract2(Platform* platform) : Abstraction(platform) {}
 public:
@@ -175,6 +191,9 @@ public:
 	}
 };
 class Abstract3 : public Abstraction {
+public: ~Abstract3() {
+		DTOR("  ~Abstract3", Lecture);
+	}
 public:
 	Abstract3(Platform* platform) : Abstraction(platform) {}
 public:
@@ -183,26 +202,25 @@ public:
 	}
 };
 // Seam point - add another abstraction.
-
-Abstraction* Abstraction::makeObject(string& crit, Platform* plat) {
-	if(		crit == "Abstract1")	return new Abstract1(plat);
-	else if(crit == "Abstract2")	return new Abstract2(plat);
-	else if(crit == "Abstract3")	return new Abstract3(plat);
+Abstraction* Abstraction::makeObject(string& crit, Platform* plat){
+	if(crit == "Abstract1")	return new Abstract1(plat);
+	if(crit == "Abstract2")	return new Abstract2(plat);
+	if(crit == "Abstract3")	return new Abstract3(plat);
 	// Seam point - insert another criteria.
-	else {						// Options:
-		return new Abstraction;	// null, exception,
-	}							// base, default, ABC.
+	return new Abstraction; // Base, default, null, exception.
 }
 
-void demo() {	// Test variation.
+void demo() {	// Test variations.
 	string critA[] = {"Abstract1","Abstract2","Abstract3","oops" };
-	string critP[] = {"Platform1","Platform2","Platform3","oops" };
+	string critP[] = {"Platform1","Platform2","Platform3" };
 	for(size_t i=0; i<COUNT(critA); i++) {
+		Abstraction* abstracts[COUNT(critP)];
 		for(size_t j=0; j<COUNT(critP); j++) {
 			Platform* platform = Platform::makeObject(critP[j]);
-			Abstraction* abstract = Abstraction::makeObject(critA[i], platform);
-			cout << "  " << abstract->execute() << ".\n";
+			abstracts[j] = Abstraction::makeObject(critA[i], platform);
+			cout << "  " << abstracts[j]->execute() << ".\n";
 		}
+		for(size_t j=0; j<COUNT(critP); j++) delete abstracts[j];
 	}
 	cout << endl;
 }

@@ -117,7 +117,9 @@ void demo(int seqNo) {
 namespace skeleton {
 
 class TemplateMethod { // If the steps are varying...
-public: virtual ~TemplateMethod() {}
+public: virtual ~TemplateMethod() {
+		DTOR("~TemplateMethod\n", Lecture);
+	}
 public:
 	void run() {
 		cout << "  run - " << sameStep1();
@@ -130,41 +132,52 @@ protected:
 	string sameStep1() { return "step1"; }
 	string sameStep2() { return "step2"; }
 	virtual string diffStep3() { return "oops!"; }
-	string sameStep4() { return "step4"; }
+	string sameStep4() { return "step4."; }
 public:
 	static TemplateMethod* makeObject(string& criteria);
 };
 class Diff1Step3 : public TemplateMethod {
+public: ~Diff1Step3() {
+		DTOR("  ~Diff1Step3 ", Lecture);
+	}
 public:
 	string diffStep3() { return "Diff1.step3"; }
 };
 class Diff2Step3 : public TemplateMethod {
+public: ~Diff2Step3() {
+		DTOR("  ~Diff2Step3 ", Lecture);
+	}
 public:
 	string diffStep3() { return "Diff2.step3"; }
 };
 class Diff3Step3 : public TemplateMethod {
+public: ~Diff3Step3() {
+		DTOR("  ~Diff3Step3 ", Lecture);
+	}
 public:
 	string diffStep3() { return "Diff3.step3"; }
 };
 // Seam point - add another step.
 
 TemplateMethod* TemplateMethod::makeObject(string& criteria) {
-	if(		criteria == "Diff1Step3")	return new Diff1Step3;
-	else if(criteria == "Diff2Step3")	return new Diff2Step3;
-	else if(criteria == "Diff3Step3")	return new Diff3Step3;
+	if(criteria == "Diff1Step3")	return new Diff1Step3;
+	if(criteria == "Diff2Step3")	return new Diff2Step3;
+	if(criteria == "Diff3Step3")	return new Diff3Step3;
 	// Seam point - insert another step.
-	else {							// Options:
-		return new TemplateMethod;	// null, exception,
-	}								// base, default, ABC.
+	return new TemplateMethod; // Base, default, null, exception.
 }
 
 void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Diff1Step3", "Diff2Step3",
 						  "Diff3Step3", "oops" };
+	vector<TemplateMethod*> diffs;
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		TemplateMethod* steps = TemplateMethod::makeObject(criteria[i]);
 		steps->run();
+		diffs.push_back(steps);
 	}
+	for(size_t i=0; i<COUNT(criteria); i++)
+		delete diffs[i];
 	cout << endl;
 }
 

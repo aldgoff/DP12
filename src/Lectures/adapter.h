@@ -149,14 +149,28 @@ void demo(int seqNo) {	// Test variations.
 	cout << endl;
 }
 
-namespace TM {
+namespace FM {
 
-struct Legacy1 {string thisWay() {return "this way.\n";}};
-struct Legacy2 {string thatWay() {return "that way.\n";}};
-struct Legacy3 {string yourWay() {return "your way.\n";}};
+struct Legacy1 {string thisWay() {return "this way.\n";}
+	~Legacy1() {
+		DTOR("~Legacy1 ", Lecture);
+	}
+};
+struct Legacy2 {string thatWay() {return "that way.\n";}
+	~Legacy2() {
+		DTOR("~Legacy2 ", Lecture);
+	}
+};
+struct Legacy3 {string yourWay() {return "your way.\n";}
+	~Legacy3() {
+		DTOR("~Legacy3 ", Lecture);
+	}
+};
 
 class Adapter { // If the interfaces are varying...
-public: virtual ~Adapter() {}
+public: virtual ~Adapter() {
+		DTOR("~Adapter\n", Lecture);
+	}
 public:
 	virtual void myWay() { cout << "  Oops!\n"; }
 public:
@@ -164,18 +178,27 @@ public:
 };
 class Interface1 : public Adapter {
 	Legacy1 wrapped;
+public: ~Interface1() {
+		DTOR("  ~Interface1 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface1: wrapped "
 						<< wrapped.thisWay(); }
 };
 class Interface2 : public Adapter {
 	Legacy2 wrapped;
+public: ~Interface2() {
+		DTOR("  ~Interface2 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface2: wrapped "
 						<< wrapped.thatWay(); }
 };
 class Interface3 : public Adapter {
 	Legacy3 wrapped;
+public: ~Interface3() {
+		DTOR("  ~Interface3 ", Lecture);
+	}
 public:
 	void myWay() { cout << "  Interface3: wrapped "
 						<< wrapped.yourWay(); }
@@ -183,26 +206,28 @@ public:
 // Seam point - add another interface.
 
 Adapter* Adapter::makeObject(string& criteria) {
-	if(		criteria == "Interface1")	return new Interface1;
-	else if(criteria == "Interface2")	return new Interface2;
-	else if(criteria == "Interface3")	return new Interface3;
+	if(criteria == "Interface1")	return new Interface1;
+	if(criteria == "Interface2")	return new Interface2;
+	if(criteria == "Interface3")	return new Interface3;
 	// Seam point - insert another interface.
-	else {						// Options:
-		return new Adapter;		// null, exception,
-	}							// base, default, ABC.
+	return new Adapter; // Base, default, null, exception.
 }
 
 void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Interface1", "Interface2",
 						  "Interface3", "oops" };
+	vector<Adapter*> interfaces;
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Adapter* interface = Adapter::makeObject(criteria[i]);
 		interface->myWay();
+		interfaces.push_back(interface);
 	}
+	for(size_t i=0; i<COUNT(criteria); i++)
+		delete interfaces[i];
 	cout << endl;
 }
 
-} // TM
+} // FM
 
 } // skeleton
 
@@ -376,7 +401,7 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << adapter::skeleton >>\n";
 		skeleton::demo(seqNo);
-		skeleton::TM::demo(seqNo);
+		skeleton::FM::demo(seqNo);
 	}
 	virtual void recognition() {
 		cout << seqNo << ") << adapter::recognition >>\n";

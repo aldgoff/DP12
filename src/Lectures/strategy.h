@@ -75,21 +75,21 @@ public: ~Algorithm1() {
 		DTOR("  ~Algorithm1 ", Lecture);
 	}
 public:
-	void compute() { cout << "  Algorithm1\n"; }
+	void compute() { cout << "  Algorithm1."; }
 };
 class Algorithm2 : public Strategy {
 public: ~Algorithm2() {
 		DTOR("  ~Algorithm2 ", Lecture);
 	}
 public:
-	void compute() { cout << "  Algorithm2\n"; }
+	void compute() { cout << "  Algorithm2."; }
 };
 class Algorithm3 : public Strategy {
 public: ~Algorithm3() {
 		DTOR("  ~Algorithm3 ", Lecture);
 	}
 public:
-	void compute() { cout << "  Algorithm3\n"; }
+	void compute() { cout << "  Algorithm3."; }
 };
 // Seam point - add another algorithm.
 
@@ -101,44 +101,52 @@ void demo(int seqNo) {	// Test variations.
 	};
 	for(size_t i=0; i<COUNT(algorithms); i++) {
 		algorithms[i]->compute();
-	}
-	for(size_t i=0; i<COUNT(algorithms); i++) {
 		delete algorithms[i];
 	}
 	cout << endl;
 }
 
-namespace TM {
+namespace FM {
 
 class Strategy { // If the algorithms are varying...
-public:	virtual ~Strategy() {}
 public:
-	virtual void compute() { cout << "  Oops!\n"; }
+	virtual ~Strategy() {
+		DTOR("~Strategy\n", Lecture);
+	}
+public:
+	virtual void compute() { cout << "  Oops!  "; }
 public:
 	static Strategy* makeObject(string& criteria);
 };
 class Algorithm1 : public Strategy {
+public: ~Algorithm1() {
+		DTOR("  ~Algorithm1 ", Lecture);
+	}
 public:
-	void compute() { cout << "  Algorithm1\n"; }
+	void compute() { cout << "  Algorithm1."; }
 };
 class Algorithm2 : public Strategy {
+public: ~Algorithm2() {
+		DTOR("  ~Algorithm2 ", Lecture);
+	}
 public:
-	void compute() { cout << "  Algorithm2\n"; }
+	void compute() { cout << "  Algorithm2."; }
 };
 class Algorithm3 : public Strategy {
+public: ~Algorithm3() {
+		DTOR("  ~Algorithm3 ", Lecture);
+	}
 public:
-	void compute() { cout << "  Algorithm3\n"; }
+	void compute() { cout << "  Algorithm3."; }
 };
 // Seam point - add another algorithm.
 
 Strategy* Strategy::makeObject(string& criteria) {
-	if(		criteria == "Algorithm1")	return new Algorithm1;
-	else if(criteria == "Algorithm2")	return new Algorithm2;
-	else if(criteria == "Algorithm3")	return new Algorithm3;
+	if(criteria == "Algorithm1")	return new Algorithm1;
+	if(criteria == "Algorithm2")	return new Algorithm2;
+	if(criteria == "Algorithm3")	return new Algorithm3;
 	// Seam point - insert another algorithm.
-	else {						// Options:
-		return new Strategy;	// null, exception,
-	}							// base, default, ABC.
+	return new Strategy; // Base, default, null, exception.
 }
 
 void demo(int seqNo) {	// Test variations.
@@ -147,11 +155,12 @@ void demo(int seqNo) {	// Test variations.
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		Strategy* algorithm = Strategy::makeObject(criteria[i]);
 		algorithm->compute();
+		delete algorithm;
 	}
 	cout << endl;
 }
 
-} // TM
+} // FM
 
 } // skeleton
 
@@ -203,277 +212,6 @@ void demo() {	// Test variations.
 }
 
 } // recognition
-
-namespace refactoring {	// Deprecated.
-
-namespace bad {
-
-void clientCode_A(int criteria) {	// In file A.
-	switch(criteria) {
-	case 0:	cout << "  Pre-order traversal";	break;
-	case 1:	cout << "  In-order traversal";		break;
-	case 2:	cout << "  Post-order traversal";	break;
-	// Seam point - insert another criteria.
-	default: cout << "  Oops";	break;
-	}
-}
-void clientCode_B(int criteria) {	// In file B.
-	switch(criteria) {
-	case 0:	cout << " - heap parse.\n";	break;
-	case 1:	cout << " - token parse.\n";	break;
-	case 2:	cout << " - predictive parse.\n";	break;
-	// Seam point - insert another criteria.
-	default: cout << " - oops!\n";	break;
-	}
-}
-
-void demo() {
-	cout << "  refactoring::bad::demo().\n";
-	int test[] = { 0, 1, 2, 3 };
-	for(size_t i=0; i<COUNT(test); i++) { // Correlated:
-		clientCode_A(test[i]);	// traversal
-		clientCode_B(test[i]);	// parse
-	}
-	cout << endl;
-}
-
-} // bad
-
-namespace good {
-
-class Strategy {
-public: virtual ~Strategy() {}
-public:
-	virtual void traverse() { cout << "  Oops"; }
-	virtual void parse() { cout << " - oops!\n"; }
-public:
-	static Strategy* makeObject(const string& criteria);
-};
-class Scheme1 : public Strategy {
-public:
-	void traverse() { cout << "  Pre-order traversal"; }
-	void parse() { cout << " - heap parse.\n"; }
-};
-class Scheme2 : public Strategy {
-public:
-	void traverse() { cout << "  In-order traversal"; }
-	void parse() { cout << " - token parse.\n"; }
-};
-class Scheme3 : public Strategy {
-public:
-	void traverse() { cout << "  Post-order traversal"; }
-	void parse() { cout << " - predictive parse.\n"; }
-};
-// Seam point - add another traversal strategy.
-
-Strategy* Strategy::makeObject(const string& criteria) {
-	if(		criteria == "Scheme1")	return new Scheme1;
-	else if(criteria == "Scheme2")	return new Scheme2;
-	else if(criteria == "Scheme3")	return new Scheme3;
-	// Seam point - insert another criteria.
-	else {
-		return new Strategy;
-	}
-}
-
-void clientCode_A(Strategy* algorithm) {	// In file A.
-	algorithm->traverse();
-}
-void clientCode_B(Strategy* algorithm) {	// In file B.
-	algorithm->parse();
-}
-
-void demo() {	// Test variations.
-	cout << "  refactoring::good::demo().\n";
-	string criteria[] = {"Scheme1","Scheme2","Scheme3","oops"};
-	for(size_t i=0; i<COUNT(criteria); i++) {	// Correlated:
-		Strategy* scheme = Strategy::makeObject(criteria[i]);
-		clientCode_A(scheme);	// traversal
-		clientCode_B(scheme);	// parse
-		delete scheme;
-	}
-	cout << endl;
-}
-
-} // good
-
-namespace change {
-
-void clientCode_A(int criteria) {	// In file A.
-	switch(criteria) {
-	case 0:	cout << "  Pre-order traversal";	break;
-	case 1:	cout << "  In-order traversal";		break;
-	case 2:	cout << "  Post-order traversal";	break;
-	// Seam point - insert another criteria.
-	default: cout << "  Oops";	break;
-	}
-}
-void clientCode_B(int criteria) {	// In file B.
-	switch(criteria) {
-	case 0:	cout << " - heap parse";	break;
-	case 1:	cout << " - token parse";	break;
-	case 2:	cout << " - predictive parse";	break;
-	// Seam point - insert another criteria.
-	default: cout << " - oops";	break;
-	}
-}
-void clientCode_C(int criteria) {	// In file C.
-	switch(criteria) {	// 3rd duplication.
-	case 0:	cout << " - preHeap swarm.\n";		break;
-	case 1:	cout << " - inToken swarm.\n";		break;
-	case 2:	cout << " - postPredict swarm.\n";	break;
-	// Seam point - insert another criteria.
-	default: cout << " - oops!\n";	break;
-	}
-}
-void clientCode_M(int logic) {	// In file M.
-	switch(logic) {
-	case 7:	cout << "    Seven";	break;
-	case 8:	cout << "    Eight";	break;
-	case 9:	cout << "    Nine";	break;
-	// Seam point - insert another logic.
-	default: cout << " - oops!\n";	break;
-	}
-}
-void clientCode_N(int logic) {	// In file N.
-	switch(logic) {
-	case 7:	cout << " - nip7 maleficent.\n";	break;
-	case 8:	cout << " - nip8 maleficent.\n";	break;
-	case 9:	cout << " - nip9 maleficent.\n";	break;
-	// Seam point - insert another logic.
-	default: cout << " - oops!\n";	break;
-	}
-}
-
-void demoB() {	// Bad code.
-	cout << "  strategy::refactoring::change::demoB().\n";
-	int test[] = { 0, 1, 2, 3 };
-	int indi[] = { 7, 8, 9 };
-	for(size_t i=0; i<COUNT(test); i++) {	 // Independent.
-		clientCode_A(test[i]);	// traversal (correlates:)
-		clientCode_B(test[i]);	// parse
-		clientCode_C(test[i]);	// swarm
-		for(size_t j=0; j<COUNT(indi); j++) {// Independent.
-			clientCode_M(indi[j]);	// tuck (correlates:)
-			clientCode_N(indi[j]);	// nip
-		}
-	}
-	cout << endl;
-}
-
-class Strategy {
-public: virtual ~Strategy() {}
-public:
-	virtual void traverse() { cout << "  Oops"; }
-	virtual void parse() { cout << " - oops"; }
-	virtual void swarm() { cout << " - oops!\n"; }
-public:
-	static Strategy* makeObject(const string& criteria);
-};
-class Scheme1 : public Strategy {
-public:
-	void traverse() { cout << "  Pre-order traversal"; }
-	void parse() { cout << " - heap parse"; }
-	void swarm() { cout << " - preHeap swarm.\n"; }
-};
-class Scheme2 : public Strategy {
-public:
-	void traverse() { cout << "  In-order traversal"; }
-	void parse() { cout << " - token parse"; }
-	void swarm() { cout << " - inToken swarm.\n"; }
-};
-class Scheme3 : public Strategy {
-public:
-	void traverse() { cout << "  Post-order traversal"; }
-	void parse() { cout << " - predictive parse"; }
-	void swarm() { cout << " - postPredict swarm.\n"; }
-};
-// Seam point - add another traversal strategy.
-
-Strategy* Strategy::makeObject(const string& criteria) {
-	if(		criteria == "Scheme1")	return new Scheme1;
-	else if(criteria == "Scheme2")	return new Scheme2;
-	else if(criteria == "Scheme3")	return new Scheme3;
-	// Seam point - insert another criteria.
-	else {
-		return new Strategy;
-	}
-}
-
-class Maleficent {	// Strategy pattern.
-public: virtual ~Maleficent() {}
-public:
-	virtual void tuck() { cout << "    Number\n"; }
-	virtual void nip() { cout << " - nipN maleficent.\n"; }
-public:
-	static Maleficent* makeObject(const string& logic);
-};
-class Mal1 : public Maleficent {
-public:
-	void tuck() { cout << "    Seven"; }
-	void nip() { cout << " - nip7 maleficent.\n"; }
-};
-class Mal2 : public Maleficent {
-public:
-	void tuck() { cout << "    Eight"; }
-	void nip() { cout << " - nip8 maleficent.\n"; }
-};
-class Mal3 : public Maleficent {
-public:
-	void tuck() { cout << "    Nine"; }
-	void nip() { cout << " - nip9 maleficent.\n"; }
-};
-// Seam point - add another maleficent strategy.
-
-Maleficent* Maleficent::makeObject(const string& logic) {
-	if(		logic == "seven")	return new Mal1;
-	else if(logic == "eight")	return new Mal2;
-	else if(logic == "nine")	return new Mal3;
-	// Seam point - insert another logic.
-	else {
-		return new Maleficent;
-	}
-}
-
-void clientCode_A(Strategy* algorithm) {	// In file A.
-	algorithm->traverse();
-}
-void clientCode_B(Strategy* algorithm) {	// In file B.
-	algorithm->parse();
-}
-void clientCode_C(Strategy* algorithm) {	// In file C.
-	algorithm->swarm();
-}
-void clientCode_M(Maleficent* algorithm) {	// In file M.
-	algorithm->tuck();
-}
-void clientCode_N(Maleficent* algorithm) {	// In file N.
-	algorithm->nip();
-}
-
-void demoG() {	// Good code.
-	cout << "  strategy::refactoring::change::demoG().\n";
-	string criteria[] = {"Scheme1","Scheme2","Scheme3","oops"};
-	string logic[] = { "seven", "eight", "nine" };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		Strategy* scheme = Strategy::makeObject(criteria[i]);
-		clientCode_A(scheme);	// traversal (correlates:)
-		clientCode_B(scheme);	// parse
-		clientCode_C(scheme);	// swarm
-		for(size_t j=0; j<COUNT(logic); j++) {	// Independent.
-			Maleficent* obj = Maleficent::makeObject(logic[j]);
-			clientCode_M(obj);	// tuck (correlates:)
-			clientCode_N(obj);	// nip
-			delete obj;
-		}
-		delete scheme;
-	}
-	cout << endl;
-}
-
-} // change
-
-} // refactoring
 
 namespace practical_issues {
 
@@ -1038,18 +776,11 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << strategy::skeleton >>\n";
 		skeleton::demo(seqNo);
-		skeleton::TM::demo(seqNo);
+		skeleton::FM::demo(seqNo);
 	}
 	virtual void recognition() {
 		cout << seqNo << ") << strategy::recognition >>\n";
 		recognition::demo();
-	}
-	virtual void refactoring() {
-		cout << seqNo << ") << strategy::refactoring >>\n";
-		refactoring::bad::demo();
-		refactoring::good::demo();
-		refactoring::change::demoB();
-		refactoring::change::demoG();
 	}
 	virtual void practicalIssues() {
 		cout << seqNo << ") << strategy::practical_issues >>\n";

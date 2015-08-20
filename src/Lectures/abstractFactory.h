@@ -116,86 +116,130 @@ void demo(int seqNo) {
 
 namespace skeleton {
 
-class Family1 {
-public: virtual ~Family1() {}
+class Type1 {
+public: virtual ~Type1() {
+		DTOR("~Type1\n", Lecture);
+	}
 public:	virtual void id()=0;
 };
-class Family1_Able : public Family1 {
-public:	void id() { cout << "  Family 1 Able.\n"; }
+class Type1_Able : public Type1 {
+public: ~Type1_Able() {
+		DTOR("  ~Type1_Able ", Lecture);
+	}
+public:	void id() { cout << "  Type 1 Able.\n"; }
 };
-class Family1_Bill : public Family1 {
-public:	void id() { cout << "  Family 1 Bill.\n"; }
+class Type1_Bill : public Type1 {
+public: ~Type1_Bill() {
+		DTOR("  ~Type1_Bill ", Lecture);
+	}
+public:	void id() { cout << "  Type 1 Bill.\n"; }
 };
-class Family1_Cain : public Family1 {
-public:	void id() { cout << "  Family 1 Cain.\n"; }
+class Type1_Cain : public Type1 {
+public: ~Type1_Cain() {
+		DTOR("  ~Type1_Cain ", Lecture);
+	}
+public:	void id() { cout << "  Type 1 Cain.\n"; }
 };
 
-class Family2 {
-public: virtual ~Family2() {}
+class Type2 {
+public: virtual ~Type2() {
+		DTOR("~Type2\n", Lecture);
+	}
 public:	virtual void id()=0;
 };
-class Family2_Able : public Family2 {
-public:	void id() { cout << "  Family 2 Able.\n"; }
+class Type2_Able : public Type2 {
+public: ~Type2_Able() {
+		DTOR("  ~Type2_Able ", Lecture);
+	}
+public:	void id() { cout << "  Type 2 Able.\n"; }
 };
-class Family2_Bill : public Family2 {
-public:	void id() { cout << "  Family 2 Bill.\n"; }
+class Type2_Bill : public Type2 {
+public: ~Type2_Bill() {
+		DTOR("  ~Type2_Bill ", Lecture);
+	}
+public:	void id() { cout << "  Type 2 Bill.\n"; }
 };
-class Family2_Cain : public Family2 {
-public:	void id() { cout << "  Family 2 Cain.\n"; }
+class Type2_Cain : public Type2 {
+public: ~Type2_Cain() {
+		DTOR("  ~Type2_Cain ", Lecture);
+	}
+public:	void id() { cout << "  Type 2 Cain.\n"; }
 };
 
-class Family3 {
-public: virtual ~Family3() {}
+class Type3 {
+public: virtual ~Type3() {
+		DTOR("~Type3\n", Lecture);
+	}
 public:	virtual void id()=0;
 };
-class Family3_Able : public Family3 {
-public:	void id() { cout << "  Family 3 Able.\n"; }
+class Type3_Able : public Type3 {
+public: ~Type3_Able() {
+		DTOR("  ~Type3_Able ", Lecture);
+	}
+public:	void id() { cout << "  Type 3 Able.\n"; }
 };
-class Family3_Bill : public Family3 {
-public:	void id() { cout << "  Family 3 Bill.\n"; }
+class Type3_Bill : public Type3 {
+public: ~Type3_Bill() {
+		DTOR("  ~Type3_Bill ", Lecture);
+	}
+public:	void id() { cout << "  Type 3 Bill.\n"; }
 };
-class Family3_Cain : public Family3 {
-public:	void id() { cout << "  Family 3 Cain.\n"; }
+class Type3_Cain : public Type3 {
+public: ~Type3_Cain() {
+		DTOR("  ~Type3_Cain ", Lecture);
+	}
+public:	void id() { cout << "  Type 3 Cain.\n"; }
 };
 
 class AbstractFactory {	// If whole families are varying...
-public: virtual ~AbstractFactory() {}
+public: virtual ~AbstractFactory() {
+		DTOR("~AbstractFactory\n", Lecture);
+	}
 public:
-	virtual Family1* create_family_1()=0;
-	virtual Family2* create_family_2()=0;
-	virtual Family3* create_family_3()=0;
+	virtual Type1* create_type_1()=0;
+	virtual Type2* create_type_2()=0;
+	virtual Type3* create_type_3()=0;
 public:
 	static AbstractFactory* makeObject(string& criteria);
 };
 class Factory_Able : public AbstractFactory {
+public: ~Factory_Able() {
+		DTOR("  ~Factory_Able ", Lecture);
+	}
 public:
-	Family1* create_family_1() { return new Family1_Able; }
-	Family2* create_family_2() { return new Family2_Able; }
-	Family3* create_family_3() { return new Family3_Able; }
+	Type1* create_type_1() { return new Type1_Able; }
+	Type2* create_type_2() { return new Type2_Able; }
+	Type3* create_type_3() { return new Type3_Able; }
 };
 class Factory_Bill : public AbstractFactory {
+public: ~Factory_Bill() {
+		DTOR("  ~Factory_Bill ", Lecture);
+	}
 public:
-	Family1* create_family_1() { return new Family1_Bill; }
-	Family2* create_family_2() { return new Family2_Bill; }
-	Family3* create_family_3() { return new Family3_Bill; }
+	Type1* create_type_1() { return new Type1_Bill; }
+	Type2* create_type_2() { return new Type2_Bill; }
+	Type3* create_type_3() { return new Type3_Bill; }
 };
 class Factory_Cain : public AbstractFactory {
+public: ~Factory_Cain() {
+		DTOR("  ~Factory_Cain ", Lecture);
+	}
 public:
-	Family1* create_family_1() { return new Family1_Cain; }
-	Family2* create_family_2() { return new Family2_Cain; }
-	Family3* create_family_3() { return new Family3_Cain; }
+	Type1* create_type_1() { return new Type1_Cain; }
+	Type2* create_type_2() { return new Type2_Cain; }
+	Type3* create_type_3() { return new Type3_Cain; }
 };
 // Seam point - add another abstract factory.
 
 AbstractFactory* AbstractFactory::makeObject(string& criteria) {
-	if(		criteria == "Able")	return new Factory_Able;
-	else if(criteria == "Bill")	return new Factory_Bill;
-	else if(criteria == "Cain")	return new Factory_Cain;
-	// Seam point - insert another criteria.
-	else { return 0; }	// ABS null.
+	if(criteria == "Able")	return new Factory_Able;
+	if(criteria == "Bill")	return new Factory_Bill;
+	if(criteria == "Cain")	return new Factory_Cain;
+	// Seam point - insert another family.
+	return 0;	// ABS null.
 }
 
-void demo() {	// Test variation.
+void demo() {	// Test variations.
 	string criteria[] = { "Able", "Bill", "Cain", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		AbstractFactory* factory
@@ -205,13 +249,16 @@ void demo() {	// Test variation.
 			return;
 		}
 
-		Family1* family1 = factory->create_family_1();
-		Family2* family2 = factory->create_family_2();
-		Family3* family3 = factory->create_family_3();
+		Type1* type1 = factory->create_type_1();
+		Type2* type2 = factory->create_type_2();
+		Type3* type3 = factory->create_type_3();
 
-		family1->id();
-		family2->id();
-		family3->id();
+		type1->id();
+		type2->id();
+		type3->id();
+
+		delete type1; delete type2; delete type3;
+		delete factory;
 	}
 	cout << endl;
 }

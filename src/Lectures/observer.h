@@ -120,6 +120,9 @@ class Observer;
 
 class Subject {
 	list<Observer*>	observers;
+public: ~Subject() {
+		DTOR("~Subject\n\n", Lecture);
+	}
 public:
 	void attach(Observer* obs) { observers.push_back(obs); }
 	void detach(Observer* obs) { observers.remove(obs); }
@@ -132,29 +135,38 @@ public:
 	Observer(Subject& target) : subject(target) {
 		subject.attach(this);
 	}
-	virtual ~Observer() {
-		subject.detach(this);
+	virtual ~Observer() { subject.detach(this);
+		DTOR("~Observer\n", Lecture);
 	}
 public:
 	virtual void update() {}
 };
 class Listener1 : public Observer {
+public: ~Listener1() {
+		DTOR("  ~Listener1 ", Lecture);
+	}
 public:
 	Listener1(Subject& subject) : Observer(subject) {}
 public:
-	void update() { cout << "  Listener1 updating\n"; }
+	void update() { cout << "  Listener1 updating.\n"; }
 };
 class Listener2 : public Observer {
+public: ~Listener2() {
+		DTOR("  ~Listener2 ", Lecture);
+	}
 public:
 	Listener2(Subject& subject) : Observer(subject) {}
 public:
-	void update() { cout << "  Listener2 updating\n"; }
+	void update() { cout << "  Listener2 updating.\n"; }
 };
 class Listener3 : public Observer {
+public: ~Listener3() {
+		DTOR("  ~Listener3 ", Lecture);
+	}
 public:
 	Listener3(Subject& subject) : Observer(subject) {}
 public:
-	void update() { cout << "  Listener3 updating\n"; }
+	void update() { cout << "  Listener3 updating.\n"; }
 };
 // Seam point - add another listener.
 

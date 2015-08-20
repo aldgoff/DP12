@@ -117,12 +117,16 @@ void demo(int seqNo) {
 namespace skeleton {
 
 class ABC {
-public: virtual ~ABC() {}
+public: virtual ~ABC() {
+		DTOR("~ABC\n", Lecture);
+	}
 public:
 	virtual void behavior()=0;
 };
 class Base : public ABC {	// Base object to be decorated.
-public:
+public:	~Base() {
+		DTOR("  ~Base ", Lecture);
+	}
 	void behavior() { cout << "  Base"; }
 };
 class Decorator : public ABC { // If options are varying...
@@ -130,7 +134,9 @@ protected:
 	ABC* decorator;
 public:
 	Decorator(ABC* decorator) : decorator(decorator) {}
-	~Decorator() { delete decorator; }
+	~Decorator() { delete decorator;
+		DTOR("  ~Decorator ", Lecture);
+	}
 	void behavior() {}
 public:
 	static ABC* makeObject(ABC* decorator, string& criteria);
@@ -138,18 +144,27 @@ public:
 class Option1 : public Decorator {
 public:
 	Option1(ABC* decorator) : Decorator(decorator) {}
+	~Option1() {
+		DTOR("  ~Option1", Lecture);
+	}
 public:
 	void behavior() { decorator->behavior(); cout << " Opt1";}
 };
 class Option2 : public Decorator {
 public:
 	Option2(ABC* decorator) : Decorator(decorator) {}
+	~Option2() {
+		DTOR("  ~Option2", Lecture);
+	}
 public:
 	void behavior() { decorator->behavior(); cout << " Opt2";}
 };
 class Option3 : public Decorator {
 public:
 	Option3(ABC* decorator) : Decorator(decorator) {}
+	~Option3() {
+		DTOR("  ~Option3", Lecture);
+	}
 public:
 	void behavior() { decorator->behavior(); cout << " Opt3";}
 };

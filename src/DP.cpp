@@ -57,8 +57,8 @@ void ObserverSubject::init() {
 	new adapter::Observer(this, ++i);
 	new factory_method::Observer(this, ++i);
 	new template_method::Observer(this, ++i);
-	new decorator::Observer(this, ++i);
 	new observer::Observer(this, ++i);
+	new decorator::Observer(this, ++i);
 	new chain_of_resp::Observer(this, ++i);
 	new bridge::Observer(this, ++i);
 	new abstract_factory::Observer(this, ++i);

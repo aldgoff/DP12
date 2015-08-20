@@ -121,7 +121,7 @@ public: virtual ~FactoryMethod() {
 		DTOR("~FactoryMethod\n", Lecture);
 	}
 public:
-	virtual void run() { cout << "  Oops!  "; }
+	virtual void method() { cout << "  Oops!  "; }
 public:
 	static FactoryMethod* makeObject(string& criteria);
 };
@@ -130,21 +130,21 @@ public: ~Type1() {
 		DTOR("  ~Type1 ", Lecture);
 	}
 public:
-	void run() { cout << "  Type1"; }
+	void method() { cout << "  Type1."; }
 };
 class Type2 : public FactoryMethod {
 public: ~Type2() {
 		DTOR("  ~Type2 ", Lecture);
 	}
 public:
-	void run() { cout << "  Type2"; }
+	void method() { cout << "  Type2."; }
 };
 class Type3 : public FactoryMethod {
 public: ~Type3() {
 		DTOR("  ~Type3 ", Lecture);
 	}
 public:
-	void run() { cout << "  Type3"; }
+	void method() { cout << "  Type3."; }
 };
 // Seam point - add another class.
 
@@ -160,7 +160,7 @@ void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Type1", "Type2", "Type3", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		FactoryMethod* type = FactoryMethod::makeObject(criteria[i]);
-		type->run();
+		type->method();
 		delete type;
 	}
 	cout << endl;
