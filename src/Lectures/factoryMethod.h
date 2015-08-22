@@ -179,26 +179,24 @@ public:
 };
 class Mercedes : public Car {
 public:
-	void drive() { cout << "  Mercedes\n"; }
+	void drive() { cout << "  Mercedes.\n"; }
 };
 class BMW : public Car {
 public:
-	void drive() { cout << "  BMW\n"; }
+	void drive() { cout << "  BMW.\n"; }
 };
 class Tesla : public Car {
 public:
-	void drive() { cout << "  Tesla\n"; }
+	void drive() { cout << "  Tesla.\n"; }
 };
 // Seam point - add another car.
 
 Car* Car::makeObject(const string& criteria) {
-	if(		criteria == "Safety")	return new Mercedes;
-	else if(criteria == "Status")	return new BMW;
-	else if(criteria == "Electric")	return new Tesla;
-	// Seam point - insert another car.
-	else {
-		return 0;	// Null.
-	}
+	if(criteria == "Safety")	return new Mercedes;
+	if(criteria == "Status")	return new BMW;
+	if(criteria == "Electric")	return new Tesla;
+	// Seam point - insert another criteria.
+	return 0;	// Null.
 }
 
 void demo() {	// Test variations.

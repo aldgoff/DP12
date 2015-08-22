@@ -196,10 +196,11 @@ public:
 };
 
 Fit* Fit::makeObject(const string& criteria) {
-	if(		criteria == "BackOfTheEnvelope")	return new Linear;
-	else if(criteria == "QuickAndDirty")	return new Poly;
-	else if(criteria == "Exact")		return new Spline;
-	else { return new Spline; }	// Default.
+	if(criteria == "BackOfTheEnvelope")	return new Linear;
+	if(criteria == "QuickAndDirty")	return new Poly;
+	if(criteria == "Exact")		return new Spline;
+	// Seam point - insert another criteria.
+	return new Spline;	// Default.
 }
 
 void demo() {	// Test variations.

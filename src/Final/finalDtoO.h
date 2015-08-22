@@ -63,13 +63,13 @@ namespace strategy {		// DP 1.
 
 }
 
-namespace observer {		// DP 7.
+namespace observer {		// DP 5.
 
 // Seam point - add another listener.
 
 }
 
-namespace abstract_factory {// DP 10.
+namespace abstract_factory {// DP 9.
 
 // Seam point - add another type 1.
 // Seam point - add another type 2.
@@ -80,14 +80,14 @@ namespace abstract_factory {// DP 10.
 
 }
 
-namespace bridge {			// DP 9.
+namespace bridge {			// DP 8.
 
 // Seam Point - add another implementation.
 // Seam Point - add another abstraction.
 
 }
 
-namespace chain_of_resp {	// DP 8.
+namespace chain_of_resp {	// DP 7.
 
 // Seam points - add another responder.
 
@@ -99,7 +99,7 @@ namespace decorator {		// DP 6.
 
 }
 
-namespace factory_method {	// DP 5.
+namespace factory_method {	// DP 3.
 
 // Seam point - add another class.
 

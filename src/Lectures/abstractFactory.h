@@ -346,7 +346,7 @@ OS* OS::makeObject(string& criteria) {
 	return 0;	// ABC null.
 }
 
-void demo() {	// Test variation.
+void demo() {	// Test variations.
 	string criteria[] = { "Mac", "Unix", "Micro", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		OS* factory = OS::makeObject(criteria[i]);

@@ -74,7 +74,7 @@ namespace strategy {		// DP 1.
 
 }
 
-namespace observer {		// DP 6.
+namespace observer {		// DP 5.
 
 // Seam point - add another listener.
 
@@ -104,7 +104,7 @@ namespace chain_of_resp {	// DP 7.
 
 }
 
-namespace decorator {		// DP 5.
+namespace decorator {		// DP 6.
 
 // Seam point - add another option.
 

@@ -199,7 +199,7 @@ protected:
 	string init() { return "initialize"; }
 	string start() { return "start"; }
 	virtual string validate()=0;
-	string stop() { return "stop"; }
+	string stop() { return "stop."; }
 public:
 	static Process* makeObject(const string& criteria);
 };
@@ -218,10 +218,11 @@ public:
 // Seam point - add another test sequence.
 
 Process* Process::makeObject(const string& criteria) {
-	if(		criteria == "Music")	return new Audio;
-	else if(criteria == "Security")	return new CSME;
-	else if(criteria == "Speech")	return new WFST;
-	else { return 0; }	// ABC.
+	if(criteria == "Music")		return new Audio;
+	if(criteria == "Security")	return new CSME;
+	if(criteria == "Speech")	return new WFST;
+	// Seam point - insert another criteria.
+	return 0;	// ABC.
 }
 
 void demo() {	// Test variations.

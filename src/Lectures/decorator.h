@@ -229,15 +229,16 @@ class MagWheels : public Accessory {
 public:
 	MagWheels(Vehicle* wheels) : Accessory(wheels) {}
 public:
-	void features() { acc->features(); cout<<" mag-wheels";}
+	void features() { acc->features(); cout<<" mag-wheels.";}
 };
 // Seam point - add another accessory.
 
 Vehicle* Accessory::create(Vehicle* car, string& criteria) {
-	if(		criteria == "Music")	return new Audio(car);
-	else if(criteria == "View")	return new SunRoof(car);
-	else if(criteria == "Hip")	return new MagWheels(car);
-	else { return car; }	// Do nothing.
+	if(criteria == "Music")	return new Audio(car);
+	if(criteria == "View")	return new SunRoof(car);
+	if(criteria == "Hip")	return new MagWheels(car);
+	// Seam point - insert another criteria.
+	return car;	// Do nothing.
 }
 
 void demo() {	// Test variations.

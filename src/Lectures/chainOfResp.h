@@ -233,11 +233,12 @@ ChainOfCommand* ChainOfCommand::setup() {
 		new Major(
 		new Colonal(
 		new General(
+		// Seam point - insert another officer.
 		new ChainOfCommand
 	)));
 }
 
-void demo() {
+void demo() {	// Test variations.
 	string criteria[] = { "Engage", "Tactical",
 						  "Strategic", "oops" };
 	for(size_t i=0; i<COUNT(criteria); i++) {

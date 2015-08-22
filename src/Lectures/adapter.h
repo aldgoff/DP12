@@ -233,10 +233,10 @@ void demo(int seqNo) {	// Test variations.
 
 namespace recognition {
 
-struct Pot { string boil() { return "  boil in water\n"; } };
-struct Lamp { string expose() { return "  5 min shine\n"; } };
-struct Bath { string emerse() { return "  3 min soak\n"; } };
-struct Carbonize { string burn() { return "  grill\n"; } };
+struct Pot { string boil() { return "  boil in water.\n"; } };
+struct Lamp { string expose() { return "  5 min shine.\n"; } };
+struct Bath { string emerse() { return "  3 min soak.\n"; } };
+struct Carbonize { string burn() { return "  grill.\n"; } };
 
 class Sanitation {
 public: virtual ~Sanitation() {}
@@ -263,11 +263,11 @@ public:
 // Seam point - add another sanitation.
 
 Sanitation* Sanitation::makeObject(const string& criteria) {
-	if(		criteria == "Pathogen")	return new Heat;
-	else if(criteria == "Virus")	return new UV;
-	else if(criteria == "ExtraTerrestrial")	return new Ozone;
-
-	else { throw "Infected!"; }	// Exception.
+	if(criteria == "Pathogen")	return new Heat;
+	if(criteria == "Virus")			return new UV;
+	if(criteria == "ExtraTerrestrial")	return new Ozone;
+	// Seam point - insert another criteria.
+	throw "Infected!";	// Exception.
 }
 
 void demo() {	// Test variations.

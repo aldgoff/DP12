@@ -17,10 +17,10 @@ namespace final_original {
  * x 4 - Factory Methods: (Observer)
  * 			packaging (domain: order[packager])
  * 			stuffing (domain: order[stuffer])
- * x 5 - Decorator:
+ * x 5 - Observer: Subject(bins) Observers(IJM, conveyer belt, (domains: packager, stuffer)
+ * x 6 - Decorator:
  * 			tags (domain: order[tags])
  * 			additives (domain: order[<additives>])
- * x 6 - Observer: Subject(bins) Observers(IJM, conveyer belt, (domains: packager, stuffer)
  * x 7 - ChainOfR: (domain: order[moldLoc] - inventory, borrow, mill, purchase)
  * x 8 - Bridge: mill
  * 			Platform: (domains: metal, order[finish])
@@ -228,7 +228,7 @@ RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& 
 
 }
 
-namespace observer {		// DP 6.
+namespace observer {		// DP 5.
 
 class BinSubject;
 class BinObserver;
@@ -741,7 +741,7 @@ GetMold* GetMold::selectMold(map<string,string>& order) {
 
 }
 
-namespace decorator {		// DP 5.
+namespace decorator {		// DP 6.
 
 class Cavity {	// If the options are varying...
 public:
@@ -967,8 +967,8 @@ using namespace strategy;			// DP 1
 using namespace adapter;			// DP 2
 //              template_method;	// DP 3
 using namespace factory_method;		// DP 4
-using namespace decorator;			// DP 5
-//				observer;			// DP 6
+//				observer;			// DP 5
+using namespace decorator;			// DP 6
 using namespace chain_of_resp;		// DP 7
 using namespace bridge;				// DP 8
 using namespace abstract_factory;	// DP 9
