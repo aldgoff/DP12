@@ -122,7 +122,8 @@ protected:
 public:
 	ChainOfResp(ChainOfResp* successor=0):successor(successor){}
 	virtual ~ChainOfResp() {
-		DTOR("~ChainOfResp\n", Lecture);
+		DTOR(" ~ChainOfResp\n", Lecture);
+		delete successor;
 	}
 public:
 	virtual void delegate(int criteria) {
@@ -135,11 +136,11 @@ class Derived1 : public ChainOfResp {
 public:
 	Derived1(ChainOfResp* successor) : ChainOfResp(successor){}
 	~Derived1() {
-		DTOR("  ~Derived1 ", Lecture);
+		DTOR("  ~Derived1", Lecture);
 	}
 public:
 	void delegate(int criteria) {
-		if(criteria == 1)	cout << "  Derived1 handled.";
+		if(criteria == 1)	cout << "  Derived1 handled.\n";
 		else 				successor->delegate(criteria);
 	}
 };
@@ -147,11 +148,11 @@ class Derived2 : public ChainOfResp {
 public:
 	Derived2(ChainOfResp* successor) : ChainOfResp(successor){}
 	~Derived2() {
-		DTOR("  ~Derived2 ", Lecture);
+		DTOR("  ~Derived2", Lecture);
 	}
 public:
 	void delegate(int criteria) {
-		if(criteria == 2)	cout << "  Derived2 handled.";
+		if(criteria == 2)	cout << "  Derived2 handled.\n";
 		else 				successor->delegate(criteria);
 	}
 };
@@ -159,11 +160,11 @@ class Derived3 : public ChainOfResp {
 public:
 	Derived3(ChainOfResp* successor) : ChainOfResp(successor){}
 	~Derived3() {
-		DTOR("  ~Derived3 ", Lecture);
+		DTOR("  ~Derived3", Lecture);
 	}
 public:
 	void delegate(int criteria) {
-		if(criteria == 3)	cout << "  Derived3 handled.";
+		if(criteria == 3)	cout << "  Derived3 handled.\n";
 		else 				successor->delegate(criteria);
 	}
 };
@@ -180,11 +181,12 @@ ChainOfResp* ChainOfResp::setupChain() {
 
 void demo() {	// Test variations.
 	int criteria[] = { 1, 2, 3, 0 };
+	ChainOfResp* responder = ChainOfResp::setupChain();
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		ChainOfResp* responder = ChainOfResp::setupChain();
 		responder->delegate(criteria[i]);
-		delete responder;
 	}
+	cout << endl;
+	delete responder;
 	cout << endl;
 }
 

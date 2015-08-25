@@ -229,9 +229,9 @@ public: virtual ~Component() {}
 public:
 	virtual void behavior()=0;
 };
-class Base : public Component {		// Base object to be decorated.
+class Object : public Component {		// Base object to be decorated.
 public:
-	void behavior() { cout << "  Base"; }
+	void behavior() { cout << "  Object"; }
 };
 class Decorator : public Component {// If the options are varying...
 protected:

@@ -123,11 +123,11 @@ public: virtual ~ABC() {
 public:
 	virtual void behavior()=0;
 };
-class Base : public ABC {	// Base object to be decorated.
-public:	~Base() {
-		DTOR("  ~Base ", Lecture);
+class Object : public ABC {	// Base object to be decorated.
+public:	~Object() {
+		DTOR("  ~Object ", Lecture);
 	}
-	void behavior() { cout << "  Base"; }
+	void behavior() { cout << "  Object"; }
 };
 class Decorator : public ABC { // If options are varying...
 protected:
@@ -180,7 +180,7 @@ ABC* Decorator::makeObject(ABC* decorator, string& criteria){
 void demo(int seqNo) {	// Test variations.
 	string criteria[] = { "Option1", /*"Option2",*/
 						  "Option3", "oops" };
-	ABC* thing = new Base;
+	ABC* thing = new Object;
 	for(size_t i=0; i<COUNT(criteria); i++) {
 		thing = Decorator::makeObject(thing, criteria[i]);
 	}
