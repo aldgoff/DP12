@@ -28,24 +28,327 @@ namespace lecture {
 
 namespace legacy {
 
+namespace story_1 {	// Single variation & criteria.
+
+void clientCode_A(int criteria) {	// In file A.
+	switch(criteria) {
+	case 1:	cout << "  Pre-order traversal.\n";		break;
+	case 2:	cout << "  In-order traversal.\n";		break;
+	case 3:	cout << "  Post-order traversal.\n";	break;
+	// Seam point - insert another criteria.
+	default: cout << "  Oops!\n";	break;
+	}
+}
+
+void demo() {
+	cout << "  legacy::story_1::demo().\n";
+	int test[] = { 1, 2, 3, 0 };
+	for(size_t i=0; i<COUNT(test); i++) {
+		clientCode_A(test[i]);	// traversal
+	}
+	cout << endl;
+}
+
+} // story_1
+
 void demo(int seqNo) {
-	cout << seqNo << ") << strategy::lecture::legacy::demo() >>\n";
+	story_1::demo();
 }
 
 }
 
 namespace problem {
 
+namespace story_2 {	// Add second variation but with same criteria.
+
+void clientCode_A(int criteria) {	// In file A.
+	switch(criteria) {	// See file B.
+	case 1:	cout << "  Pre-order traversal";	break;
+	case 2:	cout << "  In-order traversal";		break;
+	case 3:	cout << "  Post-order traversal";	break;
+	// Seam point - insert another criteria.
+	default: cout << "  Oops";	break;
+	}
+}
+void clientCode_B(int criteria) {	// In file B.
+	switch(criteria) {	// See file A.
+	case 1:	cout << " - heap parse.\n";			break;
+	case 2:	cout << " - token parse.\n";		break;
+	case 3:	cout << " - predictive parse.\n";	break;
+	// Seam point - insert another criteria.
+	default: cout << " - oops!\n";	break;
+	}
+}
+
+void demo() {
+	cout << "  problem::story_2::demo().\n";
+	int test[] = { 1, 2, 3, 0 };
+	for(size_t i=0; i<COUNT(test); i++) { // Correlated:
+		clientCode_A(test[i]);	// traversal
+		clientCode_B(test[i]);	// parse
+	}
+	cout << endl;
+}
+
+} // story_2
+
+namespace story_3 {	// Add third variation also with same criteria.
+
+void clientCode_A(int criteria) {	// In file A.
+	switch(criteria) {	// See files B,C.
+	case 1:	cout << "  Pre-order traversal";	break;
+	case 2:	cout << "  In-order traversal";		break;
+	case 3:	cout << "  Post-order traversal";	break;
+	// Seam point - insert another criteria.
+	default: cout << "  Oops";	break;
+	}
+}
+void clientCode_B(int criteria) {	// In file B.
+	switch(criteria) {	// See files A,C.
+	case 1:	cout << " - heap parse";		break;
+	case 2:	cout << " - token parse";		break;
+	case 3:	cout << " - predictive parse";	break;
+	// Seam point - insert another criteria.
+	default: cout << " - oops";	break;
+	}
+}
+void clientCode_C(int criteria) {	// In file C.
+	switch(criteria) {	// See files A,B.
+	case 1:	cout << " - preHeap swarm.\n";		break;
+	case 2:	cout << " - inToken swarm.\n";		break;
+	case 3:	cout << " - postPredict swarm.\n";	break;
+	// Seam point - insert another criteria.
+	default: cout << " - oops!\n";	break;
+	}
+}
+
+void demo() {
+	cout << "  problem::story_3::demo().\n";
+	int test[] = { 1, 2, 3, 0 };
+	for(size_t i=0; i<COUNT(test); i++) { // Correlated:
+		clientCode_A(test[i]);	// traversal
+		clientCode_B(test[i]);	// parse
+		clientCode_C(test[i]);	// swarm
+	}
+	cout << endl;
+}
+
+} // story_3
+
+namespace story_4 {	// Extend all three variations.
+
+void clientCode_A(int criteria) {	// In file A.
+	switch(criteria) {	// See files B,C.
+	case 1:	cout << "  Pre-order traversal";	break;
+	case 2:	cout << "  In-order traversal";		break;
+	case 3:	cout << "  Post-order traversal";	break;
+	// Seam point - insert another criteria.
+	case 4:	cout << "  Sample traversal";		break;
+	default: cout << "  Oops";	break;
+	}
+}
+void clientCode_B(int criteria) {	// In file B.
+	switch(criteria) {	// See files A,C.
+	case 1:	cout << " - heap parse";		break;
+	case 2:	cout << " - token parse";		break;
+	case 3:	cout << " - predictive parse";	break;
+	// Seam point - insert another criteria.
+	case 4:	cout << " - neural parse";		break;
+	default: cout << " - oops";	break;
+	}
+}
+void clientCode_C(int criteria) {	// In file C.
+	switch(criteria) {	// See files A,B.
+	case 1:	cout << " - preHeap swarm.\n";		break;
+	case 2:	cout << " - inToken swarm.\n";		break;
+	case 3:	cout << " - postPredict swarm.\n";	break;
+	// Seam point - insert another criteria.
+	case 4:	cout << " - sampleNeural swarm.\n";	break;
+	default: cout << " - oops!\n";	break;
+	}
+}
+
+void demo() {
+	cout << "  problem::story_4::demo().\n";
+	int test[] = { 1, 2, 3, 4, 0 };
+	for(size_t i=0; i<COUNT(test); i++) { // Correlated:
+		clientCode_A(test[i]);	// traversal
+		clientCode_B(test[i]);	// parse
+		clientCode_C(test[i]);	// swarm
+	}
+	cout << endl;
+}
+
+} // story_4
+
 void demo(int seqNo) {
-	cout << seqNo << ") << strategy::lecture::problem::demo() >>\n";
+	story_2::demo();
+	story_3::demo();
+	story_4::demo();
 }
 
 }
 
 namespace solution {
 
+namespace refactor_3 {	// Refactor with Strategy design pattern.
+
+class Strategy {
+public:
+	virtual ~Strategy() {
+		DTOR("~Strategy\n", Lecture);
+	}
+public:
+	virtual void traverse() { cout << "  Oops"; }
+	virtual void parse() { cout << " - oops"; }
+	virtual void swarm() { cout << " - oops!\n"; }
+};
+class Scheme1 : public Strategy {
+public: ~Scheme1() {
+		DTOR("  ~Scheme1 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  Pre-order traversal"; }
+	void parse() { cout << " - heap parse"; }
+	void swarm() { cout << " - preHeap swarm.\n"; }
+};
+class Scheme2 : public Strategy {
+public: ~Scheme2() {
+		DTOR("  ~Scheme2 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  In-order traversal"; }
+	void parse() { cout << " - token parse"; }
+	void swarm() { cout << " - inToken swarm.\n"; }
+};
+class Scheme3 : public Strategy {
+public: ~Scheme3() {
+		DTOR("  ~Scheme3 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  Post-order traversal"; }
+	void parse() { cout << " - predictive parse"; }
+	void swarm() { cout << " - postPredict swarm.\n"; }
+};
+// Seam point - add another strategy.
+
+void clientCode_A(Strategy* algorithm) {	// In file A.
+	algorithm->traverse();
+}
+void clientCode_B(Strategy* algorithm) {	// In file B.
+	algorithm->parse();
+}
+void clientCode_C(Strategy* algorithm) {	// In file C.
+	algorithm->swarm();
+}
+
+void demo() {
+	cout << "  solution::refactor_3::demo().\n";
+	int criteria[] = { 1, 2, 3 };
+	Strategy* scheme[COUNT(criteria)] = {0};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		switch(criteria[i]) {
+		case 1:	scheme[i] = new Scheme1; break;
+		case 2:	scheme[i] = new Scheme2; break;
+		case 3:	scheme[i] = new Scheme3; break;
+		}						// Correlated:
+		clientCode_A(scheme[i]);	// traversal
+		clientCode_B(scheme[i]);	// parse
+		clientCode_C(scheme[i]);	// swarm
+	}
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		delete scheme[i];
+	}
+	cout << endl;
+}
+
+} // refactor_3
+
+namespace refactor_4 {	// Refactor with Strategy design pattern.
+
+class Strategy {
+public:
+	virtual ~Strategy() {
+		DTOR("~Strategy\n", Lecture);
+	}
+public:
+	virtual void traverse() { cout << "  Oops"; }
+	virtual void parse() { cout << " - oops"; }
+	virtual void swarm() { cout << " - oops!\n"; }
+};
+class Scheme1 : public Strategy {
+public: ~Scheme1() {
+		DTOR("  ~Scheme1 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  Pre-order traversal"; }
+	void parse() { cout << " - heap parse"; }
+	void swarm() { cout << " - preHeap swarm.\n"; }
+};
+class Scheme2 : public Strategy {
+public: ~Scheme2() {
+		DTOR("  ~Scheme2 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  In-order traversal"; }
+	void parse() { cout << " - token parse"; }
+	void swarm() { cout << " - inToken swarm.\n"; }
+};
+class Scheme3 : public Strategy {
+public: ~Scheme3() {
+		DTOR("  ~Scheme3 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  Post-order traversal"; }
+	void parse() { cout << " - predictive parse"; }
+	void swarm() { cout << " - postPredict swarm.\n"; }
+};
+// Seam point - add another strategy.
+class Scheme4 : public Strategy {
+public: ~Scheme4() {
+		DTOR("  ~Scheme4 ", Lecture);
+	}
+public:
+	void traverse() { cout << "  Sample traversal"; }
+	void parse() { cout << " - neural parse"; }
+	void swarm() { cout << " - sampleNeural swarm.\n"; }
+};
+
+void clientCode_A(Strategy* algorithm) {	// In file A.
+	algorithm->traverse();
+}
+void clientCode_B(Strategy* algorithm) {	// In file B.
+	algorithm->parse();
+}
+void clientCode_C(Strategy* algorithm) {	// In file C.
+	algorithm->swarm();
+}
+
+void demo() {
+	cout << "  solution::refactor_4::demo().\n";
+	int criteria[] = { 1, 2, 3, 4 };
+	Strategy* scheme[COUNT(criteria)] = {0};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		switch(criteria[i]) {
+		case 1:	scheme[i] = new Scheme1; break;
+		case 2:	scheme[i] = new Scheme2; break;
+		case 3:	scheme[i] = new Scheme3; break;
+		case 4:	scheme[i] = new Scheme4; break;
+		}						// Correlated:
+		clientCode_A(scheme[i]);	// traversal
+		clientCode_B(scheme[i]);	// parse
+		clientCode_C(scheme[i]);	// swarm
+	}
+	for(size_t i=0; i<COUNT(criteria); i++)
+		delete scheme[i];
+	cout << endl;
+}
+
+} // refactor_4
+
 void demo(int seqNo) {
-	cout << seqNo << ") << strategy::lecture::solution::demo() >>\n";
+	refactor_3::demo();
+	refactor_4::demo();
 }
 
 }
@@ -771,7 +1074,6 @@ public:
 		homework::problem::demo(seqNo);
 	}
 	virtual void homeworkSolution() {
-		cout << seqNo << ") << strategy::homework::solution >>\n";
 		homework::solution::demo(seqNo);
 	}
 	virtual void skeleton() {
