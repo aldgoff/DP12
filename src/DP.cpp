@@ -7,6 +7,8 @@
 
 #include "DP.h"
 
+#include "swpc.h"
+
 #include "Final/final.h"
 #include "dptemplate.h"
 #include "Lectures/strategy.h"
@@ -67,6 +69,8 @@ void ObserverSubject::init() {
 	new headfirst::HeadfirstObserver(this, ++i);
 
 	new final::FinalObserver(this, 0);
+
+	new swpc::Observer(this, 0);
 
 	new LectureObserver(this);
 	new HomeworkObserver(this);
