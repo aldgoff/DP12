@@ -73,7 +73,6 @@ public:
 	void validate() { cout << " SymFW.validate()"; }
 	void stop() { cout << " SymFW.stop().\n"; }
 };
-// Seam point - add another strategy.
 class AppFW : public ValidateIP {
 public:
 	virtual ~AppFW() {
@@ -85,6 +84,7 @@ public:
 	void validate() { cout << " AppFW.validate()"; }
 	void stop() { cout << " AppFW.stop().\n"; }
 };
+// Seam point - add another strategy.
 
 void clientCode(ValidateIP* algorithm) {	// Client code polymorphic.
 	algorithm->start();
@@ -104,6 +104,8 @@ void demo(int seqNo) {	// Test all the daughter classes.
 		case DIAG_FW: val[i] = new DiagFW; break;
 		case SYM_FW:  val[i] = new SymFW;  break;
 		case APP_FW:  val[i] = new AppFW;  break;
+		// Seam point - insert another strategy.
+		default:  val[i] = new ValidateIP;  break;
 		}
 		clientCode(val[i]);
 	}

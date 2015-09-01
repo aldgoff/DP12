@@ -1066,11 +1066,9 @@ public:
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {
-		cout << seqNo << ") << strategy::homework::legacy >>\n";
 		homework::legacy::demo(seqNo);
 	}
 	virtual void homeworkProblem() {
-		cout << seqNo << ") << strategy::homework::problem >>\n";
 		homework::problem::demo(seqNo);
 	}
 	virtual void homeworkSolution() {
