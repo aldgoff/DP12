@@ -322,7 +322,7 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "factoryMethod") {}
-	virtual ~Observer() { DTOR("~FactoryMethodObserver ", Lecture); }
+	virtual ~Observer() { DTOR("~FactoryMethodObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << factory_method::lecture::legacy >>\n";

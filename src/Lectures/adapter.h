@@ -28,25 +28,178 @@ namespace lecture {
 
 namespace legacy {
 
+class Codec78 {
+public: ~Codec78() {
+		DTOR("  ~Codec78", Lecture);
+	}
+public:
+	void spin(int mono) {
+		if(mono == 1) {
+			cout << "  Codec78 mono.\n";
+			}
+		else if(mono == 2) {
+			cout << "  Codec78 stereo.\n";
+		}
+	}
+};
+
+void clientCode(bool mono=false) {
+	Codec78 codec;
+	if(mono)
+		codec.spin(1);
+	else
+		codec.spin(2);
+}
+
 void demo(int seqNo) {
 	cout << seqNo << ") << adapter::lecture::legacy::demo() >>\n";
+	clientCode(true);	cout << endl;
+	clientCode(false);	cout << endl;
+	cout << endl;
 }
 
 }
 
 namespace problem {
 
+class Codec78 {
+public: ~Codec78() {
+		DTOR("  ~Codec78", Lecture);
+	}
+public:
+	void spin(int mono) {
+		if(mono == 1) {
+			cout << "  Codec78 mono.\n";
+			}
+		else if(mono == 2) {
+			cout << "  Codec78 stereo.\n";
+		}
+	}
+};
+
+class Codec45 {
+public: ~Codec45() {
+		DTOR("  ~Codec45", Lecture);
+	}
+public:
+	void scan() { cout << "  Codec45 stereo.\n"; }
+};
+
+class Codec33 {
+public: ~Codec33() {
+		DTOR("  ~Codec33", Lecture);
+	}
+public:
+	void transcode() { cout << "  Codec33 stereo.\n"; }
+};
+
+void clientCode(unsigned format, bool mono=false) {
+	switch(format) {
+	case 78: {
+			Codec78 codec;
+			if(mono)	codec.spin(1);
+			else		codec.spin(2);
+		}
+		break;
+	case 45: {
+			Codec45 codec;
+			codec.scan();
+		}
+		break;
+	case 33: {
+			Codec33 codec;
+			codec.transcode();
+		}
+		break;
+	default:
+		cout << "  Oops!\n";
+		break;
+	}
+	cout << endl;
+}
+
 void demo(int seqNo) {
 	cout << seqNo << ") << adapter::lecture::problem::demo() >>\n";
+	clientCode(78, true);
+	clientCode(78, false);
+	clientCode(45);
+	clientCode(33);
+	clientCode(0);
 }
 
 }
 
 namespace solution {
 
+using namespace problem;
+
+class Codec {
+public: virtual ~Codec() {
+		DTOR("  ~Adapter\n", Lecture);
+	}
+public:
+	virtual void decode() { cout << "  Oops!\n"; }
+};
+class Mono78 : public Codec {
+	Codec78 codec;
+public: ~Mono78() {
+		DTOR("  ~Mono78 ", Lecture);
+	}
+public:
+	void decode() { codec.spin(1); }
+};
+class Stereo78 : public Codec {
+	Codec78 codec;
+public: ~Stereo78() {
+		DTOR("  ~Stereo78 ", Lecture);
+	}
+public:
+	void decode() { codec.spin(2); }
+};
+class Stereo45 : public Codec {
+	Codec45 codec;
+public: ~Stereo45() {
+		DTOR("  ~Stereo45 ", Lecture);
+	}
+public:
+	void decode() { codec.scan(); }
+};
+class Stereo33 : public Codec {
+	Codec33 codec;
+public: ~Stereo33() {
+		DTOR("  ~Stereo33 ", Lecture);
+	}
+public:
+	void decode() { codec.transcode(); }
+};
+// Seam point - add another interface.
+
+void clientCode(Codec* format) {
+	format->decode();
+}
+
 void demo(int seqNo) {
 	cout << seqNo << ") << adapter::lecture::solution::demo() >>\n";
+	Codec* interfaces[] = {
+		new Mono78,
+		new Stereo78,
+		new Stereo45,
+		new Stereo33,
+		new Codec
+	};
+	for(size_t i=0; i<COUNT(interfaces); i++) {
+		clientCode(interfaces[i]);
+	}
+	for(size_t i=0; i<COUNT(interfaces); i++)
+		delete interfaces[i];
+	cout << endl;
 }
+
+}
+
+namespace FM {
+
+//	string criteria[] = { "78Mono", "78", "45", "33", "0" };
 
 }
 
@@ -54,29 +207,9 @@ void demo(int seqNo) {
 
 namespace homework {
 
-namespace legacy {
+#include "../Problems/adapter.h"
 
-void demo(int seqNo) {
-	cout << seqNo << ") << adapter::homework::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << adapter::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << adapter::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/adapter.h"
 
 } // homework
 
@@ -372,30 +505,24 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "adapter") {}
-	virtual ~Observer() { DTOR("~AdapterObserver ", Lecture); }
+	virtual ~Observer() { DTOR("~AdapterObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
-		cout << seqNo << ") << adapter::lecture::legacy >>\n";
 		lecture::legacy::demo(seqNo);
 	}
 	virtual void lectureProblem() {
-		cout << seqNo << ") << adapter::lecture::problem >>\n";
 		lecture::problem::demo(seqNo);
 	}
 	virtual void lectureSolution() {
-		cout << seqNo << ") << adapter::lecture::solution >>\n";
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {
-		cout << seqNo << ") << adapter::homework::legacy >>\n";
 		homework::legacy::demo(seqNo);
 	}
 	virtual void homeworkProblem() {
-		cout << seqNo << ") << adapter::homework::problem >>\n";
 		homework::problem::demo(seqNo);
 	}
 	virtual void homeworkSolution() {
-		cout << seqNo << ") << adapter::homework::solution >>\n";
 		homework::solution::demo(seqNo);
 	}
 	virtual void skeleton() {

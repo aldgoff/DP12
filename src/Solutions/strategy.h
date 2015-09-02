@@ -20,6 +20,24 @@
 #ifndef SOLUTIONS_STRATEGY_H_
 #define SOLUTIONS_STRATEGY_H_
 
+#include "../macros.h"
+
+/* Consider the challenge of testing hardware.
+ * 1) There are multiple operations to be performed (start, stop, etc.).
+ * 2) The firmware installed on the hardware can also differ.
+ *
+ * Below is legacy code that might result from the first user story.
+ * Initially it doesn't look too bad, but as each new user story is implemented,
+ * the quadratic scaling law of change in two dimensions steadily erodes
+ * programmer velocity.
+ *
+ * Use the strategy pattern to
+ * 1) Avoid the quadratic scaling
+ * 2) Eliminate the duplicated decision making
+ * 3) Follow the Open/Closed principle
+ * 4) Simplify the client code
+ */
+
 namespace solution {
 
 enum FirmWare {

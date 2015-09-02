@@ -47,7 +47,7 @@ namespace solution {
 class TemplateMethod {
 public:
 	TemplateMethod() {}
-	virtual ~TemplateMethod() { DTOR("~TemplateMethodObserver\n", Architecture); }
+	virtual ~TemplateMethod() { DTOR("~TemplateMethodObserver\n", Lecture); }
 public:
 	virtual void run() {}
 public:

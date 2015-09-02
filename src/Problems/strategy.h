@@ -20,6 +20,8 @@
 #ifndef PROBLEMS_STRATEGY_H_
 #define PROBLEMS_STRATEGY_H_
 
+#include "../macros.h"
+
 /* Consider the challenge of testing hardware.
  * 1) There are multiple operations to be performed (start, stop, etc.).
  * 2) The firmware installed on the hardware can also differ.

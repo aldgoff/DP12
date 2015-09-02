@@ -1051,7 +1051,7 @@ class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
 	: observer::DPObserver(subject, seqNo, "strategy") {}
-	virtual ~Observer() { DTOR("~StrategyObserver ", Lecture); }
+	virtual ~Observer() { DTOR("~StrategyObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
 		cout << seqNo << ") << strategy::lecture::legacy >>\n";
