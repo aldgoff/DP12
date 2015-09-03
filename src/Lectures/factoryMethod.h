@@ -28,56 +28,177 @@ namespace lecture {
 
 namespace legacy {
 
+void clientCode_Trip(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  Fly to the Bahamas.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Load car.\n";
+	}
+	// Seam point - add another vacation.
+}
+void clientCode_Plan(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  Schedule dives.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Mark up map.\n";
+	}
+	// Seam point - add another vacation.
+}
+void clientCode_Experience(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  See pretty fish.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Take pictures.\n";
+	}
+	// Seam point - add another vacation.
+}
+
 void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::lecture::legacy::demo() >>\n";
+	cout<<seqNo<<") << factory_method::lecture::legacy::demo() >>\n";
+	string criteria[] = { "Bahamas", "RoadTrip" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		clientCode_Trip(criteria[i]);
+		clientCode_Plan(criteria[i]);
+		clientCode_Experience(criteria[i]);
+	}
+	cout << endl;
 }
 
 }
 
 namespace problem {
 
+void clientCode_Trip(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  Fly to the Bahamas.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Load car.\n";
+		}
+	else if(criteria == "Disneyland") {
+		cout << "  Get to Disneyland.\n";
+		}
+	// Seam point - add another vacation.
+	else {
+		cout << "  Oops!";
+	}
+}
+void clientCode_Plan(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  Schedule dives.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Mark up map.\n";
+		}
+	else if(criteria == "Disneyland") {
+		cout << "  Plan rides.\n";
+		}
+	// Seam point - add another vacation.
+	else {
+		cout << "  Oops!";
+	}
+}
+void clientCode_Experience(const string& criteria) {
+	if(criteria == "Bahamas") {
+		cout << "  See pretty fish.\n";
+		}
+	else if(criteria == "RoadTrip") {
+		cout << "  Take pictures.\n";
+		}
+	else if(criteria == "Disneyland") {
+		cout << "  Wait in line.\n";
+		}
+	// Seam point - add another vacation.
+	else {
+		cout << "  Oops!\n";
+	}
+}
+
 void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::lecture::problem::demo() >>\n";
+	cout<<seqNo<<") << factory_method::lecture::problem::demo() >>\n";
+	string criteria[] = {"Bahamas","RoadTrip","Disneyland","oops"};
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		clientCode_Trip(criteria[i]);
+		clientCode_Plan(criteria[i]);
+		clientCode_Experience(criteria[i]);
+	}
+	cout << endl;
 }
 
 }
 
 namespace solution {
 
-class FactoryMethod {	// If the classes are varying...
-public:
-	FactoryMethod() {}
-	virtual ~FactoryMethod() { DTOR("~FactoryMethodObserver\n", Lecture); }
-public:
-	virtual void run() {}
-public:
-	static FactoryMethod* decisionLogic(const string& criteria);
-};
-class Derived : public FactoryMethod {
-public:
-	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Lecture); }
-public:
-	void run() {}
-};
-// Seam point - add another Derived.
-
-FactoryMethod* FactoryMethod::decisionLogic(const string& criteria) {
-	if(		criteria == "whatever")	return new FactoryMethod;
-	else if(criteria == "whatever")	return new FactoryMethod;
-	// Seam point - add another FactoryMethod.
-
-	else {
-		return new FactoryMethod;
+class Vacation { // Factory Method design pattern.
+public:	virtual ~Vacation() {
+		DTOR(" ~Vacation\n", Lecture);
 	}
+public:
+	virtual void getThere() { cout << "  Oops!"; }
+	virtual void schedule() { cout << " Oops!"; }
+	virtual void haveFun() { cout << " Oops!"; }
+public:
+	static Vacation* makeObject(const string& criteria);
+};
+class Bahamas : public Vacation {
+public:	virtual ~Bahamas() {
+		DTOR("    ~Bahamas", Lecture);
+	}
+public:
+	void getThere() { cout << "  Fly to the Bahamas.\n";}
+	void schedule() { cout << "  Schedule dives.\n";}
+	void haveFun() { cout << "  See pretty fish.\n";}
+};
+class RoadTrip : public Vacation {
+public:	virtual ~RoadTrip() {
+		DTOR("    ~RoadTrip", Lecture);
+	}
+public:
+	void getThere() { cout << "  Load car.\n";}
+	void schedule() { cout << "  Mark up map.\n";}
+	void haveFun() { cout << "  Take pictures.\n";}
+};
+class Disneyland : public Vacation {
+public:	virtual ~Disneyland() {
+		DTOR("    ~Disneyland", Lecture);
+	}
+public:
+	void getThere() { cout << "  Get to Disneyland.\n";}
+	void schedule() { cout << "  Plan rides.\n";}
+	void haveFun() { cout << "  Wait in line.\n";}
+};
+// Seam point - add another vacation.
+
+Vacation* Vacation::makeObject(const string& criteria) {
+	if(criteria == "Bahamas")	return new Bahamas;
+	if(criteria == "RoadTrip")	return new RoadTrip;
+	if(criteria == "Disneyland")	return new Disneyland;
+	// Seam point - insert another vacation.
+	return new Vacation; // Base, default, null, exception.
+}
+
+void clientCode_Trip(Vacation* vacation) {
+	vacation->getThere();
+}
+void clientCode_Plan(Vacation* vacation) {
+	vacation->schedule();
+}
+void clientCode_Experience(Vacation* vacation) {
+	vacation->haveFun();
 }
 
 void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::lecture::solution::demo() >>\n";
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
+	cout<<seqNo<<") << factory_method::lecture::solution::demo() >>\n";
+	string criteria[] = {"Bahamas","RoadTrip","Disneyland","oops"};
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		FactoryMethod* derived = FactoryMethod::decisionLogic(criteria[i]);
-		derived->run();
+		Vacation* vacation = Vacation::makeObject(criteria[i]);
+		clientCode_Trip(vacation);
+		clientCode_Plan(vacation);
+		clientCode_Experience(vacation);
+		delete vacation;
 	}
 	cout << endl;
 }
@@ -153,7 +274,7 @@ FactoryMethod* FactoryMethod::makeObject(string& criteria) {
 	if(criteria == "Type2")	return new Type2;
 	if(criteria == "Type3")	return new Type3;
 	// Seam point - insert another class.
-	return new FactoryMethod;	// Base, default, null, exception.
+	return new FactoryMethod; // Base, default, null, exception.
 }
 
 void demo(int seqNo) {	// Test variations.
@@ -325,15 +446,12 @@ public:
 	virtual ~Observer() { DTOR("~FactoryMethodObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
-		cout << seqNo << ") << factory_method::lecture::legacy >>\n";
 		lecture::legacy::demo(seqNo);
 	}
 	virtual void lectureProblem() {
-		cout << seqNo << ") << factory_method::lecture::problem >>\n";
 		lecture::problem::demo(seqNo);
 	}
 	virtual void lectureSolution() {
-		cout << seqNo << ") << factory_method::lecture::solution >>\n";
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {

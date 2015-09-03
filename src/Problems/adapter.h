@@ -87,7 +87,7 @@ void demo(int seqNo) {
 	shapes.push_back(new Rect);
 
 	for(size_t i=0; i<shapes.size(); i++) {	// Polymorphic client code.
-		shapes[i]->draw();
+		clientCode(shapes[i]);
 	}
 	for(size_t i=0; i<shapes.size(); i++)
 		delete shapes[i];

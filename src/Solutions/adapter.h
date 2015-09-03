@@ -135,7 +135,7 @@ public:
 };
 // Seam point - add another interface.
 
-void clientCode(ShapeInterfaceDraw* shape) {	// Interface adapts to Client.
+void clientCode(ShapeInterfaceDraw* shape) { // Interface adapts to Client.
 	shape->draw();
 }
 
@@ -149,9 +149,9 @@ void demo(int seqNo) {
 	shapes.push_back(new Torus);
 	shapes.push_back(new Bezel);
 
-	for(size_t i=0; i<shapes.size(); i++) {	// Client code stays simple because
-		clientCode(shapes[i]);				// API's have been converged.
-	}
+	for(size_t i=0; i<shapes.size(); i++) {	// Client code stays simple
+		clientCode(shapes[i]);				// because API's have
+	}										// been converged.
 	for(size_t i=0; i<shapes.size(); i++)
 		delete shapes[i];
 	cout << endl;

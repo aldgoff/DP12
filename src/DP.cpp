@@ -21,8 +21,8 @@
 #include "Lectures/bridge.h"
 #include "Lectures/abstractFactory.h"
 
-#include "Lectures/state.h"
-#include "Lectures/headfirst.h"
+#include "WIP/state.h"
+#include "WIP/headfirst.h"
 
 namespace observer {
 
