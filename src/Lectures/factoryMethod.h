@@ -209,29 +209,9 @@ void demo(int seqNo) {
 
 namespace homework {
 
-namespace legacy {
+#include "../Problems/factoryMethod.h"
 
-void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::homework::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << factory_method::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/factoryMethod.h"
 
 } // homework
 
@@ -439,6 +419,105 @@ void demo() {
 
 } // refactoring
 
+namespace obsolete {
+
+// This is really the Bridge pattern.
+void clientCode(int fr, int* res, string display, string crypto) {
+	if(display == "DisplayPort") {
+		cout << "  Display " << "DisplayPort()";
+		cout << " at " << fr << " frames/sec";
+		cout << " with [" << res[0] << ", " << res[1] << "]";
+		if(crypto == "PVP") {
+			cout << " via " << "PVP()" << ".\n";
+			}
+		else if(crypto == "ID1") {
+			cout << " via " << "ID1()" << ".\n";
+			}
+		else if(crypto == "RSA") {
+			cout << " via " << "RSA()" << ".\n";
+			}
+		// Seam point - insert another crypto protocol.
+		else {
+			cout << " via " << "crypto->protocol()" << ".\n";
+		}
+		}
+	else if(display == "HDMI") {
+		cout << "  Display " << "HDMI()";
+		cout << " at " << fr << " frames/sec";
+		cout << " with [" << res[0] << ", " << res[1] << "]";
+		if(crypto == "PVP") {
+			cout << " via " << "PVP()" << ".\n";
+			}
+		else if(crypto == "ID1") {
+			cout << " via " << "ID1()" << ".\n";
+			}
+		else if(crypto == "RSA") {
+			cout << " via " << "RSA()" << ".\n";
+			}
+		// Seam point - insert another crypto protocol.
+		else {
+			cout << " via " << "crypto protocol()" << ".\n";
+		}
+		}
+	else if(display == "MIPI") {
+		cout << "  Display " << "MIPI()";
+		cout << " at " << fr << " frames/sec";
+		cout << " with [" << res[0] << ", " << res[1] << "]";
+		if(crypto == "PVP") {
+			cout << " via " << "PVP()" << ".\n";
+			}
+		else if(crypto == "ID1") {
+			cout << " via " << "ID1()" << ".\n";
+			}
+		else if(crypto == "RSA") {
+			cout << " via " << "RSA()" << ".\n";
+			}
+		// Seam point - insert another crypto protocol.
+		else {
+			cout << " via " << "crypto protocol()" << ".\n";
+		}
+		}
+	else if(display == "Widi") {
+		cout << "  Display " << "Widi()";
+		cout << " at " << fr << " frames/sec";
+		cout << " with [" << res[0] << ", " << res[1] << "]";
+		if(crypto == "PVP") {
+			cout << " via " << "PVP()" << ".\n";
+			}
+		else if(crypto == "ID1") {
+			cout << " via " << "ID1()" << ".\n";
+			}
+		else if(crypto == "RSA") {
+			cout << " via " << "RSA()" << ".\n";
+			}
+		// Seam point - insert another crypto protocol.
+		else {
+			cout << " via " << "crypto protocol()" << ".\n";
+		}
+		}
+	// Seam point - insert another display format.
+	else {
+		cout << "  Display " << "display format()";
+		cout << " at " << fr << " frames/sec";
+		cout << " with [" << res[0] << ", " << res[1] << "]";
+		if(crypto == "PVP") {
+			cout << " via " << "PVP()" << ".\n";
+			}
+		else if(crypto == "ID1") {
+			cout << " via " << "ID1()" << ".\n";
+			}
+		else if(crypto == "RSA") {
+			cout << " via " << "RSA()" << ".\n";
+			}
+		// Seam point - insert another crypto protocol.
+		else {
+			cout << " via " << "crypto protocol()" << ".\n";
+		}
+	}
+}
+
+} // obsolete
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -455,15 +534,12 @@ public:
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {
-		cout << seqNo << ") << factory_method::homework::legacy >>\n";
 		homework::legacy::demo(seqNo);
 	}
 	virtual void homeworkProblem() {
-		cout << seqNo << ") << factory_method::homework::problem >>\n";
 		homework::problem::demo(seqNo);
 	}
 	virtual void homeworkSolution() {
-		cout << seqNo << ") << factory_method::homework::solution >>\n";
 		homework::solution::demo(seqNo);
 	}
 	virtual void skeleton() {
