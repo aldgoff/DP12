@@ -501,6 +501,10 @@ void demo() {	// Separates use from creation.
 
 } // refactoring
 
+namespace in_the_wild {	// Real world examples (GoF).
+
+} // in_the_wild
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)

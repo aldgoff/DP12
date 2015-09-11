@@ -1047,6 +1047,180 @@ void demo() {
 
 } // practical_issues
 
+namespace in_the_wild {	// Real world examples (GoF).
+
+class Compositor {	// ET++ and InterViews.
+public: virtual ~Compositor() {}
+public:
+	virtual int compose() { return 0; }
+};
+class Simple : public Compositor {
+public:
+	int compose() { return 1; };
+};
+class Tex : public Compositor {
+public:
+	int compose() { return 5; };
+};
+class Icon : public Compositor {
+public:
+	int compose() { return 7; };
+};
+// Seam point - add another compositor.
+
+class RegisterAllocation {	// RTL System.
+public: virtual ~RegisterAllocation() {}
+public:
+	virtual void scheme() {}
+};
+class ShortInstOpt : public RegisterAllocation {
+public:
+	void scheme() {}
+};
+class LeastUsed : public RegisterAllocation {
+public:
+	void scheme() {}
+};
+class Proximity : public RegisterAllocation {
+public:
+	void scheme() {}
+};
+// Seam point - add another RegisterAllocation.
+
+class InstructionScheduling {	// RTL System.
+public: virtual ~InstructionScheduling() {}
+public:
+	virtual void policy() {}
+};
+class RISCScheduler : public InstructionScheduling {
+public:
+	void policy() {}
+};
+class CISCScheduler : public InstructionScheduling {
+public:
+	void policy() {}
+};
+// Seam point - add another instruction scheduling policy.
+
+namespace et_swap_manager {	// ET++SwapManager.
+
+class DiscountFactor {
+public: virtual ~DiscountFactor() {}
+public:
+	virtual void calc() {}
+};
+class NetPresent : public DiscountFactor {
+public:
+	void calc() {}
+};
+class BlackSwan : public DiscountFactor {
+public:
+	void calc() {}
+};
+// Seam point - add another discount factor.
+
+class CashFlow {
+public: virtual ~CashFlow() {}
+public:
+	virtual void calc() {}
+};
+class Inflation : public CashFlow {
+public:
+	void calc() {}
+};
+class Deflation : public CashFlow {
+public:
+	void calc() {}
+};
+// Seam point - add another cash flow.
+
+class ValuingSwap {
+public: virtual ~ValuingSwap() {}
+public:
+	virtual void calc() {}
+};
+class RationalModel : public ValuingSwap {
+public:
+	void calc() {}
+};
+class AvoidanceModel : public ValuingSwap {
+public:
+	void calc() {}
+};
+// Seam point - add another valuing swap.
+
+class Instrument {
+	CashFlow*	cf;
+	ValuingSwap	vs;
+public: virtual ~Instrument() {}
+public:
+	virtual void calc() {}
+};
+class SteadyGains : public Instrument {
+public:
+	void calc() {}
+};
+class HighRisk : public Instrument {
+public:
+	void calc() {}
+};
+// Seam point - add another instrument.
+
+class YieldCurve {
+	DiscountFactor*	df;
+	Instrument*		instrument;
+};
+
+}
+
+class Router { // RApp circuit router.
+public: virtual ~Router() {}
+public:
+	virtual void route() {}
+};
+class OptimizeArea : public Router {
+public:
+	void route() {}
+};
+class OptimizeSpeed : public Router {
+public:
+	void route() {}
+};
+class MinimizeNoise : public Router {
+public:
+	void route() {}
+};
+class MinimizePower : public Router {
+public:
+	void route() {}
+};
+// Seam point - add another router.
+
+class Validator {	// Borland's ObjectWindows.
+public: virtual ~Validator() {}
+public:
+	virtual bool valid(const string& entry) { return false; }
+};
+class Number : public Validator {
+public:
+	bool valid(const string& entry) { return true; }
+};
+class Date : public Validator {
+public:
+	bool valid(const string& entry) { return true; }
+};
+class Range : public Validator {
+public:
+	bool valid(const string& entry) { return true; }
+};
+class List : public Validator {
+public:
+	bool valid(const string& entry) { return true; }
+};
+// Seam point - add another validator.
+
+} // in_the_wild
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
