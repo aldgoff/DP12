@@ -2,7 +2,6 @@
 // Name        : main.cpp
 // Author      : Allan Goff
 // Version     :
-// Copyright   : Novatia Labs 2015
 // Description : Lectures, homework, and final for a Design Patterns class.
 //============================================================================
 
