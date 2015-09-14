@@ -28,89 +28,165 @@ namespace lecture {
 
 namespace legacy {
 
+void soak() { cout << "    soak"; }
+void wash() { cout << " - wash"; }
+void boil() { cout << " - boil"; }
+void rinse() { cout << " - rinse.\n"; }
+
+void clientCode() {
+	soak();
+	wash();
+	boil();
+	rinse();
+}
+
 void demo(int seqNo) {
 	cout << seqNo << ") << template_method::lecture::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << template_method::lecture::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-class TemplateMethod {
-public:
-	TemplateMethod() {}
-	virtual ~TemplateMethod() { DTOR("~TemplateMethodObserver\n", Lecture); }
-public:
-	virtual void run() {}
-public:
-	static TemplateMethod* decisionLogic(const string& criteria);
-};
-class Derived : public TemplateMethod {
-public:
-	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Architecture); }
-public:
-	void run() {}
-};
-// Seam point - add another step.
-
-TemplateMethod* TemplateMethod::decisionLogic(const string& criteria) {
-	if(		criteria == "whatever")	return new TemplateMethod;
-	else if(criteria == "whatever")	return new TemplateMethod;
-	// Seam point - add another TemplateMethod.
-
-	else {
-		return new TemplateMethod;
-	}
-}
-
-void demo(int seqNo) {
-	cout << seqNo << ") << template_method::lecture::solution::demo() >>\n";
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		TemplateMethod* derived = TemplateMethod::decisionLogic(criteria[i]);
-		derived->run();
-	}
+	clientCode();
 	cout << endl;
 }
 
+} // legacy
+
+namespace problem {
+
+void soak() { cout << "    soak"; }
+void wash() { cout << " - wash"; }
+void boil() { cout << " - boil"; }		// Sterilize 1.
+void ozone() { cout << " - ozone"; }	// Sterilize 2.
+void uv() { cout << " - uv"; }			// Sterilize 3.
+void rinse() { cout << " - rinse.\n"; }
+
+void clientCode_A(int criteria) {	// Clutter.
+	soak();
+	wash();
+	switch(criteria) {
+	case 0:	boil(); break;	// Sterilize 1.
+	case 1:	ozone(); break;	// Sterilize 2.
+	case 2:	uv(); break;	// Sterilize 3.
+	default: cout << " - Oops!"; break;	// Sterilize ?.
+	}
+	rinse();
 }
+
+void clientCode_B(int criteria) {	// Duplication.
+	switch(criteria) {
+	case 0:
+		soak();
+		wash();
+		boil();		// Sterilize 1.
+		rinse();
+		break;
+	case 1:
+		soak();
+		wash();
+		ozone();	// Sterilize 2.
+		rinse();
+		break;
+	case 2:
+		soak();
+		wash();
+		uv();		// Sterilize 3.
+		rinse();
+		break;
+	default:
+		soak();
+		wash();
+		cout << " = Oops!";	// Sterilize ?.
+		rinse();
+		break;
+	}
+}
+
+void demo(int seqNo) {
+	cout << seqNo << ") << template_method::lecture::problem::demo() >>\n";
+	int test[] = { 0, 1, 2, 3 };
+	for(size_t i=0; i<COUNT(test); i++)
+		clientCode_A(test[i]);
+	cout << endl;
+	for(size_t i=0; i<COUNT(test); i++)
+		clientCode_B(test[i]);
+	cout << endl;
+}
+
+} // problem
+
+namespace solution {
+
+class Sterilize {	// Template Method design pattern.
+public: virtual ~Sterilize() {
+	DTOR("  ~Sterilize\n", Lecture);
+}
+public:
+	void run() {
+		soak();
+		wash();
+		sanitize();
+		rinse();
+	}
+public:
+	void soak() { cout << "    soak"; }
+	void wash() { cout << " - wash"; }
+	virtual void sanitize() {cout << " - Oops!";}
+	void rinse() { cout << " - rinse.\n"; }
+public:
+	static Sterilize* makeObject(string& criteria);
+};
+class Boil : public Sterilize {
+public: ~Boil() {
+		DTOR("  ~Boil", Lecture);
+	}
+public:
+	void sanitize() { cout << " - boil"; }
+};
+class Ozone : public Sterilize {
+public: ~Ozone() {
+		DTOR("  ~Ozone", Lecture);
+	}
+public:
+	void sanitize() { cout << " - ozone"; }
+};
+class UV : public Sterilize {
+public: ~UV() {
+		DTOR("  ~UV", Lecture);
+	}
+public:
+	void sanitize() { cout << " - uv"; }
+};
+// Seam point - add another class.
+
+Sterilize* Sterilize::makeObject(string& criteria){
+	if(criteria == "Boil")	return new Boil;
+	if(criteria == "Ozone")	return new Ozone;
+	if(criteria == "UV")	return new UV;
+	// Seam point - insert another criteria.
+	else { return new Sterilize; }
+}
+
+void clientCode(Sterilize* clean) { clean->run(); }
+
+void demo(int seqNo) {
+	cout<<seqNo<<") << template_method::lecture::solution::demo() >>\n";
+	string criteria[] = { "Boil", "Ozone", "UV", "oops" };
+	vector<Sterilize*> clean;
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		clean.push_back(Sterilize::makeObject(criteria[i]));
+		clientCode(clean[i]);
+	}
+	for(size_t i=0; i<COUNT(criteria); i++)
+		delete clean[i];
+	cout << endl;
+}
+
+} // solution
 
 } // lecture
 
 namespace homework {
 
-namespace legacy {
+#include "../Problems/templateMethod.h"
 
-void demo(int seqNo) {
-	cout << seqNo << ") << template_method::homework::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << template_method::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << template_method::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/templateMethod.h"
 
 } // homework
 
@@ -236,7 +312,7 @@ void demo() {	// Test variations.
 
 } // recognition
 
-namespace refactoring {
+namespace refactoring {	// SWPC.
 
 namespace bad {
 
@@ -839,27 +915,21 @@ public:
 	virtual ~Observer() { DTOR("~TemplateMethodObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
-		cout << seqNo << ") << template_method::lecture::legacy >>\n";
 		lecture::legacy::demo(seqNo);
 	}
 	virtual void lectureProblem() {
-		cout << seqNo << ") << template_method::lecture::problem >>\n";
 		lecture::problem::demo(seqNo);
 	}
 	virtual void lectureSolution() {
-		cout << seqNo << ") << template_method::lecture::solution >>\n";
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {
-		cout << seqNo << ") << template_method::homework::legacy >>\n";
 		homework::legacy::demo(seqNo);
 	}
 	virtual void homeworkProblem() {
-		cout << seqNo << ") << template_method::homework::problem >>\n";
 		homework::problem::demo(seqNo);
 	}
 	virtual void homeworkSolution() {
-		cout << seqNo << ") << template_method::homework::solution >>\n";
 		homework::solution::demo(seqNo);
 	}
 	virtual void skeleton() {
