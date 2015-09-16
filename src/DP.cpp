@@ -24,6 +24,20 @@
 #include "WIP/state.h"
 #include "WIP/headfirst.h"
 
+/* Lecture/Homework Chart
+ * Design Pattern			Lecture					Homework
+ * ---------------------------------------------------------------------
+ * Strategy					Traversal/Parse/Swarm	Testing hardware
+ * Adapter					Audio codecs			Shape draw
+ * Factory Method			Vacation				Encrypted video
+ * Template Method			Sterilize process		Coating process
+ * Observer					Customers				Cat in the Hat
+ * Decorator
+ * Chain of Responsibility
+ * Bridge
+ * Abstract Factory
+ */
+
 namespace observer {
 
 DPObserver::DPObserver(ObserverSubject* subject, int seqNo, const string& name)
