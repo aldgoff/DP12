@@ -37,7 +37,7 @@ namespace solution {
 
 class Listener;
 
-class Perpetrator {
+class Perpetrator { // Subject class in Observer DP.
 	const string name;
 	list<Listener*> listeners;
 public:
@@ -59,7 +59,7 @@ public:
 	void says(const string& phrase);
 };
 
-class Listener {
+class Listener { // Observer class in Observer DP.
 protected:
 	string name;
 public:
@@ -112,7 +112,7 @@ public:
 	}
 public:
 	void update(Perpetrator* perp) {
-		cout << "    " << name << " asks \"how was your day?\"\n";
+		cout <<"    " <<name <<" asks \"how was your day?\"\n";
 	}
 };
 // Seam point - add another Listener.
