@@ -28,61 +28,238 @@ namespace lecture {
 
 namespace legacy {
 
-void demo(int seqNo) {
-	cout << seqNo << ") << decorator::lecture::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << decorator::lecture::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-class Decorator {	// If the options are varying...
+class Window {
+public: virtual ~Window() {}
 public:
-	Decorator() {}
-	virtual ~Decorator() { DTOR("~DecoratorObserver\n", Architecture); }
-public:
-	virtual void run() {}
-public:
-	static Decorator* makeObject(const string& criteria);
+	virtual void draw() { cout << "  Draw window\n"; }
 };
-class Derived : public Decorator {
+class WindowWithBorder : public Window {
 public:
-	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Architecture); }
-public:
-	void run() {}
+	void draw() { cout << "  Draw window with border\n"; }
 };
-// Seam point - add another Derived.
-
-Decorator* Decorator::makeObject(const string& criteria) {
-	if(		criteria == "whatever")	return new Decorator;
-	else if(criteria == "whatever")	return new Decorator;
-	// Seam point - add another Decorator.
-
-	else {
-		return new Decorator;
-	}
-}
+class ScrollingHWindow : public Window {
+public:
+	void draw() { cout << "  Draw window with H scroll bar\n"; }
+};
+class ScrollingVWindow : public Window {
+public:
+	void draw() { cout << "  Draw window with V scroll bar\n"; }
+};
+class ScrollingHVWindow : public Window {
+public:
+	void draw() { cout << "  Draw window with scroll bars\n"; }
+};
+class ScrollingHWindowWithBorder : public Window {
+public:
+	void draw() { cout << "  Draw window with border H scroll bar\n"; }
+};
+class ScrollingVWindowWithBorder : public Window {
+public:
+	void draw() { cout << "  Draw window with border V scroll bar\n"; }
+};
+class ScrollingHVWindowWithBorder : public Window {
+public:
+	void draw() { cout << "  Draw window with border and scroll bars\n";}
+};
+// Seam points - add another window decorator to each class.
+// !! Exponential scaling (2, 4, 8, 16).
+// !! Can't adjust at run time.
+// !! Client pays for what they don't use.
 
 void demo(int seqNo) {
-	cout << seqNo << ") << decorator::lecture::solution::demo() >>\n";
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		Decorator* derived = Decorator::makeObject(criteria[i]);
-		derived->run();
-	}
+	Window().draw();
+	WindowWithBorder().draw();
+	ScrollingHWindow().draw();
+	ScrollingVWindow().draw();
+	ScrollingHVWindow().draw();
+	ScrollingHWindowWithBorder().draw();
+	ScrollingVWindowWithBorder().draw();
+	ScrollingHVWindowWithBorder().draw();
 	cout << endl;
 }
 
+} // legacy
+
+namespace problem {
+
+class Window {
+public: ~Window() {
+		DTOR("  ~Window\n", Lecture);
+	}
+public:
+	void drawWindow() { cout << "  Display Window.\n"; }
+};
+class Border {
+public: ~Border() {
+		DTOR("  ~Border\n", Lecture);
+	}
+public:
+	void drawBorder() { cout << "  Display Border.\n"; }
+};
+class VScrollBar {
+public: ~VScrollBar() {
+		DTOR("  ~VScrollBar\n", Lecture);
+	}
+public:
+	void drawVSBar() { cout << "  Display VScrollBar.\n"; }
+};
+class HScrollBar {
+public: ~HScrollBar() {
+		DTOR("  ~HScrollBar\n", Lecture);
+	}
+public:
+	void drawHSBar() { cout << "  Display HScrollBar.\n"; }
+};
+class Jitter3D {
+public: ~Jitter3D() {
+		DTOR("  ~Jitter3D\n", Lecture);
+	}
+public:
+	void draw3DJit() { cout << "  Display Jitter3D.\n"; }
+};
+// Seam point - add another window decorator.
+
+class NeedInThisApp // Multiple inheritance, bad scaling.
+	  : public Window, public Border,
+		public VScrollBar, public Jitter3D {
+public: ~NeedInThisApp() {
+		DTOR("  ~NeedInThisApp\n", Lecture);
+	}
+};
+// Avoids exponential scaling only for small apps.
+// Still can't set at run time.
+
+class AggregateWindow {	// Composition.
+	Window		window;
+	Border		border;
+	VScrollBar	vScrollBar;
+	HScrollBar	hScrollBar;
+	Jitter3D	jitter3D;
+	// Seam point - insert another window decorator.
+public: ~AggregateWindow() {
+		DTOR("  ~AggregateWindow\n", Lecture);
+	}
+public:
+	void drawWindow(bool b, bool vs, bool hs, bool j3d
+			/*, Seam point in the interface!*/ ) {
+		cout << "  Display Aggregate Window.\n";
+		window.drawWindow();
+		if(b)	border.drawBorder();
+		if(vs)	vScrollBar.drawVSBar();
+		if(hs)	hScrollBar.drawHSBar();
+		if(j3d)	jitter3D.draw3DJit();
+		// Seam point - insert another window decorator.
+	}
+};
+// !! Client pays for things not used (at least there's less of it).
+
+void demo(int seqNo) {
+	NeedInThisApp* myWindow = new NeedInThisApp;
+	myWindow->drawWindow();
+	myWindow->drawBorder();
+	myWindow->drawVSBar();
+	myWindow->draw3DJit();
+	delete myWindow;
+	cout << endl;
+
+	AggregateWindow* agWindow = new AggregateWindow;
+	agWindow->drawWindow(true, true, false, true);
+	delete agWindow;
+	cout << endl;
 }
+
+} // problem
+
+namespace solution {
+
+class View { // Component class in Decorator design pattern.
+public: virtual ~View() {
+		DTOR("~View\n", Lecture);
+	}
+	virtual void display()=0;
+};
+class Window : public View { // Base object to be decorated.
+public:	~Window() {
+		DTOR("  ~Window ", Lecture);
+	}
+	void display() { cout << "  Display Window.\n"; }
+};
+class WinDec : public View { // Decorator class: Decorator DP.
+protected:
+	View* decorator;
+public:
+	WinDec(View* decorator) : decorator(decorator) {}
+	~WinDec() {  delete decorator;
+		DTOR("  ~WinDec ", Lecture);
+	}
+	virtual void display() {}
+public:
+	static View* makeObject(View* decoratr, string& criteria);
+};
+class Border : public WinDec {
+public:
+	Border(View* decorator) : WinDec(decorator) {}
+	virtual ~Border() {
+		DTOR("  ~Border ", Lecture);
+	}
+	void display() { decorator->display();
+		cout << "  Display Border.\n";
+	}
+};
+class VScrollBar : public WinDec {
+public:
+	VScrollBar(View* decorator) : WinDec(decorator) {}
+	virtual ~VScrollBar() {
+		DTOR("  ~VScrollBar ", Lecture);
+	}
+	void display() { decorator->display();
+		cout << "  Display VScrollBar.\n";
+	}
+};
+class HScrollBar : public WinDec {
+public:
+	HScrollBar(View* decorator) : WinDec(decorator) {}
+	virtual ~HScrollBar() {
+		DTOR("  ~HScrollBar ", Lecture);
+	}
+	void display() { decorator->display();
+		cout << "  Display HScrollBar.\n";
+	}
+};
+class Jitter3D : public WinDec {
+public:
+	Jitter3D(View* decorator) : WinDec(decorator) {}
+	virtual ~Jitter3D() {
+		DTOR("  ~Jitter3D ", Lecture);
+	}
+	void display() { decorator->display();
+		cout << "  Display Jitter3D.\n";
+	}
+};
+// Seam point - insert another window decorator.
+
+View* WinDec::makeObject(View* decoratr, string& criteria) {
+	if(criteria == "Border")	 return new Border(decoratr);
+	if(criteria == "VScrollBar") return new VScrollBar(decoratr);
+	if(criteria == "HScrollBar") return new HScrollBar(decoratr);
+	if(criteria == "Jitter3D")	 return new Jitter3D(decoratr);
+	// Seam point - add another criteria.
+	return decoratr;
+}
+
+void demo(int seqNo) {
+	string criteria[] = { "Border", "VScrollBar",
+		/*"HScrollBar",*/ "Jitter3D", "oops" };
+	View* window = new Window;
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		window = WinDec::makeObject(window, criteria[i]);
+	}
+	window->display();
+	delete window;
+	cout << endl;
+}
+
+} // solution
 
 } // lecture
 
@@ -433,15 +610,15 @@ public:
 	virtual ~Observer() { DTOR("~DecoratorObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
-		cout << seqNo << ") << decorator::lecture::legacy >>\n";
+		cout << seqNo << ") << decorator::lecture::legacy::demo() >>\n";
 		lecture::legacy::demo(seqNo);
 	}
 	virtual void lectureProblem() {
-		cout << seqNo << ") << decorator::lecture::problem >>\n";
+		cout << seqNo << ") << decorator::lecture::problem::demo( >>\n";
 		lecture::problem::demo(seqNo);
 	}
 	virtual void lectureSolution() {
-		cout << seqNo << ") << decorator::lecture::solution >>\n";
+		cout << seqNo << ") << decorator::lecture::solution::demo() >>\n";
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {

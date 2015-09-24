@@ -32,7 +32,7 @@
  * Factory Method			Vacation				Encrypted video
  * Template Method			Sterilize process		Coating process
  * Observer					Customers				Cat in the Hat
- * Decorator
+ * Decorator				Windows					Cars
  * Chain of Responsibility
  * Bridge
  * Abstract Factory
