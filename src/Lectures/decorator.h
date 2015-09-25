@@ -151,7 +151,8 @@ public:
 		// Seam point - insert another window decorator.
 	}
 };
-// !! Client pays for things not used (at least there's less of it).
+// !! Client pays for things not used
+// (at least there's less of it).
 
 void demo(int seqNo) {
 	NeedInThisApp* myWindow = new NeedInThisApp;
@@ -192,14 +193,14 @@ public:
 	~WinDec() {  delete decorator;
 		DTOR("  ~WinDec ", Lecture);
 	}
-	virtual void display() {}
+	void display() {}
 public:
 	static View* makeObject(View* decoratr, string& criteria);
 };
 class Border : public WinDec {
 public:
 	Border(View* decorator) : WinDec(decorator) {}
-	virtual ~Border() {
+	~Border() {
 		DTOR("  ~Border ", Lecture);
 	}
 	void display() { decorator->display();
@@ -209,7 +210,7 @@ public:
 class VScrollBar : public WinDec {
 public:
 	VScrollBar(View* decorator) : WinDec(decorator) {}
-	virtual ~VScrollBar() {
+	~VScrollBar() {
 		DTOR("  ~VScrollBar ", Lecture);
 	}
 	void display() { decorator->display();
@@ -219,7 +220,7 @@ public:
 class HScrollBar : public WinDec {
 public:
 	HScrollBar(View* decorator) : WinDec(decorator) {}
-	virtual ~HScrollBar() {
+	~HScrollBar() {
 		DTOR("  ~HScrollBar ", Lecture);
 	}
 	void display() { decorator->display();
@@ -229,7 +230,7 @@ public:
 class Jitter3D : public WinDec {
 public:
 	Jitter3D(View* decorator) : WinDec(decorator) {}
-	virtual ~Jitter3D() {
+	~Jitter3D() {
 		DTOR("  ~Jitter3D ", Lecture);
 	}
 	void display() { decorator->display();
@@ -265,29 +266,9 @@ void demo(int seqNo) {
 
 namespace homework {
 
-namespace legacy {
+#include "../Problems/decorator.h"
 
-void demo(int seqNo) {
-	cout << seqNo << ") << decorator::homework::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << decorator::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << decorator::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/decorator.h"
 
 } // homework
 
