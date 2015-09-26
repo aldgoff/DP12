@@ -201,12 +201,12 @@ void demo(int seqNo) {
 
 namespace solution {
 
-class Approver { // If the responders are varying...
+class Approver { // Chain of Responsibility design pattern.
 protected:
 	Approver* successor;
 public:
 	Approver() : successor(0) {}
-	virtual  ~Approver() { delete successor;
+	virtual ~Approver() { delete successor;
 		DTOR("~Approver\n", Lecture);
 	}
 public:
@@ -221,7 +221,7 @@ public:
 class Clerk : public Approver {
 public:
 	Clerk() { cout << "  +Clerk\n"; }
-	virtual ~Clerk() {
+	~Clerk() {
 		DTOR("~Clerk ", Lecture);
 	}
 public:
@@ -234,7 +234,7 @@ public:
 class Supervisor : public Approver {
 public:
 	Supervisor() { cout << "  +Supervisor\n"; }
-	virtual ~Supervisor() {
+	~Supervisor() {
 		DTOR("~Supervisor ", Lecture);
 	}
 public:
@@ -247,7 +247,7 @@ public:
 class Manager : public Approver {
 public:
 	Manager() { cout << "  +Manager\n"; }
-	virtual ~Manager() {
+	~Manager() {
 		DTOR("~Manager ", Lecture);
 	}
 public:
@@ -260,7 +260,7 @@ public:
 class Director : public Approver {
 public:
 	Director() { cout << "  +Director\n"; }
-	virtual ~Director() {
+	~Director() {
 		DTOR("~Director ", Lecture);
 	}
 public:
@@ -273,7 +273,7 @@ public:
 class VP : public Approver {
 public:
 	VP() { cout << "  +VP\n"; }
-	virtual ~VP() {
+	~VP() {
 		DTOR("~VP ", Lecture);
 	}
 public:
@@ -286,7 +286,7 @@ public:
 class President : public Approver {
 public:
 	President() { cout << "  +President\n"; }
-	virtual ~President() {
+	~President() {
 		DTOR("~President ", Lecture);
 	}
 public:
@@ -306,41 +306,40 @@ Approver* Approver::makeObject(const string& criteria) {
 	if(criteria == "VP")			return new VP;
 	if(criteria == "President")		return new President;
 	// Seam point - add another Approver.
-	throw "OOPS!";
+	throw "OOPS!"; // Base, default, null, exception.
 }
 Approver* SetupChain() {
-	Approver* clerk = new Clerk;
 	string chain[] = {
-		"Supervisor", "Manager",
+		"Clerk", "Supervisor", "Manager",
 		/*"Director",*/	// Fired director handled dynamically.
 		"VP", "President"
 	};
+	Approver* responder = Approver::makeObject(chain[0]);
 
-	Approver* current = clerk;
-	for(size_t i=0; i<COUNT(chain); i++) {
+	Approver* current = responder;
+	for(size_t i=1; i<COUNT(chain); i++) {
 		Approver* next = Approver::makeObject(chain[i]);
 		current->setSuccessor(next);
 		current = next;
 	}
 	current->setSuccessor(new Approver);
 
-	return clerk;
+	return responder;
 }
 
 void clientCode(Approver* chain, float amount) {
 	chain->handleRequest(amount);
 }
 
-void demo(int seqNo) {
-	Approver* clerk = SetupChain();
+void demo() { // Test variations.
+	Approver* approver = SetupChain();
 
-	// Test variations.
 	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
 	for(size_t i=0; i<COUNT(data); i++) {
-		clientCode(clerk, data[i]);
+		clientCode(approver, data[i]);
 	}
 
-	delete clerk;
+	delete approver;
 	cout << endl;
 }
 
@@ -350,33 +349,104 @@ void demo(int seqNo) {
 
 namespace homework {
 
-namespace legacy {
+#include "../Problems/chainOfResp.h"
 
-void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::homework::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/chainOfResp.h"
 
 } // homework
 
-namespace skeleton { // From SWPC, rather different than solution.
+namespace skeleton {
+
+class ChainOfResp {	// If the responders are varying...
+protected:
+	ChainOfResp* successor;
+public:
+	ChainOfResp() : successor(0){}
+	virtual ~ChainOfResp() {
+		DTOR(" ~ChainOfResp\n", Lecture);
+		delete successor;
+	}
+public:
+	void setSuccessor(ChainOfResp* next) { successor = next; }
+public:
+	virtual void delegate(int criteria) {
+		cout << "  The buck stops here.\n";
+	}
+public:
+	static ChainOfResp* makeObject(const string& criteria);
+};
+class Derived1 : public ChainOfResp {
+public:
+	~Derived1() {
+		DTOR("  ~Derived1", Lecture);
+	}
+public:
+	void delegate(int criteria) {
+		if(criteria == 1)	cout << "  Derived1 handled.\n";
+		else 				successor->delegate(criteria);
+	}
+};
+class Derived2 : public ChainOfResp {
+public:
+	~Derived2() {
+		DTOR("  ~Derived2", Lecture);
+	}
+public:
+	void delegate(int criteria) {
+		if(criteria == 2)	cout << "  Derived2 handled.\n";
+		else 				successor->delegate(criteria);
+	}
+};
+class Derived3 : public ChainOfResp {
+public:
+	~Derived3() {
+		DTOR("  ~Derived3", Lecture);
+	}
+public:
+	void delegate(int criteria) {
+		if(criteria == 3)	cout << "  Derived3 handled.\n";
+		else 				successor->delegate(criteria);
+	}
+};
+// Seam point - add another responder.
+
+ChainOfResp* ChainOfResp::makeObject(const string& criteria) {
+	if(criteria == "Derived1")	return new Derived1;
+	if(criteria == "Derived2")	return new Derived2;
+	if(criteria == "Derived3")	return new Derived3;
+	// Seam point - add another Approver.
+	throw "OOPS!"; // Base, default, null, exception.
+}
+ChainOfResp* SetupChain() {
+	string chain[] = { "Derived1", "Derived2", "Derived3" };
+	ChainOfResp* responder = ChainOfResp::makeObject(chain[0]);
+
+	ChainOfResp* current = responder;
+	for(size_t i=1; i<COUNT(chain); i++) {
+		ChainOfResp* next = ChainOfResp::makeObject(chain[i]);
+		current->setSuccessor(next);
+		current = next;
+	}
+	current->setSuccessor(new ChainOfResp);
+
+	return responder;
+}
+
+void demo() {	// Test variations.
+	ChainOfResp* responder = SetupChain();
+
+	int criteria[] = { 1, 2, 3, 0 };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		responder->delegate(criteria[i]);
+	}
+
+	delete responder;
+	cout << endl;
+}
+
+} // skeleton
+
+namespace swpc {
 
 class ChainOfResp {	// If the responders are varying...
 protected:
@@ -452,7 +522,7 @@ void demo() {	// Test variations.
 	cout << endl;
 }
 
-} // skeleton
+} // swpc
 
 namespace recognition {
 
@@ -610,19 +680,19 @@ public:
 	}
 	virtual void lectureSolution() {
 		cout << seqNo << ") << chain_of_resp::lecture::solution >>\n";
-		lecture::solution::demo(seqNo);
+		lecture::solution::demo();
 	}
 	virtual void homeworkLegacy() {
 		cout << seqNo << ") << chain_of_resp::homework::legacy >>\n";
-		homework::legacy::demo(seqNo);
+		homework::legacy::demo();
 	}
 	virtual void homeworkProblem() {
 		cout << seqNo << ") << chain_of_resp::homework::problem >>\n";
-		homework::problem::demo(seqNo);
+		homework::problem::demo();
 	}
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << chain_of_resp::homework::solution >>\n";
-		homework::solution::demo(seqNo);
+		homework::solution::demo();
 	}
 	virtual void skeleton() {
 		cout << seqNo << ") << chain_of_resp::skeleton >>\n";
