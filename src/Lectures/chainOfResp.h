@@ -26,63 +26,325 @@ namespace chain_of_resp {	// Command line: chainOfResp [l|h] [ll|lp|ls] [hl|hp|h
 
 namespace lecture {
 
+/* Consider a retail store that offers refunds.
+ * Approval authorization depends on amount.
+ * Low level employees can authorize small amounts,
+ * higher level employees can authorize larger amounts.
+ */
+
 namespace legacy {
 
-void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::lecture::legacy::demo() >>\n";
-}
-
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::lecture::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-class ChainOfResp {	// If the responders are varying...
+class Clerk {
 public:
-	ChainOfResp() {}
-	virtual ~ChainOfResp() { DTOR("~ChainOfRespObserver\n", Architecture); }
+	Clerk() { cout << "  +Clerk\n"; }
+	~Clerk() {
+		DTOR("~Clerk\n", Lecture);
+	}
 public:
-	virtual void run() {}
-public:
-	static ChainOfResp* makeObject(const string& criteria);
+	void approves(float amount) {
+		cout << "  Clerk approves $" << amount << ".\n";
+	}
 };
-class Derived : public ChainOfResp {
+
+class Owner {
 public:
-	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Architecture); }
+	Owner() { cout << "  +Owner\n"; }
+	~Owner() {
+		DTOR("~Owner\n", Lecture);
+	}
 public:
-	void run() {}
+	void approves(float amount) {
+		cout << "  Owner approves $" << amount << ".\n";
+	}
 };
-// Seam point - add another Derived.
 
-ChainOfResp* ChainOfResp::makeObject(const string& criteria) {
-	if(		criteria == "whatever")	return new ChainOfResp;
-	else if(criteria == "whatever")	return new ChainOfResp;
-	// Seam point - add another ChainOfResp.
+void clientCode(float amount) {
+	{
+	static Clerk	clerk;	// Client coupled with
+	static Owner	owner;	// lots of classes.
+	// Seam point - insert another approval class.
 
-	else {
-		return new ChainOfResp;
+	if(amount < 20.00)
+		clerk.approves(amount);
+	else if(amount < 500.00)
+		owner.approves(amount);
+	// Seam point - insert another approval level.
+	else
+		cout << "  Denied $" << amount << ", the buck stops here.\n";
 	}
 }
 
 void demo(int seqNo) {
-	cout << seqNo << ") << chain_of_resp::lecture::solution::demo() >>\n";
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		ChainOfResp* responder = ChainOfResp::makeObject(criteria[i]);
-		responder->run();
+	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
+	for(size_t i=0; i<sizeof(data)/sizeof(*data); i++) {
+		clientCode(data[i]);
 	}
+
 	cout << endl;
 }
 
+} // legacy
+
+namespace problem {
+
+class Clerk {
+public:
+	Clerk() { cout << "  +Clerk\n"; }
+	~Clerk() {
+		DTOR("~Clerk\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  Clerk approves $" << amount << ".\n";
+	}
+};
+
+class Supervisor {
+public:
+	Supervisor() { cout << "  +Supervisor\n"; }
+	~Supervisor() {
+		DTOR("~Supervisor\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  Supervisor approves $" << amount << ".\n";
+	}
+};
+
+class Manager {
+public:
+	Manager() { cout << "  +Manager\n"; }
+	~Manager() {
+		DTOR("~Manager\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  Manager approves $" << amount << ".\n";
+	}
+};
+
+class Director {
+public:
+	Director() { cout << "  +Director\n"; }
+	~Director() {
+		DTOR("~Director\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  Director approves $" << amount << ".\n";
+	}
+};
+
+class VP {
+public:
+	VP() { cout << "  +VP\n"; }
+	~VP() {
+		DTOR("~VP\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  Veep approves $" << amount << ".\n";
+	}
+};
+
+class President {
+public:
+	President() { cout << "  +President\n"; }
+	~President() {
+		DTOR("~President\n", Lecture);
+	}
+public:
+	void approves(float amount) {
+		cout << "  President approves $" << amount << ".\n";
+	}
+};
+
+void clientCode(float amount) {
+	{
+	static Clerk		clerk;		// Client
+	static Supervisor	supervisor;	// coupled
+	static Manager		manager;	// with
+	static Director		director;	// lots
+	static VP			veep;		// of
+	static President	president;	// classes.
+	// Seam point - insert another approval class.
+
+	if(amount < 20.00)				// Mixing
+		clerk.approves(amount);		// deciding
+	else if(amount < 100.00)		// with doing.
+		supervisor.approves(amount);
+	else if(amount < 200.00)
+		manager.approves(amount);
+//	else if(amount < 400.00)		// Director fired, have
+//		director.approves(amount);	// to change client code.
+	else if(amount < 600.00)
+		veep.approves(amount);
+	else if(amount < 1000.00)
+		president.approves(amount);
+	// Seam point - insert another approval level.
+
+	else
+		cout << "  Denied $" << amount << ", the buck stops here.\n";
+	}
 }
+
+void demo(int seqNo) {
+	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
+	for(size_t i=0; i<COUNT(data); i++) {
+		clientCode(data[i]);
+	}
+
+	cout << endl;
+}
+
+} // problem
+
+namespace solution {
+
+class Approver { // If the responders are varying...
+protected:
+	Approver* successor;
+public:
+	Approver() : successor(0) {}
+	virtual  ~Approver() { delete successor;
+		DTOR("~Approver\n", Lecture);
+	}
+public:
+	void setSuccessor(Approver* next) { successor = next; }
+public:
+	virtual void handleRequest(float amount) {
+		cout<<"  Denied $"<<amount<<", the buck stops here.\n";
+	}
+public:
+	static Approver* makeObject(const string& criteria);
+};
+class Clerk : public Approver {
+public:
+	Clerk() { cout << "  +Clerk\n"; }
+	virtual ~Clerk() {
+		DTOR("~Clerk ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 20.00)
+			cout << "  Clerk approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+class Supervisor : public Approver {
+public:
+	Supervisor() { cout << "  +Supervisor\n"; }
+	virtual ~Supervisor() {
+		DTOR("~Supervisor ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 100.00)
+			cout << "  Supervisor approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+class Manager : public Approver {
+public:
+	Manager() { cout << "  +Manager\n"; }
+	virtual ~Manager() {
+		DTOR("~Manager ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 200.00)
+			cout << "  Manager approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+class Director : public Approver {
+public:
+	Director() { cout << "  +Director\n"; }
+	virtual ~Director() {
+		DTOR("~Director ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 400.00)
+			cout << "  Director approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+class VP : public Approver {
+public:
+	VP() { cout << "  +VP\n"; }
+	virtual ~VP() {
+		DTOR("~VP ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 600.00)
+			cout << "  Veep approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+class President : public Approver {
+public:
+	President() { cout << "  +President\n"; }
+	virtual ~President() {
+		DTOR("~President ", Lecture);
+	}
+public:
+	void handleRequest(float amount) {
+		if(amount < 1000.00)
+			cout << "  President approves $" << amount << ".\n";
+		else successor->handleRequest(amount);
+	}
+};
+// Seam point - add another Approver.
+
+Approver* Approver::makeObject(const string& criteria) {
+	if(criteria == "Clerk")			return new Clerk;
+	if(criteria == "Supervisor")	return new Supervisor;
+	if(criteria == "Manager")		return new Manager;
+	if(criteria == "Director")		return new Director;
+	if(criteria == "VP")			return new VP;
+	if(criteria == "President")		return new President;
+	// Seam point - add another Approver.
+	throw "OOPS!";
+}
+Approver* SetupChain() {
+	Approver* clerk = new Clerk;
+	string chain[] = {
+		"Supervisor", "Manager",
+		/*"Director",*/	// Fired director handled dynamically.
+		"VP", "President"
+	};
+
+	Approver* current = clerk;
+	for(size_t i=0; i<COUNT(chain); i++) {
+		Approver* next = Approver::makeObject(chain[i]);
+		current->setSuccessor(next);
+		current = next;
+	}
+	current->setSuccessor(new Approver);
+
+	return clerk;
+}
+
+void clientCode(Approver* chain, float amount) {
+	chain->handleRequest(amount);
+}
+
+void demo(int seqNo) {
+	Approver* clerk = SetupChain();
+
+	// Test variations.
+	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
+	for(size_t i=0; i<COUNT(data); i++) {
+		clientCode(clerk, data[i]);
+	}
+
+	delete clerk;
+	cout << endl;
+}
+
+} // solution
 
 } // lecture
 
@@ -114,7 +376,7 @@ void demo(int seqNo) {
 
 } // homework
 
-namespace skeleton {
+namespace skeleton { // From SWPC, rather different than solution.
 
 class ChainOfResp {	// If the responders are varying...
 protected:

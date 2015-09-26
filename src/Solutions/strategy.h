@@ -104,14 +104,14 @@ public:
 };
 // Seam point - add another strategy.
 
-void clientCode(ValidateIP* algorithm) {	// Client code polymorphic.
+void clientCode(ValidateIP* algorithm) { // Client code polymorphic.
 	algorithm->start();
 	algorithm->test();
 	algorithm->validate();
 	algorithm->stop();
 }
 
-void demo(int seqNo) {	// Test all the daughter classes.
+void demo(int seqNo) { // Test all the daughter classes.
 	cout << seqNo << ") << strategy::homework::solution::demo() >>\n";
 	FirmWare criteria[] = { PROD_FW, DIAG_FW, SYM_FW, APP_FW };
 	ValidateIP*	val[COUNT(criteria)] = {0};
@@ -132,7 +132,6 @@ void demo(int seqNo) {	// Test all the daughter classes.
 		delete val[i];
 	}
 	cout << endl;
-
 }
 
 }

@@ -33,7 +33,7 @@
  * Template Method			Sterilize process		Coating process
  * Observer					Customers				Cat in the Hat
  * Decorator				Windows					Cars
- * Chain of Responsibility
+ * Chain of Responsibility	RefundApproval			ChainOfCommand
  * Bridge
  * Abstract Factory
  */
