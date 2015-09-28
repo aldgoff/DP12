@@ -36,32 +36,32 @@ namespace legacy {
 
 class Clerk {
 public:
-	Clerk() { cout << "  +Clerk\n"; }
+	Clerk() {}
 	~Clerk() {
 		DTOR("~Clerk\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Clerk approves $" << amount << ".\n";
+		cout <<"  Clerk approves $" <<amount <<".\n";
 	}
 };
 
 class Owner {
 public:
-	Owner() { cout << "  +Owner\n"; }
+	Owner() {}
 	~Owner() {
 		DTOR("~Owner\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Owner approves $" << amount << ".\n";
+		cout <<"  Owner approves $" <<amount <<".\n";
 	}
 };
 
 void clientCode(float amount) {
 	{
 	static Clerk	clerk;	// Client coupled with
-	static Owner	owner;	// lots of classes.
+	static Owner	owner;	// multiple classes.
 	// Seam point - insert another approval class.
 
 	if(amount < 20.00)
@@ -70,13 +70,14 @@ void clientCode(float amount) {
 		owner.approves(amount);
 	// Seam point - insert another approval level.
 	else
-		cout << "  Denied $" << amount << ", the buck stops here.\n";
+		cout << "  Denied $" << amount << ".\n";
 	}
 }
 
 void demo(int seqNo) {
-	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
-	for(size_t i=0; i<sizeof(data)/sizeof(*data); i++) {
+	float data[] = { 10, 44.77, 111.88, 333.66,
+					555.22, 999.99, 1010.55 };
+	for(size_t i=0; i<COUNT(data); i++) {
 		clientCode(data[i]);
 	}
 
@@ -89,73 +90,73 @@ namespace problem {
 
 class Clerk {
 public:
-	Clerk() { cout << "  +Clerk\n"; }
+	Clerk() {}
 	~Clerk() {
 		DTOR("~Clerk\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Clerk approves $" << amount << ".\n";
+		cout << "  Clerk approves $" << amount <<".\n";
 	}
 };
 
 class Supervisor {
 public:
-	Supervisor() { cout << "  +Supervisor\n"; }
+	Supervisor() {}
 	~Supervisor() {
 		DTOR("~Supervisor\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Supervisor approves $" << amount << ".\n";
+		cout << "  Supervisor approves $" << amount <<".\n";
 	}
 };
 
 class Manager {
 public:
-	Manager() { cout << "  +Manager\n"; }
+	Manager() {}
 	~Manager() {
 		DTOR("~Manager\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Manager approves $" << amount << ".\n";
+		cout << "  Manager approves $" << amount <<".\n";
 	}
 };
 
 class Director {
 public:
-	Director() { cout << "  +Director\n"; }
+	Director() {}
 	~Director() {
 		DTOR("~Director\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Director approves $" << amount << ".\n";
+		cout << "  Director approves $" << amount <<".\n";
 	}
 };
 
 class VP {
 public:
-	VP() { cout << "  +VP\n"; }
+	VP() {}
 	~VP() {
 		DTOR("~VP\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  Veep approves $" << amount << ".\n";
+		cout << "  Veep approves $" << amount <<".\n";
 	}
 };
 
 class President {
 public:
-	President() { cout << "  +President\n"; }
+	President() {}
 	~President() {
 		DTOR("~President\n", Lecture);
 	}
 public:
 	void approves(float amount) {
-		cout << "  President approves $" << amount << ".\n";
+		cout << "  President approves $" << amount <<".\n";
 	}
 };
 
@@ -189,7 +190,8 @@ void clientCode(float amount) {
 }
 
 void demo(int seqNo) {
-	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
+	float data[] = { 10, 44.77, 111.88, 333.66,
+					555.22, 999.99, 1010.55 };
 	for(size_t i=0; i<COUNT(data); i++) {
 		clientCode(data[i]);
 	}
@@ -227,7 +229,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 20.00)
-			cout << "  Clerk approves $" << amount << ".\n";
+			cout << "  Clerk approves $" <<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -240,7 +242,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 100.00)
-			cout << "  Supervisor approves $" << amount << ".\n";
+			cout <<"  Supervisor approves $"<<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -253,7 +255,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 200.00)
-			cout << "  Manager approves $" << amount << ".\n";
+			cout << "  Manager approves $" <<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -266,7 +268,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 400.00)
-			cout << "  Director approves $" << amount << ".\n";
+			cout << "  Director approves $"<<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -279,7 +281,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 600.00)
-			cout << "  Veep approves $" << amount << ".\n";
+			cout << "  Veep approves $" <<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -292,7 +294,7 @@ public:
 public:
 	void handleRequest(float amount) {
 		if(amount < 1000.00)
-			cout << "  President approves $" << amount << ".\n";
+			cout << "  President approves $" <<amount <<".\n";
 		else successor->handleRequest(amount);
 	}
 };
@@ -305,7 +307,7 @@ Approver* Approver::makeObject(const string& criteria) {
 	if(criteria == "Director")		return new Director;
 	if(criteria == "VP")			return new VP;
 	if(criteria == "President")		return new President;
-	// Seam point - add another Approver.
+	// Seam point - insert another criteria.
 	throw "OOPS!"; // Base, default, null, exception.
 }
 Approver* SetupChain() {
@@ -334,7 +336,8 @@ void clientCode(Approver* chain, float amount) {
 void demo() { // Test variations.
 	Approver* approver = SetupChain();
 
-	float data[] = {10, 44.77, 111.88, 333.66, 555.22, 999.99, 1010.55};
+	float data[] = { 10, 44.77, 111.88, 333.66,
+					555.22, 999.99, 1010.55 };
 	for(size_t i=0; i<COUNT(data); i++) {
 		clientCode(approver, data[i]);
 	}
@@ -361,7 +364,7 @@ class ChainOfResp {	// If the responders are varying...
 protected:
 	ChainOfResp* successor;
 public:
-	ChainOfResp() : successor(0){}
+	ChainOfResp() : successor(0) {}
 	virtual ~ChainOfResp() {
 		DTOR(" ~ChainOfResp\n", Lecture);
 		delete successor;
@@ -414,7 +417,7 @@ ChainOfResp* ChainOfResp::makeObject(const string& criteria) {
 	if(criteria == "Derived1")	return new Derived1;
 	if(criteria == "Derived2")	return new Derived2;
 	if(criteria == "Derived3")	return new Derived3;
-	// Seam point - add another Approver.
+	// Seam point - add another criteria.
 	throw "OOPS!"; // Base, default, null, exception.
 }
 ChainOfResp* SetupChain() {

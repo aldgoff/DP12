@@ -30,7 +30,7 @@ namespace legacy {
 
 class Lieutenant {
 public:
-	Lieutenant() { cout << "  +Lieutenant\n"; }
+	Lieutenant() {}
 	~Lieutenant() {
 		DTOR("  ~Lieutenant\n", Homework);
 	}
@@ -42,7 +42,7 @@ public:
 
 class Captain {
 public:
-	Captain() { cout << "  +Captain\n"; }
+	Captain() {}
 	~Captain() {
 		DTOR("  ~Captain\n", Homework);
 	}
