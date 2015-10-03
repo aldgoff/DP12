@@ -370,58 +370,58 @@ public:
 		delete successor;
 	}
 public:
-	void setSuccessor(ChainOfResp* next) { successor = next; }
+	void setSuccessor(ChainOfResp* next) {successor = next;}
 public:
-	virtual void delegate(int criteria) {
+	virtual void delegate(int data) {
 		cout << "  The buck stops here.\n";
 	}
 public:
 	static ChainOfResp* makeObject(const string& criteria);
 };
-class Derived1 : public ChainOfResp {
+class Responder1 : public ChainOfResp {
 public:
-	~Derived1() {
-		DTOR("  ~Derived1", Lecture);
+	~Responder1() {
+		DTOR("  ~Responder1", Lecture);
 	}
 public:
-	void delegate(int criteria) {
-		if(criteria == 1)	cout << "  Derived1 handled.\n";
-		else 				successor->delegate(criteria);
-	}
-};
-class Derived2 : public ChainOfResp {
-public:
-	~Derived2() {
-		DTOR("  ~Derived2", Lecture);
-	}
-public:
-	void delegate(int criteria) {
-		if(criteria == 2)	cout << "  Derived2 handled.\n";
-		else 				successor->delegate(criteria);
+	void delegate(int data) {
+		if(data == 1)	cout << "  Responder1 handled.\n";
+		else 			successor->delegate(data);
 	}
 };
-class Derived3 : public ChainOfResp {
+class Responder2 : public ChainOfResp {
 public:
-	~Derived3() {
-		DTOR("  ~Derived3", Lecture);
+	~Responder2() {
+		DTOR("  ~Responder2", Lecture);
 	}
 public:
-	void delegate(int criteria) {
-		if(criteria == 3)	cout << "  Derived3 handled.\n";
-		else 				successor->delegate(criteria);
+	void delegate(int data) {
+		if(data == 2)	cout << "  Responder2 handled.\n";
+		else 			successor->delegate(data);
+	}
+};
+class Responder3 : public ChainOfResp {
+public:
+	~Responder3() {
+		DTOR("  ~Responder3", Lecture);
+	}
+public:
+	void delegate(int data) {
+		if(data == 3)	cout << "  Responder3 handled.\n";
+		else 			successor->delegate(data);
 	}
 };
 // Seam point - add another responder.
 
 ChainOfResp* ChainOfResp::makeObject(const string& criteria) {
-	if(criteria == "Derived1")	return new Derived1;
-	if(criteria == "Derived2")	return new Derived2;
-	if(criteria == "Derived3")	return new Derived3;
+	if(criteria == "Responder1")	return new Responder1;
+	if(criteria == "Responder2")	return new Responder2;
+	if(criteria == "Responder3")	return new Responder3;
 	// Seam point - add another criteria.
 	throw "OOPS!"; // Base, default, null, exception.
 }
 ChainOfResp* SetupChain() {
-	string chain[] = { "Derived1", "Derived2", "Derived3" };
+	string chain[] = { "Responder1", "Responder2", "Responder3" };
 	ChainOfResp* responder = ChainOfResp::makeObject(chain[0]);
 
 	ChainOfResp* current = responder;
@@ -435,12 +435,12 @@ ChainOfResp* SetupChain() {
 	return responder;
 }
 
-void demo() {	// Test variations.
+void demo() {	// Test the chain.
 	ChainOfResp* responder = SetupChain();
 
-	int criteria[] = { 1, 2, 3, 0 };
-	for(size_t i=0; i<COUNT(criteria); i++) {
-		responder->delegate(criteria[i]);
+	int data[] = { 1, 2, 3, 0 };
+	for(size_t i=0; i<COUNT(data); i++) {
+		responder->delegate(data[i]);
 	}
 
 	delete responder;
@@ -449,7 +449,7 @@ void demo() {	// Test variations.
 
 } // skeleton
 
-namespace swpc {
+namespace swpc { // As submitted, but modified to above during practice.
 
 class ChainOfResp {	// If the responders are varying...
 protected:
