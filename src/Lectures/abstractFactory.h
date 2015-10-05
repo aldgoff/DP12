@@ -126,19 +126,25 @@ class Type1_Able : public Type1 {
 public: ~Type1_Able() {
 		DTOR("  ~Type1_Able ", Lecture);
 	}
-public:	void id() { cout << "  Type 1 Able.\n"; }
+public:	void id() {
+	cout << "  Type 1 Able.\n";
+}
 };
 class Type1_Bill : public Type1 {
 public: ~Type1_Bill() {
 		DTOR("  ~Type1_Bill ", Lecture);
 	}
-public:	void id() { cout << "  Type 1 Bill.\n"; }
+public:	void id() {
+	cout << "  Type 1 Bill.\n";
+}
 };
 class Type1_Cain : public Type1 {
 public: ~Type1_Cain() {
 		DTOR("  ~Type1_Cain ", Lecture);
 	}
-public:	void id() { cout << "  Type 1 Cain.\n"; }
+public:	void id() {
+	cout << "  Type 1 Cain.\n";
+}
 };
 
 class Type2 {
@@ -151,19 +157,25 @@ class Type2_Able : public Type2 {
 public: ~Type2_Able() {
 		DTOR("  ~Type2_Able ", Lecture);
 	}
-public:	void id() { cout << "  Type 2 Able.\n"; }
+public:	void id() {
+	cout << "  Type 2 Able.\n";
+}
 };
 class Type2_Bill : public Type2 {
 public: ~Type2_Bill() {
 		DTOR("  ~Type2_Bill ", Lecture);
 	}
-public:	void id() { cout << "  Type 2 Bill.\n"; }
+public:	void id() {
+	cout << "  Type 2 Bill.\n";
+}
 };
 class Type2_Cain : public Type2 {
 public: ~Type2_Cain() {
 		DTOR("  ~Type2_Cain ", Lecture);
 	}
-public:	void id() { cout << "  Type 2 Cain.\n"; }
+public:	void id() {
+	cout << "  Type 2 Cain.\n";
+}
 };
 
 class Type3 {
@@ -176,19 +188,25 @@ class Type3_Able : public Type3 {
 public: ~Type3_Able() {
 		DTOR("  ~Type3_Able ", Lecture);
 	}
-public:	void id() { cout << "  Type 3 Able.\n"; }
+public:	void id() {
+	cout << "  Type 3 Able.\n";
+}
 };
 class Type3_Bill : public Type3 {
 public: ~Type3_Bill() {
 		DTOR("  ~Type3_Bill ", Lecture);
 	}
-public:	void id() { cout << "  Type 3 Bill.\n"; }
+public:	void id() {
+	cout << "  Type 3 Bill.\n";
+}
 };
 class Type3_Cain : public Type3 {
 public: ~Type3_Cain() {
 		DTOR("  ~Type3_Cain ", Lecture);
 	}
-public:	void id() { cout << "  Type 3 Cain.\n"; }
+public:	void id() {
+	cout << "  Type 3 Cain.\n";
+}
 };
 
 class AbstractFactory {	// If whole families are varying...
@@ -202,27 +220,27 @@ public:
 public:
 	static AbstractFactory* makeObject(string& criteria);
 };
-class Factory_Able : public AbstractFactory {
-public: ~Factory_Able() {
-		DTOR("  ~Factory_Able ", Lecture);
+class Family_Able : public AbstractFactory {
+public: ~Family_Able() {
+		DTOR("  ~Family_Able ", Lecture);
 	}
 public:
 	Type1* create_type_1() { return new Type1_Able; }
 	Type2* create_type_2() { return new Type2_Able; }
 	Type3* create_type_3() { return new Type3_Able; }
 };
-class Factory_Bill : public AbstractFactory {
-public: ~Factory_Bill() {
-		DTOR("  ~Factory_Bill ", Lecture);
+class Family_Bill : public AbstractFactory {
+public: ~Family_Bill() {
+		DTOR("  ~Family_Bill ", Lecture);
 	}
 public:
 	Type1* create_type_1() { return new Type1_Bill; }
 	Type2* create_type_2() { return new Type2_Bill; }
 	Type3* create_type_3() { return new Type3_Bill; }
 };
-class Factory_Cain : public AbstractFactory {
-public: ~Factory_Cain() {
-		DTOR("  ~Factory_Cain ", Lecture);
+class Family_Cain : public AbstractFactory {
+public: ~Family_Cain() {
+		DTOR("  ~Family_Cain ", Lecture);
 	}
 public:
 	Type1* create_type_1() { return new Type1_Cain; }
@@ -232,9 +250,9 @@ public:
 // Seam point - add another abstract factory.
 
 AbstractFactory* AbstractFactory::makeObject(string& criteria) {
-	if(criteria == "Able")	return new Factory_Able;
-	if(criteria == "Bill")	return new Factory_Bill;
-	if(criteria == "Cain")	return new Factory_Cain;
+	if(criteria == "Able")	return new Family_Able;
+	if(criteria == "Bill")	return new Family_Bill;
+	if(criteria == "Cain")	return new Family_Cain;
 	// Seam point - insert another family.
 	return 0;	// ABS null.
 }

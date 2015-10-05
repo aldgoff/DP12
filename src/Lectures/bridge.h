@@ -121,7 +121,7 @@ public: virtual ~Platform() {
 		DTOR("~Platform ", Lecture);
 	}
 public:
-	virtual string execute() { return "Oops"; }
+	virtual string implement() { return "Oops"; }
 public:
 	static Platform* makeObject(string& crit);
 };
@@ -130,21 +130,21 @@ public: ~Platform1() {
 		DTOR(" ~Platform1 ", Lecture);
 	}
 public:
-	string execute() { return "Platform1"; }
+	string implement() { return "Platform1"; }
 };
 class Platform2 : public Platform {
 public: ~Platform2() {
 		DTOR(" ~Platform2 ", Lecture);
 	}
 public:
-	string execute() { return "Platform2"; }
+	string implement() { return "Platform2"; }
 };
 class Platform3 : public Platform {
 public: ~Platform3() {
 		DTOR(" ~Platform3 ", Lecture);
 	}
 public:
-	string execute() { return "Platform3"; }
+	string implement() { return "Platform3"; }
 };
 // Seam point - add another implementation.
 Platform* Platform::makeObject(string& crit) {
@@ -176,7 +176,7 @@ public:
 	Abstract1(Platform* platform) : Abstraction(platform) {}
 public:
 	string execute() {
-		return "Abstract1 via " + platform->execute();
+		return "Abstract1 via " + platform->implement();
 	}
 };
 class Abstract2 : public Abstraction {
@@ -187,7 +187,7 @@ public:
 	Abstract2(Platform* platform) : Abstraction(platform) {}
 public:
 	string execute() {
-		return "Abstract2 via " + platform->execute();
+		return "Abstract2 via " + platform->implement();
 	}
 };
 class Abstract3 : public Abstraction {
@@ -198,7 +198,7 @@ public:
 	Abstract3(Platform* platform) : Abstraction(platform) {}
 public:
 	string execute() {
-		return "Abstract3 via " + platform->execute();
+		return "Abstract3 via " + platform->implement();
 	}
 };
 // Seam point - add another abstraction.
