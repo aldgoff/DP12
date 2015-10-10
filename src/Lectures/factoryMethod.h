@@ -473,6 +473,308 @@ void demo() {	// Test variations.
 
 } // gof_factory
 
+namespace wiki_factory {
+
+/* URLs
+ * https://en.wikipedia.org/wiki/Factory_method_pattern
+ * https://en.wikipedia.org/wiki/Factory_(object-oriented_programming)
+ */
+
+class Quantum {};
+
+Quantum Factory_Obj() { return Quantum(); }
+Quantum* Factory_Ptr() { return new Quantum(); }
+Quantum& Factory_Singleton() {
+	static Quantum quantum;
+	return quantum;
+}
+int Factory_Int() { return int(); }
+
+class Lepton {
+public: virtual ~Lepton() {}
+	virtual string id() { return "Lepton"; }
+};
+class Proton : public Lepton {
+	string id() { return "Proton"; }
+};
+class Neutron : public Lepton {
+	string id() { return "Neutron"; }
+};
+
+class LeptonFactory { // Factory Method.
+public: virtual ~LeptonFactory() {}
+virtual Lepton* make() { return new Lepton; }
+};
+class ProtonFactory : public LeptonFactory {
+public: Lepton* make() { return new Proton; }
+};
+class NeutronFactory : public LeptonFactory {
+public: Lepton* make() { return new Neutron; }
+};
+
+class Boson {
+public: virtual ~Boson() {}
+	virtual string id() { return "Boson"; }
+};
+class Photon : public Boson {
+	string id() { return "Photon"; }
+};
+class Graviton : public Boson {
+	string id() { return "Graviton"; }
+};
+
+class BosonFactory { // Factory Method.
+public: virtual ~BosonFactory() {}
+virtual Boson* make() { return new Boson; }
+};
+class PhotonFactory : public BosonFactory {
+public: Boson* make() { return new Photon; }
+};
+class GravitonFactory : public BosonFactory {
+public: Boson* make() { return new Graviton; }
+};
+
+Boson* bosonFactory(string criteria) {
+	if(criteria == "Photon")	return new Photon;
+	if(criteria == "Graviton")	return new Graviton;
+	return new Boson;
+}
+
+//class BuildUniverse { // Orthogonal.
+//public:
+//	Lepton* makeLepton(LeptonFactory* factory) { return factory->make(); }
+//	Boson* makeBoson(BosonFactory* factory) { return factory->make(); }
+//};
+
+class UniverseFactory { // Abstract Factory.
+public: virtual ~UniverseFactory() {}
+public:
+	virtual Lepton* makeLepton() { return new Lepton; }
+	virtual Boson* makeBoson() { return new Boson; }
+};
+class PlasmaFactory : public UniverseFactory {
+public:
+	Lepton* makeLepton() { return new Proton; }
+	Boson* makeBoson() { return new Photon; }
+};
+class DarkMatterFactory : public UniverseFactory {
+public:
+	Lepton* makeLepton() { return new Neutron; }
+	Boson* makeBoson() { return new Graviton; }
+};
+
+void demo() {
+	LeptonFactory* leptons[] = { new ProtonFactory, new NeutronFactory };
+//	for(size_t i=0; i<COUNT(leptons); i++) {
+//		Lepton* particle = leptons[i]->make();
+//		cout << "  " << particle->id() << "\n";
+//	}
+//	cout << endl;
+//
+	BosonFactory* bosons[] = { new PhotonFactory, new GravitonFactory };
+//	for(size_t i=0; i<COUNT(bosons); i++) {
+//		Boson* particle = bosons[i]->make();
+//		cout << "  " << particle->id() << "\n";
+//	}
+//	cout << endl;
+//
+//	BuildUniverse universe;
+	for(size_t i=0; i<COUNT(leptons); i++) {
+		for(size_t j=0; j<COUNT(bosons); j++) {
+			Lepton* lepton = leptons[i]->make();
+			Boson* boson = bosons[j]->make();
+//			Lepton* lepton = universe.makeLepton(leptons[i]);
+//			Boson* boson = universe.makeBoson(bosons[j]);
+			cout << "  " << lepton->id() << " - " << boson->id() << "\n";
+		}
+	}
+	cout << endl;
+
+	UniverseFactory* universes[] = { new PlasmaFactory, new DarkMatterFactory };
+	for(size_t i=0; i<COUNT(universes); i++) {
+		Lepton* lepton = universes[i]->makeLepton();
+		Boson* boson = universes[i]->makeBoson();
+		cout << "  " << lepton->id() << " - " << boson->id() << "\n";
+	}
+	cout << endl;
+}
+
+} // wiki_factory
+
+namespace singletons {
+
+static int num = 0;
+
+class InputDevice {
+protected:
+	const int n;
+	char str[9];
+public:
+	InputDevice() : n(++num) {}
+	virtual ~InputDevice() {}
+public:
+	virtual string id() { return "InputDevice"; }
+public:
+	static InputDevice* makeObject(const string& criteria);
+};
+class Keyboard : public InputDevice {
+	string id() {
+		sprintf(str, "%d", n);
+		return (string("Keyboard - ") = str);
+	}
+};
+class Mic : public InputDevice {
+	string id() {
+		sprintf(str, "%d", n);
+		return (string("Mic - ") = str);
+	}
+};
+class TouchScreen : public InputDevice {
+	string id() {
+		sprintf(str, "%d", n);
+		return (string("TouchScreen - ") = str);
+	}
+};
+
+InputDevice* InputDevice::makeObject(const string& criteria) {
+	if(criteria == "Keyboard") {
+		static Keyboard device;
+		return (InputDevice*)&device;
+	}
+	if(criteria == "Mic") {
+		static Mic device;
+		return (InputDevice*)&device;
+	}
+	if(criteria == "TouchScreen") {
+		static TouchScreen device;
+		return (InputDevice*)&device;
+	}
+	return new InputDevice;
+}
+
+class SingletonDevice { // Factory Method
+public: virtual ~SingletonDevice() {}
+virtual InputDevice* make() { return new InputDevice; }
+};
+class KeyboardFactory : public SingletonDevice {
+	InputDevice* make() {
+		static Keyboard device;
+		return (InputDevice*)&device;
+	}
+};
+class MicFactory : public SingletonDevice {
+	InputDevice* make() {
+		static Mic device;
+		return (InputDevice*)&device;
+	}
+};
+class TouchScreenFactory : public SingletonDevice {
+	InputDevice* make() {
+		static TouchScreen device;
+		return (InputDevice*)&device;
+	}
+};
+
+SingletonDevice* makeFactory(const string& criteria) {
+	if(criteria == "Keyboard")		return new KeyboardFactory;
+	if(criteria == "Mic")			return new MicFactory;
+	if(criteria == "TouchScreen")	return new TouchScreenFactory;
+	return new SingletonDevice;
+}
+
+void demo() {
+	string criteria[] = { "Keyboard", "Mic", "TouchScreen" };
+	InputDevice* device = 0;
+
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		SingletonDevice* factory = makeFactory(criteria[i]);
+		device = factory->make();
+		cout << "  " << device->id() << ".\n";
+		device = factory->make();
+		cout << "  " << device->id() << ".\n";
+		cout << endl;
+	}
+
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		device = InputDevice::makeObject(criteria[i]);
+		cout << "  " << device->id() << ".\n";
+		device = InputDevice::makeObject(criteria[i]);
+		cout << "  " << device->id() << ".\n";
+		cout << endl;
+	}
+}
+
+} // singletons
+
+namespace separation_of_concerns {
+
+class ClientHierarchy { // Some design pattern.		// Abstract doing.
+public: virtual ~ClientHierarchy() {}
+public:
+	virtual string process() { return "ClientHierarchy"; }
+};
+class Concrete1 : public ClientHierarchy {
+public:
+	string process() { return "Concrete1"; }
+};
+class Concrete2 : public ClientHierarchy {
+public:
+	string process() { return "Concrete2"; }
+};
+class Concrete3 : public ClientHierarchy {
+public:
+	string process() { return "Concrete3"; }
+};
+// Seam point - add another Concrete.
+
+class FactoryMethod {								// Abstract creation.
+public: virtual ~FactoryMethod() {}
+public:
+	virtual ClientHierarchy* make() { return new ClientHierarchy; }
+	void log() {
+		cout << "  Deciding...\n";
+		cout << "  Creating...\n";
+		cout << "  Doing ";
+	}
+};
+class Factory1 : public FactoryMethod {
+public:
+	ClientHierarchy* make() { log(); return new Concrete1; }
+};
+class Factory2 : public FactoryMethod {
+public:
+	ClientHierarchy* make() { log(); return new Concrete2; }
+};
+class Factory3 : public FactoryMethod {
+public:
+	ClientHierarchy* make() { log(); return new Concrete3; }
+};
+// Seam point - add another Factory.
+
+FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
+	if(criteria == "Factory1")	return new Factory1;
+	if(criteria == "Factory2")	return new Factory2;
+	if(criteria == "Factory3")	return new Factory3;
+	// Seam point - insert another Factory.
+	return new FactoryMethod;
+}
+
+void clientCode(const string& criteria) {
+	FactoryMethod* factory = makeFactory(criteria);	// Complicated deciding;
+	ClientHierarchy* concrete = factory->make();	// Complicated creation;
+	cout << concrete->process() << ".\n";			// Complicated doing;
+}
+
+void demo() { // Test variation.
+	string criteria[] = { "Factory1", "Factory2", "Factory3" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		clientCode(criteria[i]);
+		cout << endl;
+	}
+}
+
+} // separation_of_concerns
+
 } // refactoring
 
 namespace obsolete {
@@ -611,6 +913,9 @@ public:
 		refactoring::bad::demo();
 		refactoring::good::demo();
 		refactoring::gof_factory::demo();
+		refactoring::wiki_factory::demo();
+		refactoring::singletons::demo();
+		refactoring::separation_of_concerns::demo();
 	}
 };
 
