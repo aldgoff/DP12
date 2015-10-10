@@ -27,7 +27,7 @@ namespace observer {	// Command line: observer [l|h] [ll|lp|ls] [hl|hp|hs]
 namespace lecture {
 
 /* Client wants to welcome new customers.
- * Client wants to send a welcome letter.
+ * Client wants to verify address and send a welcome letter.
  * Eventually client wants to offer coupons or credit cards.
  * The Customer class is in danger of becoming coupled
  * to a growing list of welcome features.
@@ -36,37 +36,46 @@ namespace lecture {
 
 namespace legacy {
 
+class Customer;
+
 class VerifyAddress {
 public:
-	void verify(const string& name) {
-		cout << "  Verify address of " << name << ".\n";
-	}
+	void verify(Customer* customer);
 };
 class WelcomeLetter {
 public:
-	void send(const string& name) {
-		cout << "  Welcome letter to " << name << ".\n";
-	}
+	void send(Customer* customer);
 };
 // Seam point - add another feature.
 
 class Customer {
-	string name;
 	VerifyAddress	address;
 	WelcomeLetter	letter;
 	// Seam point - insert another feature.
 public:
+	const string name;
+public:
 	Customer(const string& name) : name(name) {}
 public:
+	string getState() { return "State info"; }
+public:
 	void welcome() {
-		address.verify(name);
-		letter.send(name);
+		address.verify(this);
+		letter.send(this);
 		// Seam point - insert another feature.
 	}
 };
 
+void VerifyAddress::verify(Customer* customer) {
+	cout << "  Verify address of ";
+	cout << customer->name << ".\n";
+}
+void WelcomeLetter::send(Customer* customer) {
+	cout << "  Welcome letter to ";
+	cout << customer->name << ".\n";
+}
+
 void demo(int seqNo) {
-	cout<<seqNo<<") << observer::lecture::legacy::demo() >>\n";
 	Customer newCustomer("Sam");
 	newCustomer.welcome();
 	cout << endl;
@@ -76,31 +85,23 @@ void demo(int seqNo) {
 
 namespace problem {
 
+class Customer;
+
 class VerifyAddress {
 public:
-	void verify(const string& name) {
-		cout << "  Verify address of " << name << ".\n";
-	}
+	void verify(Customer* customer);
 };
 class WelcomeLetter {
 public:
-	void send(const string& name) {
-		cout << "  Welcome letter to " << name << ".\n";
-	}
+	void send(Customer* customer);
 };
 class Coupon {
 public:
-	void issue(const string& name) {
-		cout << "  Coupon: ";
-		cout << "State info.\n";
-	}
+	void issue(Customer* customer);
 };
 class CreditCard {
 public:
-	void offer(const string& name) {
-		cout << "  Credit card offer: ";
-		cout << "State info.\n";
-	}
+	void offer(Customer* customer);
 };
 // Seam point - add another feature.
 
@@ -113,17 +114,37 @@ class Customer {
 	// Seam point - insert another feature.
 public:
 	Customer(const string& name) : name(name) {}
+public:
+	string getName() { return name; }
+	string getState() { return "State info"; }
+public:
 	void welcome() {
-		address.verify(name);
-		letter.send(name);
-		coupon.issue(name);
-		creditCard.offer(name);
+		address.verify(this);
+		letter.send(this);
+		coupon.issue(this);
+		creditCard.offer(this);
 		// Seam point - insert another feature.
 	}
 };
 
+void VerifyAddress::verify(Customer* customer) {
+	cout << "  Verify address of ";
+	cout << customer->getName() << ".\n";
+}
+void WelcomeLetter::send(Customer* customer) {
+	cout << "  Welcome letter to ";
+	cout << customer->getName() << ".\n";
+}
+void Coupon::issue(Customer* customer) {
+	cout << "  Coupon: ";
+	cout << customer->getState() << ".\n";
+}
+void CreditCard::offer(Customer* customer) {
+	cout << "  Credit card offer: ";
+	cout << customer->getState() << ".\n";
+}
+
 void demo(int seqNo) {
-	cout<<seqNo<<") << observer::lecture::problem::demo() >>\n";
 	Customer newCustomer("Sam");
 	newCustomer.welcome();
 	cout << endl;
@@ -136,9 +157,8 @@ namespace solution {
 class Welcome;
 
 class Customer { // Subject in Observer design pattern.
+	string name;
 	list<Welcome*> observers;
-public:
-	const string name;
 public:
 	Customer(const string& name) : name(name) {}
 	~Customer() {
@@ -149,47 +169,43 @@ public:
 public:
 	void attach(Welcome* obs) { observers.push_back(obs); }
 	void detach(Welcome* obs) { observers.remove(obs); }
-	void welcome();
+	string getName() { return name; }
 	string getState() { return "State info"; }
+public:
+	void welcome();
 };
 
 class Welcome {	// Observer in Observer design pattern.
-public:
-	Welcome() {}
-	virtual ~Welcome() {
+public:	virtual ~Welcome() {
 		DTOR("~Welcome\n", Lecture);
 	}
 public:
 	virtual void update(Customer* customer)=0;
+public:
+	static Welcome* makeObject(const string& criteria);
 };
 class VerifyAddress : public Welcome {
-public:
-	VerifyAddress() {}
-	virtual ~VerifyAddress() {
+public:	virtual ~VerifyAddress() {
 		DTOR("  ~VerifyAddress ", Lecture);
 	}
 public:
 	void update(Customer* customer) {
 		cout << "  Verify address of ";
-		cout << customer->name << ".\n";
+		cout << customer->getName() << ".\n";
 	}
 };
 class Letter : public Welcome {
-public:
-	Letter() {}
-	virtual ~Letter() {
+public:	virtual ~Letter() {
 		DTOR("  ~Letter ", Lecture);
 	}
 public:
 	void update(Customer* customer) {
 		cout << "  Welcome letter to ";
-		cout << customer->name << ".\n";
+		cout << customer->getName() << ".\n";
 	}
 };
 class Coupon : public Welcome {
-public:
-	Coupon() {}
-	virtual ~Coupon() {
+public:	virtual ~Coupon() {
 		DTOR("  ~Coupon ", Lecture);
 	}
 public:
@@ -199,9 +215,7 @@ public:
 	}
 };
 class CreditCardOffer : public Welcome {
-public:
-	CreditCardOffer() {}
-	virtual ~CreditCardOffer() {
+public:	virtual ~CreditCardOffer() {
 		DTOR("  ~CreditCardOffer ", Lecture);
 	}
 public:
@@ -212,6 +226,15 @@ public:
 };
 // Seam point - add another Observer.
 
+Welcome* Welcome::makeObject(const string& criteria) {
+	if(criteria == "VerifyAddress")   return new VerifyAddress;
+	if(criteria == "Letter")		  return new Letter;
+	if(criteria == "Coupon")		  return new Coupon;
+	if(criteria == "CreditCardOffer") return new CreditCardOffer;
+	// Seam point - insert another criteria.
+	throw "Oops!";
+}
+
 void Customer::welcome() {
 	list<Welcome*>::iterator it=observers.begin();
 	for(; it!=observers.end(); ++it) {
@@ -220,22 +243,23 @@ void Customer::welcome() {
 }
 
 void demo(int seqNo) {
-	cout<<seqNo<<") << observer::lecture::solution::demo() >>\n";
-	{
-		Customer newCustomer("Sam");
-		Welcome* obs[] = {	// Register.
-				new VerifyAddress,
-				new Letter,
-				new Coupon,
-				new CreditCardOffer};
-		for(size_t i=0; i<COUNT(obs); i++)
-			newCustomer.attach(obs[i]);
-
-		newCustomer.welcome();	// Notify.
-
-		for(size_t i=0; i<COUNT(obs); i++) {
-			newCustomer.detach(obs[i]);	delete obs[i];	}
+	Customer* newCustomer = new Customer("Sam");
+	string criteria[] = { // Observers set at run time.
+		"VerifyAddress","Letter","Coupon","CreditCardOffer"
+	};
+	Welcome* welcome[COUNT(criteria)];
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		welcome[i] = Welcome::makeObject(criteria[i]);
+		newCustomer->attach(welcome[i]);
 	}
+
+	newCustomer->welcome();	// Notify event.
+
+	for(size_t i=0; i<COUNT(welcome); i++) {
+		newCustomer->detach(welcome[i]);
+		delete welcome[i];
+	}
+	delete newCustomer;
 	cout << endl;
 }
 
@@ -389,12 +413,15 @@ public:
 	virtual ~Observer() { DTOR("~ObserverObserver ", Architecture); }
 public:
 	virtual void lectureLegacy() {
+		cout << seqNo << ") << observer::lecture::legacy >>\n";
 		lecture::legacy::demo(seqNo);
 	}
 	virtual void lectureProblem() {
+		cout << seqNo << ") << observer::lecture::problem >>\n";
 		lecture::problem::demo(seqNo);
 	}
 	virtual void lectureSolution() {
+		cout << seqNo << ") << observer::lecture::solution >>\n";
 		lecture::solution::demo(seqNo);
 	}
 	virtual void homeworkLegacy() {

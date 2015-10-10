@@ -31,7 +31,7 @@
  * Adapter					Audio codecs			Shape draw
  * Factory Method			Vacation				Encrypted video
  * Template Method			Sterilize process		Coating process
- * Observer					Customers				Cat in the Hat
+ * Observer					New Customers			Cat in the Hat
  * Decorator				Windows					Cars
  * Chain of Responsibility	RefundApproval			ChainOfCommand
  * Bridge

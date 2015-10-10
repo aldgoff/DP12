@@ -417,6 +417,62 @@ void demo() {
 
 } // good
 
+namespace gof_factory {
+
+class Seuss {
+public: virtual ~Seuss() {}
+public:
+	virtual void id() { cout << "  Seuss.\n"; }
+};
+class SamIAm : public Seuss {
+public: void id() { cout << "  SamIAm.\n"; }
+};
+class GreenEggsAndHam : public Seuss {
+public: void id() { cout << "  GreenEggsAndHam.\n"; }
+};
+class DoNotLikeThem : public Seuss {
+public: void id() { cout << "  DoNotLikeThem.\n"; }
+};
+
+class Factory {
+public: virtual ~Factory() {}
+public:
+	virtual Seuss* make()=0;
+};
+class RedFish : public Factory {
+public:	Seuss* make() { return new SamIAm; }
+};
+class BlueFish : public Factory {
+public:	Seuss* make() { return new GreenEggsAndHam; }
+};
+class OneFish : public Factory {
+public:	Seuss* make() { return new DoNotLikeThem; }
+};
+
+Seuss* makeObject(const string& criteria) {
+	if(criteria == "SamIAm")			return new SamIAm;
+	if(criteria == "GreenEggsAndHam")	return new GreenEggsAndHam;
+	if(criteria == "DoNotLikeThem")		return new DoNotLikeThem;
+	throw "Oops!";
+}
+
+void demo() {	// Test variations.
+	Factory* fms[] = { new RedFish, new BlueFish, new OneFish };
+	for(size_t i=0; i<COUNT(fms); i++) {
+		Seuss* reader = fms[i]->make();
+		reader->id();
+	}
+	cout << endl;
+	string criteria[] = { "SamIAm", "GreenEggsAndHam", "DoNotLikeThem" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		Seuss* reader = makeObject(criteria[i]);
+		reader->id();
+	}
+	cout << endl;
+}
+
+} // gof_factory
+
 } // refactoring
 
 namespace obsolete {
@@ -554,6 +610,7 @@ public:
 		cout << seqNo << ") << factory_method::refactoring >>\n";
 		refactoring::bad::demo();
 		refactoring::good::demo();
+		refactoring::gof_factory::demo();
 	}
 };
 
