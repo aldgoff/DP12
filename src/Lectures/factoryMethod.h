@@ -269,6 +269,194 @@ void demo(int seqNo) {	// Test variations.
 
 } // skeleton
 
+namespace evolution_of_concerns {
+
+class ClientHierarchy { // Some design pattern.		// Abstract doing.
+public: virtual ~ClientHierarchy() {
+	DTOR("~ClientHierarchy\n", Lecture);
+}
+public:
+	virtual string process() { return "Oops!"; }
+public:
+	static ClientHierarchy* makeObject(string& criteria);
+};
+class Type1 : public ClientHierarchy {
+public: ~Type1() {
+		DTOR("  ~Type1 ", Lecture);
+	}
+public:
+	string process() { return "Type1"; }
+};
+class Type2 : public ClientHierarchy {
+public: ~Type2() {
+		DTOR("  ~Type2 ", Lecture);
+	}
+public:
+	string process() { return "Type2"; }
+};
+class Type3 : public ClientHierarchy {
+public: ~Type3() {
+		DTOR("  ~Type3 ", Lecture);
+	}
+public:
+	string process() { return "Type3"; }
+};
+// Seam point - add another Type.
+
+class FactoryMethod {								// Abstract creation.
+public: virtual ~FactoryMethod() {
+	DTOR("~FactoryMethod\n", Lecture);
+}
+public:
+	virtual ClientHierarchy* make() { return new ClientHierarchy; }
+};
+class Factory1 : public FactoryMethod {
+public: ~Factory1() {
+		DTOR("  ~Factory1 ", Lecture);
+	}
+public:
+	ClientHierarchy* make() { return new Type1; }
+};
+class Factory2 : public FactoryMethod {
+public: ~Factory2() {
+		DTOR("  ~Factory2 ", Lecture);
+	}
+public:
+	ClientHierarchy* make() { return new Type2; }
+};
+class Factory3 : public FactoryMethod {
+public: ~Factory3() {
+		DTOR("  ~Factory3 ", Lecture);
+	}
+public:
+	ClientHierarchy* make() { return new Type3; }
+};
+// Seam point - add another Factory.
+
+namespace idiomatic {
+
+FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
+	if(criteria == "Factory1")	return new Factory1;
+	if(criteria == "Factory2")	return new Factory2;
+	if(criteria == "Factory3")	return new Factory3;
+	// Seam point - insert another Factory.
+	return new FactoryMethod;
+}
+
+ClientHierarchy* makeObject(string& criteria) {
+	FactoryMethod* factory = 0;
+
+	// Factory implementation:
+	if(		criteria == "Type1")	factory = makeFactory("Factory1");
+	else if(criteria == "Type2")	factory = makeFactory("Factory2");
+	else if(criteria == "Type3")	factory = makeFactory("Factory3");
+	// Seam point - insert another Factory.
+
+	else							factory = new FactoryMethod;
+
+	ClientHierarchy* type = factory->make();
+	delete factory;
+
+	return type;
+}
+
+} // idiomatic
+
+namespace realistic {
+
+FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
+	if(criteria == "Factory1") {
+		//...
+		return new Factory1;
+	}
+	if(criteria == "Factory2") {
+		//...
+		return new Factory2;
+	}
+	if(criteria == "Factory3") {
+		//...
+		return new Factory3;
+	}
+	// Seam point - insert another Factory.
+
+	//...
+	return new FactoryMethod;
+}
+
+namespace original {
+
+ClientHierarchy* makeObject(string& criteria) {
+	if(criteria == "Type1")	return new Type1;
+	if(criteria == "Type2")	return new Type2;
+	if(criteria == "Type3")	return new Type3;
+	// Seam point - insert another class.
+	return new ClientHierarchy; // Base, default, null, exception.
+}
+
+} // original
+
+namespace leaky {
+
+ClientHierarchy* makeObject(string& criteria) {
+	if(criteria == "Type1")	return makeFactory("Factory1")->make();
+	if(criteria == "Type2")	return makeFactory("Factory2")->make();
+	if(criteria == "Type3")	return makeFactory("Factory3")->make();
+	// Seam point - insert another Concrete.
+	else 						return new ClientHierarchy;
+}
+
+} // leaky
+
+namespace final {
+
+ClientHierarchy* makeObject(string& criteria) {
+	FactoryMethod* factory = 0;
+
+	// Factory implementation:
+	if(		criteria == "Type1"
+			//...
+			)
+		{ factory = makeFactory("Factory1"); }
+	else if(criteria == "Type2"
+			//...
+			)
+		{ factory = makeFactory("Factory2"); }
+	else if(criteria == "Type3"
+			//...
+			)
+		{ factory = makeFactory("Factory3"); }
+	// Seam point - insert another Factory.
+
+	else {
+		factory = new FactoryMethod;
+	}
+
+	ClientHierarchy* type = factory->make();
+	delete factory;
+
+	return type;
+}
+
+} // final
+
+} // realistic
+
+ClientHierarchy* ClientHierarchy::makeObject(string& criteria) {
+	return idiomatic::makeObject(criteria);
+}
+
+void demo(int seqNo) {	// Test variations.
+	string criteria[] = { "Type1", "Type2", "Type3", "oops" };
+	for(size_t i=0; i<COUNT(criteria); i++) {
+		ClientHierarchy* type = ClientHierarchy::makeObject(criteria[i]);
+		cout << "  " << type->process() << ".\n";
+		delete type;
+	}
+	cout << endl;
+}
+
+}
+
 namespace recognition {
 
 class Car {
@@ -712,6 +900,8 @@ class ClientHierarchy { // Some design pattern.		// Abstract doing.
 public: virtual ~ClientHierarchy() {}
 public:
 	virtual string process() { return "ClientHierarchy"; }
+public:
+	static ClientHierarchy* makeObject(const string& criteria);
 };
 class Concrete1 : public ClientHierarchy {
 public:
@@ -757,6 +947,33 @@ FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
 	if(criteria == "Factory3")	return new Factory3;
 	// Seam point - insert another Factory.
 	return new FactoryMethod;
+}
+
+ClientHierarchy* ClientHierarchy::makeObject(const string& criteria) {
+	// Concise implementation:
+	if(criteria == "Concrete1")	return makeFactory("Factory1")->make();
+	if(criteria == "Concrete2")	return makeFactory("Factory2")->make();
+	if(criteria == "Concrete3")	return makeFactory("Factory3")->make();
+	// Seam point - insert another Concrete.
+	else 						return new ClientHierarchy;
+
+	FactoryMethod* factory = 0;
+
+	// Factory implementation:
+	if(		criteria == "Concrete1")	factory = makeFactory("Factory1");
+	else if(criteria == "Concrete2")	factory = makeFactory("Factory2");
+	else if(criteria == "Concrete3")	factory = makeFactory("Factory3");
+	// Seam point - insert another Factory.
+	else 								factory = new FactoryMethod;
+
+	return factory->make();
+
+	// Obsolete implementation:
+	if(criteria == "Concrete1")	return new Concrete1;
+	if(criteria == "Concrete2")	return new Concrete2;
+	if(criteria == "Concrete3")	return new Concrete3;
+	// Seam point - insert another Concrete.
+	return new ClientHierarchy;
 }
 
 void clientCode(const string& criteria) {
@@ -903,6 +1120,8 @@ public:
 	virtual void skeleton() {
 		cout << seqNo << ") << factory_method::skeleton >>\n";
 		skeleton::demo(seqNo);
+		evolution_of_concerns::demo(seqNo);
+
 	}
 	virtual void recognition() {
 		cout << seqNo << ") << factory_method::recognition >>\n";
