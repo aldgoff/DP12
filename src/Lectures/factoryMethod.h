@@ -269,7 +269,7 @@ void demo(int seqNo) {	// Test variations.
 
 } // skeleton
 
-namespace evolution_of_concerns {
+namespace evolution_of_concerns { // Todo: move to acceleration.h.
 
 class ClientHierarchy { // Some design pattern.		// Abstract doing.
 public: virtual ~ClientHierarchy() {
@@ -367,18 +367,22 @@ namespace realistic {
 FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
 	if(criteria == "Factory1") {
 		//...
+		//...
 		return new Factory1;
 	}
 	if(criteria == "Factory2") {
+		//...
 		//...
 		return new Factory2;
 	}
 	if(criteria == "Factory3") {
 		//...
+		//...
 		return new Factory3;
 	}
 	// Seam point - insert another Factory.
 
+	//...
 	//...
 	return new FactoryMethod;
 }
@@ -395,14 +399,26 @@ ClientHierarchy* makeObject(string& criteria) {
 
 } // original
 
-namespace leaky {
+namespace leaky { // Memory leak: factories never destroyed.
 
 ClientHierarchy* makeObject(string& criteria) {
 	if(criteria == "Type1")	return makeFactory("Factory1")->make();
 	if(criteria == "Type2")	return makeFactory("Factory2")->make();
 	if(criteria == "Type3")	return makeFactory("Factory3")->make();
-	// Seam point - insert another Concrete.
-	else 						return new ClientHierarchy;
+	// Seam point - insert another Type.
+	else 					return new ClientHierarchy;
+}
+
+} // leaky
+
+namespace object {
+
+ClientHierarchy* makeObject(string& criteria) {
+	if(criteria == "Type1")	return Factory1().make();
+	if(criteria == "Type2")	return Factory2().make();
+	if(criteria == "Type3")	return Factory3().make();
+	// Seam point - insert another Type.
+	else 					return new ClientHierarchy;
 }
 
 } // leaky
@@ -415,16 +431,25 @@ ClientHierarchy* makeObject(string& criteria) {
 	// Factory implementation:
 	if(		criteria == "Type1"
 			//...
-			)
-		{ factory = makeFactory("Factory1"); }
+			//...
+		)
+	{
+		factory = makeFactory("Factory1");
+	}
 	else if(criteria == "Type2"
 			//...
-			)
-		{ factory = makeFactory("Factory2"); }
+			//...
+		)
+	{
+		factory = makeFactory("Factory2");
+	}
 	else if(criteria == "Type3"
 			//...
+			//...
 			)
-		{ factory = makeFactory("Factory3"); }
+	{
+		factory = makeFactory("Factory3");
+	}
 	// Seam point - insert another Factory.
 
 	else {
@@ -442,7 +467,7 @@ ClientHierarchy* makeObject(string& criteria) {
 } // realistic
 
 ClientHierarchy* ClientHierarchy::makeObject(string& criteria) {
-	return idiomatic::makeObject(criteria);
+	return realistic::object::makeObject(criteria);
 }
 
 void demo(int seqNo) {	// Test variations.
@@ -894,7 +919,7 @@ void demo() {
 
 } // singletons
 
-namespace separation_of_concerns {
+namespace separation_of_concerns { // Todo: move to acceleration.h.
 
 class ClientHierarchy { // Some design pattern.		// Abstract doing.
 public: virtual ~ClientHierarchy() {}
@@ -945,27 +970,32 @@ FactoryMethod* makeFactory(const string& criteria) { // Abstract deciding.
 	if(criteria == "Factory1")	return new Factory1;
 	if(criteria == "Factory2")	return new Factory2;
 	if(criteria == "Factory3")	return new Factory3;
-	// Seam point - insert another Factory.
+	// Seam point - insert another criteria.
 	return new FactoryMethod;
 }
 
-ClientHierarchy* ClientHierarchy::makeObject(const string& criteria) {
-	// Concise implementation:
+ClientHierarchy* ClientHierarchy::makeObject(const string& criteria) { // Evolution.
+	// Succinct implementation:
+	if(criteria == "Concrete1")	return Factory1().make();
+	if(criteria == "Concrete2")	return Factory2().make();
+	if(criteria == "Concrete3")	return Factory3().make();
+	// Seam point - insert another Concrete.
+	else 						return new ClientHierarchy;
+
+	// Concise but leaky implementation:
 	if(criteria == "Concrete1")	return makeFactory("Factory1")->make();
 	if(criteria == "Concrete2")	return makeFactory("Factory2")->make();
 	if(criteria == "Concrete3")	return makeFactory("Factory3")->make();
 	// Seam point - insert another Concrete.
 	else 						return new ClientHierarchy;
 
-	FactoryMethod* factory = 0;
-
 	// Factory implementation:
+	FactoryMethod* factory = 0;
 	if(		criteria == "Concrete1")	factory = makeFactory("Factory1");
 	else if(criteria == "Concrete2")	factory = makeFactory("Factory2");
 	else if(criteria == "Concrete3")	factory = makeFactory("Factory3");
 	// Seam point - insert another Factory.
 	else 								factory = new FactoryMethod;
-
 	return factory->make();
 
 	// Obsolete implementation:
