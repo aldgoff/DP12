@@ -34,7 +34,7 @@
  * Observer					New Customers			Cat in the Hat
  * Decorator				Windows					Cars
  * Chain of Responsibility	RefundApproval			ChainOfCommand
- * Bridge					Thread Scheduler
+ * Bridge					Thread Scheduler		ShapeRenderPlatform
  * Abstract Factory
  */
 
