@@ -430,7 +430,7 @@ public:
 		DTOR("  ~RoundRobin ", Lecture);
 	}
 public:
-	virtual void run() {
+	void run() {
 		cout << "  RoundRobin thread scheduler running on";
 		platform->implement(); }
 };
@@ -441,7 +441,7 @@ public:
 		DTOR("  ~TimeSliced ", Lecture);
 	}
 public:
-	virtual void run() {
+	void run() {
 		cout << "  TimeSliced thread scheduler running on";
 		platform->implement(); }
 };
@@ -452,7 +452,7 @@ public:
 		DTOR("  ~Prioritized ", Lecture);
 	}
 public:
-	virtual void run() {
+	void run() {
 		cout << "  Prioritized thread scheduler running on";
 		platform->implement(); }
 };

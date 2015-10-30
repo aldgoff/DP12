@@ -102,7 +102,7 @@ enum Render {
 
 namespace simple_FM_solution {
 
-class Platform {
+class Platform { // Implementation class in Bridge pattern.
 public: virtual ~Platform() {
 		DTOR("~Platform\n", Homework);
 	}
@@ -159,13 +159,13 @@ Platform* Platform::makeObject(const Render renderPlatform) {
 	}
 }
 
-class Shape {
+class Shape { // Abstraction class in Bridge pattern.
 protected:
 	Platform* platform;
 public:	virtual ~Shape() {
 		DTOR("~Shape\n", Homework);
 	}
-	void setPlatform(Platform* platform) { this->platform = platform; }
+	void setPlatform(Platform* platform) {this->platform = platform;}
 	virtual void draw()=0;
 };
 class Rectangle : public Shape {
@@ -336,16 +336,11 @@ protected:
 public:	virtual ~Shape() {
 		DTOR("~Shape\n", Homework);
 	}
-public:
-	void setPlatform(Platform* platform) {
-		this->platform = platform;
-	}
-public:
+	void setPlatform(Platform* platform) {this->platform = platform;}
 	virtual void draw()=0;
 public:
 	static Shape* makeObject(Platform* platform, // (EFM).
-			 const Primative primative,
-							 const float* params);
+		const Primative primative, const float* params);
 };
 class Rectangle : public Shape {
 	double x1;
