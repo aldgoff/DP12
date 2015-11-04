@@ -378,7 +378,7 @@ class AnimalWorld {
 	Wolf*		wolf;
 	Wildebeest*	wildebeest;	// Africa animals.
 	Lion*		lion;
-	Llama*		llama;		// North America animals.
+	Llama*		llama;		// South America animals.
 	Puma*		puma;
 	// Seam point - insert another continent.
 public:
