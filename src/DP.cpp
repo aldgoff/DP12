@@ -35,7 +35,7 @@
  * Decorator				Windows					Cars
  * Chain of Responsibility	RefundApproval			ChainOfCommand
  * Bridge					Thread Scheduler		ShapeRenderPlatform
- * Abstract Factory
+ * Abstract Factory			Fast Hierarchy			Herbivores/Carnivores
  */
 
 namespace observer {

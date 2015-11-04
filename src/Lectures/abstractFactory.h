@@ -6,9 +6,10 @@
  *
  * Varies: If the families are varying, use the Abstract Factory pattern.
  *
- * Desc:
+ * Desc: Provide an interface for creating families of related or
+ * 		 dependent objects without specifying their concrete classes.
  *
- * Category: whatever
+ * Category: Creational
  *
  *  URLs:
  *  	http://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Design_Patterns#Abstract_Factory
@@ -26,91 +27,429 @@ namespace abstract_factory {	// Command line: abstractFactory [l|h] [ll|lp|ls] [
 
 namespace lecture {
 
-namespace legacy {
+/* Consider the Fast Hierarchy, a schema for creating algebras:
+ *   0) Counting
+ *   1) Addition - fast counting
+ *   2) Multiplication - fast addition
+ *   3) Exponentiation - fast multiplication
+ * At every level we need the correct instance from each of these families:
+ *   1) Identity element (like zero & one)
+ *   2) Scale progression (tick mark, arithmetic, geometric, exponential)
+ *   	1. inc
+ *   	2. dec
+ *   3) Forward operation (|, +, *, ^)
+ *   	1. op
+ *   	2. symbol
+ *   4) Inverse operation (~, -, /, r)
+ *   	1. op
+ *   	2. symbol
+ * We'll use the Abstract Factory design pattern to create the right factory
+ * that the client can use to create the correct instance of each family
+ * and then execute example operations demonstrating that creation has
+ * occurred as intended.
+ * All destructors will be instrumented to confirm the structure of the
+ * class hierarchy.
+ * We'll skip the legacy and problem precursors.
+ */
+
+namespace legacy { // Not used.
 
 void demo(int seqNo) {
 	cout << seqNo << ") << abstract_factory::lecture::legacy::demo() >>\n";
 }
 
-}
+} // legacy
 
-namespace problem {
+namespace problem { // Not used.
 
 void demo(int seqNo) {
 	cout << seqNo << ") << abstract_factory::lecture::problem::demo() >>\n";
 }
 
-}
+} // problem
 
 namespace solution {
 
-class AbstractFactory {	// If the families are varying...
+class Identity { // An interface class in the AF DP.
+public: virtual ~Identity() {
+	DTOR("~Identity ", Lecture);
+}
 public:
-	AbstractFactory() {}
-	virtual ~AbstractFactory() { DTOR("~AbstractFactoryObserver\n", Architecture); }
-public:
-	virtual void run() {}
-public:
-	static AbstractFactory* makeObject(const string& criteria);
+	virtual string value() { return "[ ]"; }
 };
-class Derived : public AbstractFactory {
+class Nothing : public Identity {
+public: virtual ~Nothing() {
+	DTOR("~Nothing ", Lecture);
+}
 public:
-	Derived() {}
-	virtual ~Derived() { DTOR("~Derived ", Architecture); }
-public:
-	void run() {}
+	string value() { return "[ ]"; }
 };
-// Seam point - add another Derived.
+class Zero : public Identity {
+public: virtual ~Zero() {
+	DTOR("~Zero ", Lecture);
+}
+public:
+	string value() { return "[0]"; }
+};
+class One : public Identity {
+public: virtual ~One() {
+	DTOR("~One ", Lecture);
+}
+public:
+	string value() { return "[1.0]"; }
+};
+class Range : public Identity {
+public: virtual ~Range() {
+	DTOR("~Range ", Lecture);
+}
+public:
+	string value() { return "[2.0, x-root-x]"; } // Math fudge.
+};
 
-AbstractFactory* AbstractFactory::makeObject(const string& criteria) {
-	if(		criteria == "whatever")	return new AbstractFactory;
-	else if(criteria == "whatever")	return new AbstractFactory;
+class Scale { // An interface class in the AF DP.
+protected:
+	char str[80];
+public: virtual ~Scale() {
+	DTOR("~Scale ", Lecture);
+}
+public:
+	virtual double inc(double x) { return x; }
+	virtual double dec(double x) { return x; }
+	virtual string convert(double x) { return ""; }
+};
+class Ticks : public Scale {
+public: ~Ticks() {
+	DTOR("~Ticks ", Lecture);
+}
+public:
+	double inc(double x) { return x + 1; }
+	double dec(double x) { return (x>0) ? x - 1 : -1; }
+	string convert(double x) {
+		string ticks = "";
+		if(x <= 0)	return "_";
+		for(int i=0; i<x; i++)
+			ticks += "|";
+		return ticks;
+	}
+};
+class Successor : public Scale {
+public: ~Successor() {
+	DTOR("~Successor ", Lecture);
+}
+public:
+	double inc(double x) { return x + 1; }
+	double dec(double x) { return x - 1; }
+	string convert(double x) {
+		sprintf(str, "%.0f", x);
+		return str;
+	}
+};
+class Product : public Scale {
+public: ~Product() {
+	DTOR("~Product ", Lecture);
+}
+public:
+	double inc(double x) { return x * 2; }
+	double dec(double x) { return x / 2; }
+	string convert(double x) {
+		sprintf(str, "%.2f", x);
+		return str;
+	}
+};
+class Expo : public Scale {
+public: ~Expo() {
+	DTOR("~Expo ", Lecture);
+}
+public:
+	double inc(double x) { return x * x; } // x^2.
+	double dec(double x) { return sqrt(x); }
+	string convert(double x) {
+		sprintf(str, "%.2f", x);
+		return str;
+	}
+};
+
+class ForwardOp { // An interface class in the AF DP.
+protected:
+	char str[80];
+public: virtual ~ForwardOp() {
+	DTOR("~ForwardOp ", Lecture);
+}
+	virtual string op(double a, double b) { return "_"; }
+	virtual string symbol() { return " "; }
+};
+class Count : public ForwardOp {
+public: ~Count() {
+	DTOR("~Count ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		string ticks = "";
+		if(a + b == 0)	return "_";
+		for(int i=0; i<a; i++)
+			ticks += "|";
+		for(int i=0; i<b; i++)
+			ticks += "|";
+		return ticks;
+	}
+	string symbol() { return "|"; }
+};
+class Add : public ForwardOp {
+public: ~Add() {
+	DTOR("~Add ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		sprintf(str, "%.0f", a+b);
+		return str;
+	}
+	string symbol() { return "+"; }
+};
+class Multiply : public ForwardOp {
+public: ~Multiply() {
+	DTOR("~Multiply ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		sprintf(str, "%.3f", a*b);
+		return str;
+	}
+	string symbol() { return "*"; }
+};
+class Exponentiate : public ForwardOp {
+public: ~Exponentiate() {
+	DTOR("~Exponentiate ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		double val = 1;
+		for(int i=0; i<b; i++)
+			val = a*val;
+		sprintf(str, "%.3f", val);
+		return str;
+	}
+	string symbol() { return "^"; }
+};
+
+class InverseOp { // An interface class in the AF DP.
+protected:
+	char str[80];
+public: virtual ~InverseOp() {
+	DTOR("~InverseOp ", Lecture);
+}
+	virtual string op(double a, double b) { return "_"; }
+	virtual string symbol() { return "|"; }
+};
+class TakeAway : public InverseOp {
+public: ~TakeAway() {
+	DTOR("~TakeAway ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		string ticks = "";
+		if(a - b <= 0)	return "_";
+		for(int i=0; i<a-b; i++)
+			ticks += "|";
+		return ticks;
+	}
+	string symbol() { return "~"; }
+};
+class Subtract : public InverseOp {
+public: ~Subtract() {
+	DTOR("~Subtract ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		sprintf(str, "%.0f", a-b);
+		return str;
+	}
+	string symbol() { return "-"; }
+};
+class Divide : public InverseOp {
+public: ~Divide() {
+	DTOR("~Divide ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		sprintf(str, "%.3f", a/b);
+		return str;
+	}
+	string symbol() { return "/"; }
+};
+class Root : public InverseOp {
+public: ~Root() {
+	DTOR("~Root ", Lecture);
+}
+public:
+	string op(double a, double b) {
+		sprintf(str, "%.3f", pow(a,1/b));
+		return str;
+	}
+	string symbol() { return "r"; }
+};
+
+class FastHierarchy { // Abstract Factory design pattern.
+public:	virtual ~FastHierarchy() {
+	DTOR("~AbstractFactory\n", Lecture);
+}
+public:
+  virtual Identity*  createIdentityElement(){return new Identity;};
+  virtual Scale* 	 createScale() {   return new Scale; };
+  virtual ForwardOp* createForwardOp(){return new ForwardOp;};
+  virtual InverseOp* createInverseOp(){return new InverseOp;};
+public:
+	static FastHierarchy* createAlgebra(const string& criteria);
+};
+class Counting : public FastHierarchy {
+public:	~Counting() {
+	DTOR("  ~Counting ", Lecture);
+}
+public:
+  Identity*  createIdentityElement(){return new Nothing; };
+  Scale* 	 createScale() {		 return new Ticks; };
+  ForwardOp* createForwardOp() {	 return new Count; };
+  InverseOp* createInverseOp() {	 return new TakeAway;};
+};
+class Addition : public FastHierarchy {
+public:	~Addition() {
+	DTOR("  ~Addition ", Lecture);
+}
+public:
+  Identity*  createIdentityElement(){return new Zero; };
+  Scale* 	 createScale() {		 return new Successor;};
+  ForwardOp* createForwardOp() {	 return new Add; };
+  InverseOp* createInverseOp() {	 return new Subtract;};
+};
+class Multiplication : public FastHierarchy {
+public:	~Multiplication() {
+	DTOR("  ~Multiplication ", Lecture);
+}
+public:
+  Identity*  createIdentityElement(){return new One; };
+  Scale* 	 createScale() {		 return new Product; };
+  ForwardOp* createForwardOp() {	 return new Multiply;};
+  InverseOp* createInverseOp() {	 return new Divide; };
+};
+class Exponentiation : public FastHierarchy {
+public:	~Exponentiation() {
+	DTOR("  ~Exponentiation ", Lecture);
+}
+public:
+  Identity*  createIdentityElement(){return new Range; };
+  Scale* 	 createScale() {	 return new Expo; };
+  ForwardOp* createForwardOp() { return new Exponentiate;};
+  InverseOp* createInverseOp() { return new Root; };
+};
+// Seam point - add another algebra.
+
+FastHierarchy* FastHierarchy::createAlgebra(const string& criteria) {
+	if(criteria == "Counting")			return new Counting;
+	if(criteria == "Addition")			return new Addition;
+	if(criteria == "Multiplication")	return new Multiplication;
+	if(criteria == "Exponentiation")	return new Exponentiation;
 	// Seam point - add another AbstractFactory.
-
-	else {
-		return new AbstractFactory;
-	}
+	return new FastHierarchy;
 }
 
-void demo(int seqNo) {
-	cout << seqNo << ") << abstract_factory::lecture::solution::demo() >>\n";
-	string criteria[] = { "Derived1", "Derived2", "Derived3", "oops" };
+class ClientCode {
+	Identity*	ident;
+	Scale*		scale;
+	ForwardOp*	forward;
+	InverseOp*	inverse;
+public:
+	ClientCode(FastHierarchy* algebra)
+		: ident(algebra->createIdentityElement())
+		, scale(algebra->createScale())
+		, forward(algebra->createForwardOp())
+		, inverse(algebra->createInverseOp())
+	{}
+	~ClientCode() {
+		DTOR("  ~ClientCode\n", Lecture);
+		delete ident;
+		delete scale;
+		delete forward;
+		delete inverse;
+	}
+public:
+void calc() {
+	cout << "  The identity element is "// Identity.
+		 << ident->value() << ".\n";
+
+	double value = atoi(&(ident->value()[1]));
+
+	cout << "  ";						// Up scale.
+	for(int i=0; i<3; i++) {
+		value = scale->inc(value);
+		cout << scale->convert(value) << "  ";
+	}
+	value = scale->inc(value);
+	cout << scale->convert(value);
+
+	cout << " <> ";						// Down scale.
+	for(int i=0; i<5; i++) {
+		value = scale->dec(value);
+		cout << scale->convert(value) << "  ";
+	}
+	value = scale->dec(value);
+	cout << scale->convert(value) << "\n";
+
+										// Forward op.
+	cout << "  6 " << forward->symbol() << " 2 = ";
+	cout << forward->op(6, 2) << "\n";
+										// Inverse op.
+	cout << "  6 " << inverse->symbol() << " 2 = ";
+	cout << inverse->op(6, 2) << "\n";
+	cout << "  2 " << inverse->symbol() << " 6 = ";
+	cout << inverse->op(2, 6) << "\n";
+}
+};
+
+void demo() {
+	string criteria[] = { "Counting", "Addition",
+						  "Multiplication", "Exponentiation" };
 	for(size_t i=0; i<COUNT(criteria); i++) {
-		AbstractFactory* factory = AbstractFactory::makeObject(criteria[i]);
-		factory->run();
+		FastHierarchy* factory = FastHierarchy::createAlgebra(criteria[i]);
+		ClientCode* client = new ClientCode(factory);
+		delete factory;
+		client->calc();
+
+		delete client;
+		cout << endl << endl;
 	}
-	cout << endl;
 }
 
-}
+} // solution
 
 } // lecture
 
 namespace homework {
 
-namespace legacy {
+/* Consider a wild life simulation with different animals and continents.
+ * The major complexity is the relationships between the animals.
+ * Animals are grouped according to their continent, so the simulation
+ * runs on a continent by continent basis.
+ * Legacy namespace has two continents, each with one prey and one predator:
+ *   1) North America
+ *   	1.1 Bison
+ *   	1.2 Wolf
+ *   2) Africa
+ *   	2.1 Zebra
+ *   	2.2 Lion
+ * Problem namespace adds another continent:
+ *   3) South America
+ *   	3.1 Llama
+ *   	3.2 Puma
+ * Prey graze, mate, and evade; predators eat, mate and hunt.
+ * With a procedural approach, scaling is quadratic.
+ * The effort to add a relationship scales as the number of continents.
+ * The effort to add a continent scales as the number of relationships.
+ * Use the Abstract Factory design pattern to reduce coupling,
+ * enhance cohesion, and avoid quadratic scaling.
+ */
 
-void demo(int seqNo) {
-	cout << seqNo << ") << abstract_factory::homework::legacy::demo() >>\n";
-}
+#include "../Problems/abstractFactory.h"
 
-}
-
-namespace problem {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << abstract_factory::homework::problem::demo() >>\n";
-}
-
-}
-
-namespace solution {
-
-void demo(int seqNo) {
-	cout << seqNo << ") << abstract_factory::homework::solution::demo() >>\n";
-}
-
-}
+#include "../Solutions/abstractFactory.h"
 
 } // homework
 
@@ -211,7 +550,7 @@ public:	void id() {
 
 class AbstractFactory {	// If whole families are varying...
 public: virtual ~AbstractFactory() {
-		DTOR("~AbstractFactory\n", Lecture);
+		DTOR("~FastHierarchy\n", Lecture);
 	}
 public:
 	virtual Type1* create_type_1()=0;
@@ -481,19 +820,19 @@ public:
 	}
 	virtual void lectureSolution() {
 		cout << seqNo << ") << abstract_factory::lecture::solution >>\n";
-		lecture::solution::demo(seqNo);
+		lecture::solution::demo();
 	}
 	virtual void homeworkLegacy() {
 		cout << seqNo << ") << abstract_factory::homework::legacy >>\n";
-		homework::legacy::demo(seqNo);
+		homework::legacy::demo();
 	}
 	virtual void homeworkProblem() {
 		cout << seqNo << ") << abstract_factory::homework::problem >>\n";
-		homework::problem::demo(seqNo);
+		homework::problem::demo();
 	}
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << abstract_factory::homework::solution >>\n";
-		homework::solution::demo(seqNo);
+		homework::solution::demo();
 	}
 	virtual void skeleton() {
 		cout << seqNo << ") << abstract_factory::skeleton >>\n";
