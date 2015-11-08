@@ -183,7 +183,7 @@ Car* OptionsDecorator::makeObject(Car* dec, string& crit) {
 	return dec;
 }
 
-void demo(int seqNo) {
+void demo() {
 	Car* mine = new BaseModel("RunAbout");
 	mine = new TwoDoors(mine);
 
@@ -217,6 +217,168 @@ void demo(int seqNo) {
 	for(size_t i=0; i<COUNT(cars); i++)
 		delete cars[i];
 	cout << endl;
+}
+
+namespace haro1 { // Student's solution #1.
+
+/*Base component class*/
+class Sandwich {
+public:
+	virtual ~Sandwich(){}
+	virtual double getCost()=0;
+	virtual std::string getDesc()=0;
+};
+
+class WheatBread:public Sandwich {
+public:
+	std::string getDesc() { return "Wheat Bread"; }
+	double getCost() { return 2.0; }
+};
+class WholeGrainBread:public Sandwich {
+public:
+	std::string getDesc() { return "WholeGrain Bread"; }
+	double getCost() { return 3.0; }
+};
+
+/*Decorator Base class*/
+class SubDecorator: public Sandwich {
+protected:
+	Sandwich *sandwich;
+public:
+	SubDecorator(Sandwich *sandwichRef) : sandwich(sandwichRef) {}
+	~SubDecorator() { delete sandwich; }
+};
+class CheeseDecorator:public SubDecorator {
+public:
+	CheeseDecorator(Sandwich *sandwich):SubDecorator(sandwich) {}
+
+	std::string getDesc() { return sandwich->getDesc() + " + Cheese"; }
+	double getCost() { return sandwich->getCost() + 3.0; }
+};
+class VegDecorator:public SubDecorator {
+public:
+	VegDecorator(Sandwich *sandwich):SubDecorator(sandwich) {}
+
+	std::string getDesc() { return sandwich->getDesc().append(" + Veg"); }
+	double getCost() { return sandwich->getCost() + 2.0; }
+};
+
+void demo() {
+	cout << "Hello, haro1::demo().\n";
+
+	Sandwich *sandwich = new WheatBread();
+	std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+	sandwich = new CheeseDecorator(sandwich);
+	std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+	// Double Cheese Burger :)
+	sandwich = new CheeseDecorator(sandwich);
+	std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+	sandwich = new VegDecorator(sandwich);
+	std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+	delete sandwich;
+
+	// Lets make wholegrain
+	Sandwich *sandwich2 = new WholeGrainBread();
+	std::cout << "Your sandwich is " << sandwich2->getDesc() << " and costs $" << sandwich2->getCost() << endl;
+
+	sandwich2 = new VegDecorator(sandwich2);
+	std::cout << "Your sandwich is " << sandwich2->getDesc() << " and costs $" << sandwich2->getCost() << endl;
+
+	cout << "Aloha, haro1::demo().\n";
+}
+
+} // haro
+
+namespace haro2 { // Student's solution #1, no virtual methods.
+
+/* Analysis:
+ * This only appears to avoid the need for virtual methods.
+ * It works in this case only because the variation in
+ * description and cost can both be modeled as state.
+ * When the variation must be modeled as code, then
+ * virtual methods are required/
+ */
+
+/*Base component class*/
+class Sandwich {
+protected:
+	string Desc;
+	double Cost;
+public:
+	virtual ~Sandwich() {}
+    double getCost() { return Cost; }
+    std::string getDesc() { return Desc; }
+};
+
+/*Concrete component class*/
+class Bread : public Sandwich {
+public:
+	Bread(string D, double C) { Desc = D; Cost = C;}
+};
+
+/*Decorator Base class*/
+class SubDecorator : public Sandwich {
+protected:
+    Sandwich *sandwich;
+public:
+    SubDecorator(Sandwich *sandwichRef) : sandwich(sandwichRef) {}
+    ~SubDecorator() { delete sandwich; }
+};
+class CheeseDecorator : public SubDecorator {
+public:
+    CheeseDecorator(Sandwich *sandwich) : SubDecorator(sandwich) {
+        Desc = sandwich->getDesc() + " + Cheese";
+        Cost = sandwich->getCost() + 1.5;
+    }
+};
+class VegDecorator : public SubDecorator {
+public:
+    VegDecorator(Sandwich *sandwich) : SubDecorator(sandwich) {
+        Desc = sandwich->getDesc() + " + Vegie";
+        Cost = sandwich->getCost() + 1.0;
+    }
+};
+
+void demo() {
+	cout << "Hello, haro2::demo().\n";
+
+    Sandwich *sandwich = new Bread(string("WholeGrain"), 2.0);
+    std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+    sandwich = new CheeseDecorator(sandwich);
+    std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+    // Double Cheese Burger :)
+    sandwich = new CheeseDecorator(sandwich);
+    std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+    sandwich = new VegDecorator(sandwich);
+    std::cout << "Your sandwich is " << sandwich->getDesc() << " and costs $" << sandwich->getCost() << endl;
+
+    delete sandwich;
+
+    // Lets make Italian
+    Sandwich *sandwich2 = new Bread(string("ItalianBread"), 3.0);
+    std::cout << "Your sandwich is " << sandwich2->getDesc() << " and costs $" << sandwich2->getCost() << endl;
+
+    sandwich2 = new CheeseDecorator(sandwich2);
+    std::cout << "Your sandwich is " << sandwich2->getDesc() << " and costs $" << sandwich2->getCost() << endl;
+
+    delete sandwich2;
+
+	cout << "Aloha, haro2::demo().\n";
+}
+
+} // haro2
+
+void demo(int seqNo) {
+	demo();
+	haro1::demo(); cout << endl;
+	haro2::demo();
 }
 
 } // solution

@@ -23,6 +23,8 @@
 
 #include "WIP/state.h"
 #include "WIP/headfirst.h"
+#include "WIP/lambda.h"
+// Seam point - add another header file.
 
 /* Lecture/Homework Chart
  * Design Pattern			Lecture					Homework
@@ -81,6 +83,7 @@ void ObserverSubject::init() {
 	// Seam point - add another design pattern command.
 	new state::StateObserver(this, ++i);
 	new headfirst::HeadfirstObserver(this, ++i);
+	new lambda::Observer(this, ++i);
 
 	new final::FinalObserver(this, 0);
 
@@ -88,6 +91,7 @@ void ObserverSubject::init() {
 
 	new LectureObserver(this);
 	new HomeworkObserver(this);
+
 	// Seam point - add another matrix command.
 	new SkeletonObserver(this);
 	new RecognitionObserver(this);
