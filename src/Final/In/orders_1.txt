@@ -38,12 +38,13 @@
 	plastic		= Polyethelene
 	moldLoc		= mill
 	finish		= rippled
+	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
 5:
 	orderNum	= 5
 	comment		= Next of singles or last.
-	size		= 50000
+	size		= 100000
 	mold		= hero
 	color		= green
 	plastic		= PET

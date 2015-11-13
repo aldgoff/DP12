@@ -990,7 +990,7 @@ Cavity* Cavity::addTags(Cavity* cavity, const string& list) {
 		else if(!strcmp(val, "RecycleCode"))	cavity = new RecycleCode(cavity);
 
 		else {
-			cout << "Ignoring unknown tag " << val << ".\n";
+			cout << "    Ignoring unknown tag " << val << ".\n";
 		}
 
 		remainingTokens = strchr(remainingTokens+1, ' ');

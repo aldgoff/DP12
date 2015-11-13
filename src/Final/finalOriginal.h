@@ -821,7 +821,7 @@ Cavity* Cavity::addTags(Cavity* cavity, const string& list) {
 		// Seam point - add more tags.
 
 		else {
-			cout << "Ignoring unknown tag " << val << ".\n";
+			cout << "    Ignoring unknown tag " << val << ".\n";
 		}
 
 		remainingTokens = strchr(remainingTokens+1, ' ');

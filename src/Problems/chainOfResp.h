@@ -52,11 +52,11 @@ public:
 	}
 };
 
-Lieutenant lieutenant;
-Captain captain;
-// Seam point - insert another officer class.
-
 void clientCode(int livesAtRisk) {
+	Lieutenant lieutenant;
+	Captain captain;
+	// Seam point - insert another officer class.
+
 	if(livesAtRisk < 10)
 		lieutenant.makeDecision(livesAtRisk);
 	else if(livesAtRisk < 20)
@@ -72,8 +72,8 @@ void demo() {
 		clientCode(data[i]);
 	}
 
-	lieutenant.~Lieutenant();
-	captain.~Captain();
+//	lieutenant.~Lieutenant();
+//	captain.~Captain();
 	cout << endl;
 }
 
