@@ -16,7 +16,7 @@
 	endOfOrder
 3:
 	orderNum		= 3
-	comment			= Max order - next of singles, all of everything else (orig secs).
+	comment			= Max order - next of singles, all of everything else (orig specs).
 	size			= 20000
 	mold			= car
 	color			= orange
@@ -38,16 +38,17 @@
 	plastic		= Polyethelene
 	moldLoc		= mill
 	finish		= rippled
+	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
 5:
 	orderNum	= 5
 	comment		= Next of singles or last.
-	size		= 50000
+	size		= 100000
 	mold		= hero
 	color		= green
 	plastic		= PET
-	moldLoc		= mill
+	moldLoc		= sisterCompany
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder

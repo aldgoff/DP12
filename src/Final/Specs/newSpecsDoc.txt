@@ -1,0 +1,71 @@
+1. Add ability to handle run size of 40,000 (FastOrder):
+	1.1 IJM_140.
+	1.2 Aluminum molds with 4 cavities.
+	1.3 V-Level conveyer belt.
+2. Add ZipLock packager.
+3. Add Styrene as a new synthetic plastic:
+	3.1 Injection: Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
+	3.2 Cleaning: ozone wash.
+4. Add new colors:	
+	4.1 blue
+	4.2 violet
+	4.3 gray
+	4.4 white
+4. Add sisterCompany as a new mold location, prior to mill.
+5. Add a new mold shape, dino 30 cc.
+6. Add new tags:
+	6.1 IncCounter 4 mm (serial number), this tags increments with each injection.
+	6.2 PartNumber 2 mm.
+	6.3 RecycleCode 6 mm (2D bar code to automate sorting of discarded parts).
+7. Add new additive, MicroFibers.
+8. Add Stuffing machine to put cushioning material into the parts bin: (domain: stuffer)
+	8.1 Air
+		8.1.1 Does nothing, but is default.
+		8.1.2 cout << "  <>Unknown stuffer || defaulting to 'None'.\n";
+	8.2 cout << "  Setup injection line for <size> order with <packager> packager and <cushion> stuffer:\n"
+	8.3 cout << "        <Stuffer> stuffer triggered to fill <output> parts bin.\n";
+9. Add shipping step to injection run process:
+	9.1 order["address"] = shipping address as one line with comma separated fields.
+
+10. Add ability to handle run size of 100,000 (LargeOrder):
+	10.1 IJM_220.
+	10.2 Steel molds with 2 cavities.
+	10.3 New estimation algorithm: Projection:
+		 10.3.1 cycletime = legacy::cycleTime_sec(metal, shape->volume)
+		 10.3.2 rejectRate_pcnt = if(PET) then legacy::rejectRateHigh_pcnt else legacy::rejectRateLow_pcnt
+		 10.3.3 runTime = legacy::setupAvg_min
+						+ (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime
+			 			+ legacy::teardownAvg_min;
+11. Add Nylon66 as a new synthetic plastic:
+	11.1 Injection: heat to 480 - inject at 150 PSI - cool to 390 - shock eject.
+	11.1 Cleaning: ozone wash.
+12. Add purchase as new mold location, between sister company and mill.
+13. Add Stuffing machine for styrene popcorn:
+	13.1 Popcorn ("styrene popcorn").
+	13.2 Triggered when parts bin is full.
+	13.3 cout << "        Popcorn stuffer triggered to fill <output> parts bin.\n";
+	
+14. Add ability to handle run size of 200,000 (HugeOrder):
+	14.1 IJM_240.
+	14.2 Steel molds with 4 cavities.
+	14.3 V-Level converyer belt.
+	14.4 New parts bin, Crate.
+15. Add two new finishes:
+	15.1 sanded
+	15.2 satin
+	15.3 Requires EDM milling tools:
+		15.3.1 static punch
+		15.3.2 static slice
+		15.3.3 static etch
+16. Add Stuffing machine for bubble wrap:
+	16.1 Bubblewrap ("bubble wrap").
+	16.2 Triggered when parts bin is full.
+	16.3 cout << "        Bubblewrap stuffer triggered to fill <output> parts bin.\n";
+
+17. Resize too large orders to largest available:
+	17.1 400,000 reduced to 200,000.
+18. Add Stuffing machine for expanding foam: (domain: stuffer)
+	18.1 Foam ("expanding foam").
+	18.2 Triggered when parts bin is full.
+	18.3 cout << "        Foam stuffer triggered to fill <output> parts bin.\n";
+

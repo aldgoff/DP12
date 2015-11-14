@@ -269,7 +269,7 @@ BinSubject::~BinSubject() {
 	DTORF(".\n");
 }
 void BinSubject::pause() {
-	cout << "      Whenever " << name << " package bin was full...\n";
+	cout << "      Whenever " << name << " parts bin was full...\n";
 	list<BinObserver*>::iterator it;
 	for(it=obs.begin(); it!=obs.end(); ++it) {
 		(*it)->update(this);
@@ -295,7 +295,7 @@ public:
 public:
 	void update(BinSubject* bin) {
 		cout << "        " << setup() << " paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << bin->name << " parts bin was swapped.\n";
 	}
 	virtual string setup() { return "IJM base"; }
 };
@@ -362,7 +362,7 @@ public:
 public:
 	void update(BinSubject* bin) {
 		cout << "        " << setup() << " paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << bin->name << " parts bin was swapped.\n";
 	}
 	virtual string setup() { return "ConveyerBelt base"; }
 };
@@ -382,35 +382,35 @@ public:
 };
 // Seam point - add another conveyer belt.
 
-class PackageBin : public BinSubject {
+class PartsBin : public BinSubject {
 public:
-	PackageBin(const string name) : BinSubject(name) {}
-	virtual ~PackageBin() { DTORF("~PackageBin "); }
+	PartsBin(const string name) : BinSubject(name) {}
+	virtual ~PartsBin() { DTORF("~PartsBin "); }
 public:
-	virtual string setup() { return "PackageBin base"; }
+	virtual string setup() { return "PartsBin base"; }
 };
-class CardboardBox : public PackageBin {
+class CardboardBox : public PartsBin {
 public:
-	CardboardBox() : PackageBin("CardboardBox") {}
+	CardboardBox() : PartsBin("CardboardBox") {}
 	~CardboardBox() { DTORF("~CardboardBox "); }
 public:
 	string setup() { return "CardboardBox"; }
 };
-class ShellBox : public PackageBin {
+class ShellBox : public PartsBin {
 public:
-	ShellBox() : PackageBin("ShellBox") {}
+	ShellBox() : PartsBin("ShellBox") {}
 	~ShellBox() { DTORF("~ShellBox "); }
 public:
 	string setup() { return "ShellBox"; }
 };
-class PalletBox : public PackageBin {
+class PalletBox : public PartsBin {
 public:
-	PalletBox() : PackageBin("PalletBox") {}
+	PalletBox() : PartsBin("PalletBox") {}
 	~PalletBox() { DTORF("~PalletBox "); }
 public:
 	string setup() { return "PalletBox"; }
 };
-// Seam point - add another package bin.
+// Seam point - add another parts bin.
 
 class InjectionLine {	// If the families are varying...
 public:
@@ -426,8 +426,8 @@ public:
 	virtual ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
 		return new ConveyerBelt(bin);
 	}
-	virtual PackageBin* createPackageBin(map<string,string>& order) {
-		return new PackageBin("needName");
+	virtual PartsBin* createPackageBin(map<string,string>& order) {
+		return new PartsBin("needName");
 	}
 public:
 	static InjectionLine* createInjectionLine(map<string,string>& order);
@@ -444,7 +444,7 @@ public:
 	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
 		return new LinearBelt(bin);
 	}
-	PackageBin* createPackageBin(map<string,string>& order) {
+	PartsBin* createPackageBin(map<string,string>& order) {
 		return new CardboardBox();
 	}
 };
@@ -460,7 +460,7 @@ public:
 	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
 		return new YSplitBelt(bin);
 	}
-	PackageBin* createPackageBin(map<string,string>& order) {
+	PartsBin* createPackageBin(map<string,string>& order) {
 		return new ShellBox();
 	}
 };
@@ -476,7 +476,7 @@ public:
 	ConveyerBelt* createConveyerBelt(map<string,string>& order, BinSubject* bin) {
 		return new LinearBelt(bin);
 	}
-	PackageBin* createPackageBin(map<string,string>& order) {
+	PartsBin* createPackageBin(map<string,string>& order) {
 		return new PalletBox();
 	}
 };
@@ -929,7 +929,7 @@ public:
 	string wrap() { return "ShrinkWrap"; }
 	void update(BinSubject* bin) {
 		cout << "        Shrink wrap packager paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << bin->name << " parts bin was swapped.\n";
 	}
 };
 class HardPack : public Packager {
@@ -940,7 +940,7 @@ public:
 	string wrap() { return "HardPack"; }
 	void update(BinSubject* bin) {
 		cout << "        Hard pack packager paused while ";
-		cout << bin->name << " package bin was swapped.\n";
+		cout << bin->name << " parts bin was swapped.\n";
 	}
 };
 // Seam point - add another class.
@@ -989,7 +989,7 @@ private: // Heap objects.
 	abstract_factory::IJM*			ijm;
 	abstract_factory::Mold*			mold;
 	abstract_factory::ConveyerBelt*	belt;
-	abstract_factory::PackageBin*	bin;
+	abstract_factory::PartsBin*		bin;
 public:
 	ProcessOrder() :
 		colorVol(0),

@@ -53,14 +53,17 @@
 		11.1.1 Default: cout << "    <>Unknown mold |<mold>| defaulting to 'duck'.\n";
 	11.2 car (40 cc)
 	11.3 hero (50 cc)
-12. Molds are be pulled fron inventory or milled from bulk metal: (domain: moldLoc)
+12. Molds are to be pulled from inventory, sister company, or milled from bulk metal: (domain: moldLoc)
 	12.1 (To keep the final simple, the order will specify the mold location.)
 		12.1.1 If location and shape unknown, default to duck from inventory
 		12.1.2 cout << "    <>Can't find place |<loc>| to get |<shape>| mold from with |<finish>| finish, defaulting to smooth duck from inventory.\n";
 	12.2 Inventory:
 		12.2.1 cout << "    Pull <shape> mold from inventory.\n";
-	12.3 Mill: (must be last option)
-		12.3.1 cout << "    Create <shape> mold from mill with <n> cavities - steps: <steps>.\n"
+	12.3 SisterCompany as a new mold location, prior to mill.
+		12.3.1 cout << "    Borrow <shape> mold from sister company.\n";
+	12.4 Mill: (must be last option)
+		12.3.1 cout << "    Create <shape> mold from mill with <n> cavities - steps: <steps>.\n";
+	12.5 Order is important; don't mill if it can be borrowed, don't borrow if one is on hand.
 13. Shapes are milled with three techniques (actual steps simulated, see "couts" below):
 	13.1 drill
 	13.2 cut
@@ -106,31 +109,45 @@
 	20.1 ABS:  heat to 440 - inject at 125 PSI - cool to 360 - progressive eject
 	20.2 Poly: heat to 350 - inject at  90 PSI - cool to 290 - smooth eject
 	20.3 PET:  heat to 404 - inject at 110 PSI - cool to 340 - smooth eject
-21. Support three upline machines pausing when package/output/parts bin is full:
+21. Support three upline machines pausing when parts bin is full:
 	21.1 IJM
 	21.2 Conveyer belt
-	21.3 Packager
-	21.4 Note: (The example output file is a little weak here, done more correctly, the diffs will be off a little.)
-22. Simulate cycling the IJM for the specified plastic times
-	22.1 cout << "    Cycle IJM for <plastic> <size> times.\n";
-	22.2 cout << "      Close - heat to <temp> - inject at <psi> PSI - cool to <temp> - separate - <technique> eject.\n";
-	22.3 cout << "      <PackageBin> package bin full...\n";
-	22.3.1 cout << "        IJM pausing while <PackageBin> package bin is swapped.\n";
-	22.3.2 cout << "        Conveyer belt pausing while <PackageBin> package bin is swapped.\n";
-	22.3.3 cout << "        Packager pausing while <PackageBin> package bin is swapped.\n";
+	21.3 Packager (unless Bulk Packager)
+22. Run time estimates (hours): (domain: size)
+	22.1 10,000: runTime = orderSize/cavities*(1/60);
+	22.2 25,000: runTime = orderSize/cavities*legacy::cycletime(metal, shape->volume)/3600;
+	22.3 50,000:
+		cycletime = legacy::cycleTime_sec(metal, shape->volume)
+		runTime   = legacy::setupAvg_min + orderSize/cavities*cycletime + legacy::teardownAvg_min;
+	22.4 Default to highest fidelty estimate.
+23. Simulate cycling the IJM for the specified plastic <size> times
+	23.1 cout << "    Cycle <IJM> for <plastic> <size> times, estimated run time = <est> hour(s).\n";
+	23.2 cout << "      Close - mix - heat to <temp> - inject at <psi> PSI - cool to <temp> - separate - <technique> eject.\n";
+	23.3 cout << "      Whenever <PartsBin> parts bin was full...\n";
+	23.3.1 cout << "        <IJM> paused while <PartsBin> parts bin was swapped.\n";
+	23.3.2 cout << "        <ConveyerBelt> conveyer belt paused while <PartsBin> parts bin was swapped.\n";
+	23.3.3 cout << "        <Packager> packager paused while <PartsBin> parts bin was swapped.\n";
 
-23. Clean the molds, depends on plastic and metal:
-	23.1 Use existing cleaning methods (see namespace legacy)
-	23.2 cout << "    Clean <plastic> <optional metal> mold: <cleaning steps>.\n";
+24. Clean the molds, depends on plastic and metal:
+	24.1 Use existing cleaning methods (see namespace legacy)
+		24.1.1 ABS - soak in alcohol, rinse with water, dry
+				 use legacy method clean()
+		24.1.2 Poly - rinse with acetone, dry
+				 use legacy method prepForReuse()
+		24.1.3 PET
+			   24.1.3.1 Aluminum - rinse with soap and water, dry
+						  use legacy method purify()
+			   24.1.3.2 Steel - carbonize (heat to 895 C)
+						  use legacy method carbonize()
+	24.2 cout << "    Clean <plastic> <optional metal> mold: <cleaning steps>.\n";
 
-24. Instrument the destructors:
-	24.1 cout << "~<ClassName> ";
-	24.2 Use newlines to logically group the class heirarchies
-	24.3 Classes may be suffixed with design pattern name/abbreviation and/or presentation order
+25. Instrument the destructors:
+	25.1 cout << "~<ClassName> ";
+	25.2 Use newlines to logically group the class heirarchies
 
-25. To get the diffs to zero:
-	25.1 In main(int argc, char* args[]):
-		25.1.1 cout << "Hello DP4.\n" << endl;
-		25.1.2 final_design_file::demo(string(args[1]));	// Pass in the input file (orders_1.txt).
-		25.1.3 cout << "Aloha DP4.\n";
+26. To get the diffs to zero:
+	26.1 In main(int argc, char* args[]):
+		26.1.1 cout << "Hello DP4.\n" << endl;
+		26.1.2 final_design_file::demo(string(args[1]));	// Pass in the input file (orders_1.txt).
+		26.1.3 cout << "Aloha DP4.\n";
 		

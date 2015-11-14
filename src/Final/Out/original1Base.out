@@ -18,15 +18,15 @@
       Volume: duck(35) * 1 cavity = 35 cc.
     Cycle IJM_110 for ABS 100 times, estimated run time = 1 hour.
       Close - mix - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
-      Whenever CardboardBox package bin was full...
-        IJM_110 paused while CardboardBox package bin was swapped.
-        Linear conveyer belt paused while CardboardBox package bin was swapped.
+      Whenever CardboardBox parts bin was full...
+        IJM_110 paused while CardboardBox parts bin was swapped.
+        Linear conveyer belt paused while CardboardBox parts bin was swapped.
     Clean ABS mold: soak in alcohol, rinse with water, dry.
 ~ABS
 ~LinearBelt ~ConveyerBelt ~observer::BinObserver
 ~Aluminum ~Mold
 ~IJM_110 ~IJM ~observer::BinObserver
-~CardboardBox ~PackageBin ~observer::BinSubject
+~CardboardBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
@@ -58,15 +58,15 @@
       Volume: duck(35) * 1 cavity = 35 cc.
     Cycle IJM_110 for ABS 10000 times, estimated run time = 166 hours.
       Close - mix - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
-      Whenever CardboardBox package bin was full...
-        IJM_110 paused while CardboardBox package bin was swapped.
-        Linear conveyer belt paused while CardboardBox package bin was swapped.
+      Whenever CardboardBox parts bin was full...
+        IJM_110 paused while CardboardBox parts bin was swapped.
+        Linear conveyer belt paused while CardboardBox parts bin was swapped.
     Clean ABS mold: soak in alcohol, rinse with water, dry.
 ~ABS
 ~LinearBelt ~ConveyerBelt ~observer::BinObserver
 ~Aluminum ~Mold
 ~IJM_110 ~IJM ~observer::BinObserver
-~CardboardBox ~PackageBin ~observer::BinSubject
+~CardboardBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
@@ -78,7 +78,7 @@
 ~template_method::ProcessOrder
 3:
 	orderNum		= 3
-	comment			= Max order - next of singles, all of everything else (orig secs).
+	comment			= Max order - next of singles, all of everything else (orig specs).
 	size			= 20000
 	mold			= car
 	color			= orange
@@ -102,17 +102,17 @@
       Volume: car(40) * 2 cavities = 80 cc.
     Cycle IJM_120 for Polypropylene 10000 times, estimated run time = 61 hours.
       Close - mix - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
-      Whenever ShellBox package bin was full...
-        IJM_120 paused while ShellBox package bin was swapped.
-        Y-Split conveyer belt paused while ShellBox package bin was swapped.
-        Shrink wrap packager paused while ShellBox package bin was swapped.
+      Whenever ShellBox parts bin was full...
+        IJM_120 paused while ShellBox parts bin was swapped.
+        Y-Split conveyer belt paused while ShellBox parts bin was swapped.
+        Shrink wrap packager paused while ShellBox parts bin was swapped.
     Clean Poly mold: rinse with acetone, dry.
 ~Poly
 ~ShrinkWrap ~factory_method::Packager ~observer::BinObserver
 ~YSplitBelt ~ConveyerBelt ~observer::BinObserver
 ~Aluminum ~Mold
 ~IJM_120 ~IJM ~observer::BinObserver
-~ShellBox ~PackageBin ~observer::BinSubject
+~ShellBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~SmallOrder ~abstract_factory::InjectionLine
 ~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
@@ -131,6 +131,7 @@
 	plastic		= Polyethelene
 	moldLoc		= mill
 	finish		= rippled
+	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
   Setup injection line for 50000 order with HardPack packager:
@@ -138,23 +139,25 @@
   Process order:
     Create hero mold from mill with 1 cavities - steps: D1C1D1G7.
       using Carbide tools (high speed drill, cross cut, and layer grind) to mill steel block into 1 hero shape with rippled finish.
+    Ignoring unknown tag ModelNum.
+    Ignoring unknown tag date.
     Insert tags [] of width 0/20 mm, blank tag is 20 mm.
     Load plastic bin with Polyethelene and color bin with yellow.
       Recipe: Polyethelene(45) yellow(5) = 50 cc.
       Volume: hero(50) * 1 cavity = 50 cc.
     Cycle IJM_210 for Polyethelene 50000 times, estimated run time = 419 hours.
       Close - mix - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
-      Whenever PalletBox package bin was full...
-        IJM_210 paused while PalletBox package bin was swapped.
-        Linear conveyer belt paused while PalletBox package bin was swapped.
-        Hard pack packager paused while PalletBox package bin was swapped.
+      Whenever PalletBox parts bin was full...
+        IJM_210 paused while PalletBox parts bin was swapped.
+        Linear conveyer belt paused while PalletBox parts bin was swapped.
+        Hard pack packager paused while PalletBox parts bin was swapped.
     Clean Poly mold: rinse with acetone, dry.
 ~Poly
 ~HardPack ~factory_method::Packager ~observer::BinObserver
 ~LinearBelt ~ConveyerBelt ~observer::BinObserver
 ~Steel ~Mold
 ~IJM_210 ~IJM ~observer::BinObserver
-~PalletBox ~PackageBin ~observer::BinSubject
+~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~MediumOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~Carbide ~bridge::Platform
@@ -167,36 +170,36 @@
 5:
 	orderNum	= 5
 	comment		= Next of singles or last.
-	size		= 50000
+	size		= 100000
 	mold		= hero
 	color		= green
 	plastic		= PET
-	moldLoc		= mill
+	moldLoc		= sisterCompany
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
+  <>Size exceeds mold lifetime |100000| defaulting to MediumOrder of 50000.
   Setup injection line for 50000 order with HardPack packager:
     IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
   Process order:
-    Create hero mold from mill with 1 cavities - steps: D1C1D1G7.
-      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill steel block into 1 hero shape with dimpled finish.
+    Borrow hero mold from sister company.
     Insert tags [] of width 0/20 mm, blank tag is 20 mm.
     Load plastic bin with PET and color bin with green.
       Recipe: PET(45) green(5) = 50 cc.
       Volume: hero(50) * 1 cavity = 50 cc.
     Cycle IJM_210 for PET 50000 times, estimated run time = 419 hours.
       Close - mix - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
-      Whenever PalletBox package bin was full...
-        IJM_210 paused while PalletBox package bin was swapped.
-        Linear conveyer belt paused while PalletBox package bin was swapped.
-        Hard pack packager paused while PalletBox package bin was swapped.
+      Whenever PalletBox parts bin was full...
+        IJM_210 paused while PalletBox parts bin was swapped.
+        Linear conveyer belt paused while PalletBox parts bin was swapped.
+        Hard pack packager paused while PalletBox parts bin was swapped.
     Clean PET steel mold: heat to 895 C.
 ~PET
 ~HardPack ~factory_method::Packager ~observer::BinObserver
 ~LinearBelt ~ConveyerBelt ~observer::BinObserver
 ~Steel ~Mold
 ~IJM_210 ~IJM ~observer::BinObserver
-~PalletBox ~PackageBin ~observer::BinSubject
+~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~MediumOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
