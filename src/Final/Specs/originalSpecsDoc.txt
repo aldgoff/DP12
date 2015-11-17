@@ -16,43 +16,45 @@
 	3.3 HardPack
 	3.4 If Packager unknown, default to Bulk (none)
 		3.4.1 cout << "  <>Unknown packager |<unknown packager>| defaulting to 'None'.\n";
-4. Support three injection molding machines: (domain: size)
-	4.1 IJM_110 - good for aluminum molds with 1 cavity
-	4.2 IJM_120 - good for aluminum molds with 2 cavities
-	4.3 IJM_210 - good for steel molds with 1 cavity
-5. Support two mold metals: (domain: size)
-	5.1 Aluminum
-	5.2 Stainless steel
-6. Support molds with multiple cavities: (domain: size)
+4. Support three injection molding machines: (domain: order size)
+	4.1 10,000 - IJM_110 - good for aluminum molds with 1 cavity
+	4.2 20,000 - IJM_120 - good for aluminum molds with 2 cavities
+	4.3 50,000 - IJM_210 - good for steel molds with 1 cavity
+5. Support two mold metals: (domain: run size)
+	5.1 10,000 - Aluminum
+	5.2 50,000 Stainless steel
+6. Support molds with multiple cavities: (domains: order size, metal)
 	6.1 1
 	6.2 2
 7. Support two conveyer belts: (domain: cavities)
-	7.1 Linear
-	7.2 Y-Split
-8. Support two output bins: (domain: size)
-	8.1 CardboarBox
-	8.2 PallotBox
-		8.2.1 Default to largest if size > max
-9. Setup the injection line: (domains: order size, cavities, and Packager)
+	7.1 1 - Linear
+	7.2 2 - Y-Split
+8. Support three output bins: (domain: order size)
+	8.1 10,000 - CardboardBox
+	8.2 20,000 - ShellBox
+	8.3 50,000 - PallotBox
+		8.3.1 Default to largest if size > max
+9. Setup the injection line: (domains: order size, Packager)
 	9.1 cout << "  Setup injection line for <size> order with <Packager> packager:\n";
 	9.2 size <= 10,000: cout << "    IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.\n";
 	9.2 size <= 20,000: cout << "    IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.\n";
 	9.2 size <= 50,000: cout << "    IJM_210 - Steel(1) - Linear conveyer belt - PallotBox.\n";
 
 10. Process order: (doman: order[...])
+	10.0 cout << "  Process order:\n";
 	10.1 Get mold
 	10.2 Insert tags into mold
 	10.3 Load plastic, color die, and additive bins
-	10.4 Simulate cycling the IJM for the specified plastic <size> times
+	10.4 Simulate cycling the IJM for the specified plastic <run size> times (see specs 20-23)
 		10.4.1 Just once, specify the injection cycle (depends on plastic type)
 		10.4.2 Just once, simulate a full parts bin asking upline machines to pause
 	10.5 Clean the mold (ignore molds that are used up, clean them all)
 
 11. Support three mold shapes with specified volumes in cc: (domain: mold)
-	11.1 duck (35 cc)
+	11.1 duck (35 cc) - [Mill steps: D3C2D2G4]
 		11.1.1 Default: cout << "    <>Unknown mold |<mold>| defaulting to 'duck'.\n";
-	11.2 car (40 cc)
-	11.3 hero (50 cc)
+	11.2 car (40 cc) - [Mill steps: D2C8D1G3]
+	11.3 hero (50 cc) - [Mill steps: D1C1D1G7]
 12. Molds are to be pulled from inventory, sister company, or milled from bulk metal: (domain: moldLoc)
 	12.1 (To keep the final simple, the order will specify the mold location.)
 		12.1.1 If location and shape unknown, default to duck from inventory
@@ -65,20 +67,20 @@
 		12.3.1 cout << "    Create <shape> mold from mill with <n> cavities - steps: <steps>.\n";
 	12.5 Order is important; don't mill if it can be borrowed, don't borrow if one is on hand.
 13. Shapes are milled with three techniques (actual steps simulated, see "couts" below):
-	13.1 drill
-	13.2 cut
-	13.3 grind
+	13.1 drill (Dx)
+	13.2 cut (Cx)
+	13.3 grind (Gx)
 14. Support three finishes: (domain: finish)
 	14.1 smooth (default)
 	14.2 rippled
 	14.3 dimpled
 15. Support three milling platforms: (domains: metal, finish)
 	15.1 HighCarbon tools (suitable for aluminum)
-		15.1.1 cout << "      using HighCarbon tools (drill, cut, and high speed grind) to mill <metal> block into <n> <shape> shapes with <finish> finish.\n";
+		15.1.1 cout << "      using HighCarbon tools (drill, cut, and high speed grind) to mill <metal> block into <n> <shape> shape(s) with <finish> finish.\n";
 	15.2 Carbide tools (suitable for steel)
-		15.2.1 rippled: cout << "      using Carbide tools (high speed drill, cross cut, and layer grind) to mill <metal> block into <n> <shape> shapes with <finish> finish.\n";
+		15.2.1 rippled: cout << "      using Carbide tools (high speed drill, cross cut, and layer grind) to mill <metal> block into <n> <shape> shape(s) with <finish> finish.\n";
 	15.3 Diamond tipped (suitable for steel) (default)
-		15.3.1 dimpled: cout << "      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill steel block into 1 hero shape with dimpled finish.\n";
+		15.3.1 dimpled: cout << "      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill <metal> block into <n> <shape> shape(s) with <finish> finish.\n";
 16. Support three tags (+ Blank), widths in mm (inserted into molds, typically under the support base, think plastic toy): (domain: tags)
 	16.0 Blank (width determined by cavity space & sum of other tags' widths)
 	16.1 ModelNumber (2 mm)
@@ -103,25 +105,28 @@
 19. Simulate mixing plastic, color, and additives with volume recipe & total (account for multiple cavities):
 	19.1 cout << "    Load plastic bin with <plastic> and color bin with <color>.\n";
 	19.2 cout << "      Recipe: <plastic>(<vol>) <color>(<vol>) <additive1>(<vol>)... = <shape vol> cc.\n";
-	19.3 cout << "      Volume: <shape>(<shape vol>) * <cavities> cavities = <total vol> cc.\n";
+	19.3 cout << "      Volume: <shape>(<shape vol>) * <cavities> cavitie(s) = <total vol> cc.\n";
 
 20. Support three injection cycles: (domain: plastic)
-	20.1 ABS:  heat to 440 - inject at 125 PSI - cool to 360 - progressive eject
-	20.2 Poly: heat to 350 - inject at  90 PSI - cool to 290 - smooth eject
-	20.3 PET:  heat to 404 - inject at 110 PSI - cool to 340 - smooth eject
+	20.1 ABS: Close - mix - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+	20.2 Poly: Close - mix - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+	20.3 PET: Close - mix - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
 21. Support three upline machines pausing when parts bin is full:
 	21.1 IJM
 	21.2 Conveyer belt
 	21.3 Packager (unless Bulk Packager)
 22. Run time estimates (hours): (domain: size)
-	22.1 10,000: runTime = orderSize/cavities*(1/60);
-	22.2 25,000: runTime = orderSize/cavities*legacy::cycletime(metal, shape->volume)/3600;
-	22.3 50,000:
+	22.1 10,000: BackOfTheEnvelope
+		 runTime = orderSize/cavities*(1/60);
+	22.2 25,000: Calculation
+		 runTime = orderSize/cavities*legacy::cycletime(metal, shape->volume)/3600;
+	22.3 50,000: Historical
 		cycletime = legacy::cycleTime_sec(metal, shape->volume)
 		runTime   = legacy::setupAvg_min + orderSize/cavities*cycletime + legacy::teardownAvg_min;
 	22.4 Default to highest fidelty estimate.
-23. Simulate cycling the IJM for the specified plastic <size> times
-	23.1 cout << "    Cycle <IJM> for <plastic> <size> times, estimated run time = <est> hour(s).\n";
+		 22.4.1 cout << "    <>Using most sophisticated estimation algorithm for orders greater than 100000.\n";
+23. Simulate cycling the IJM for the specified plastic <run size> times
+	23.1 cout << "    Cycle <IJM> for <plastic> <run size> times, estimated run time = <est> hour(s).\n";
 	23.2 cout << "      Close - mix - heat to <temp> - inject at <psi> PSI - cool to <temp> - separate - <technique> eject.\n";
 	23.3 cout << "      Whenever <PartsBin> parts bin was full...\n";
 	23.3.1 cout << "        <IJM> paused while <PartsBin> parts bin was swapped.\n";
@@ -143,11 +148,28 @@
 
 25. Instrument the destructors:
 	25.1 cout << "~<ClassName> ";
-	25.2 Use newlines to logically group the class heirarchies
+	25.2 Or better, use the DTOR macro in macros.h
+		 25.2.1 Then if your class hiearachy differs too much you can easily turn dtor instrumentation off
+	25.3 Use newlines to logically group the class heirarchies
 
-26. To get the diffs to zero:
-	26.1 In main(int argc, char* args[]):
-		26.1.1 cout << "Hello DP4.\n" << endl;
-		26.1.2 final_design_file::demo(string(args[1]));	// Pass in the input file (orders_1.txt).
-		26.1.3 cout << "Aloha DP4.\n";
+26. To get the diffs to zero (just a suggestion):
+	26.1 #include finalDesign.h
+	26.2 In your main(int argc, char* args[]):
+		26.2.1 final_design::demo(string(args[1]));	// Pass in the input file (orders_1.txt).
+		26.2.2 <program>.exe orders_1.txt > design1.out
+		26.2.3 diff design1.out design1Base.out (Should be no difference.)
+	26.3 For Part I (2 weeks) you might copy finalDesign.h to finalOriginal.h
+		26.3.1 Include it and modify main to call it
+		26.3.2 <program>.exe orders_1.txt > original1.out
+		26.3.3 diff original1.out original1Base.out (Add code until diffs are zero.)
+	26.4 For Part II (in class) you might copy your finalOriginal.h to finalSolution.h
+		26.4.1 <program>.exe orders_2.txt > original2.out
+		26.4.2 diff original2.out original2Base.out (Diffs should be zero.)
+		26.4.3 Include it and modify main to call it
+		26.4.2 <program>.exe orders_1.txt > solution1.out
+		26.4.3 diff solution1.out solution1Base.out (Diffs should be zero.)
+		26.4.2 <program>.exe orders_2.txt > solution2.out
+		26.4.4 diff solution2.out solution2Base.out (Add code until diffs are zero.)
+	26.5 Email your finalOriginal.h to me at start of class
+	26.6 Email your finalSolution.h to me when you are done
 		

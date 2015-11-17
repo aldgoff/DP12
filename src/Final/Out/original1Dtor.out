@@ -1,5 +1,4 @@
-
-<<< final solution >>>
+<<< final original >>>
 1:
 	orderNum	= 1
 	comment		= Null order - check default behaviors.
@@ -7,7 +6,6 @@
   <>Unknown plastic || defaulting to 'ABS'.
   <>No size specified, defaulting to 100.
   <>Unknown packager || defaulting to 'None'.
-  <>Unknown stuffer || defaulting to 'None'.
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Process order:
@@ -23,21 +21,9 @@
         IJM_110 paused while CardboardBox parts bin was swapped.
         Linear conveyer belt paused while CardboardBox parts bin was swapped.
     Clean ABS mold: soak in alcohol, rinse with water, dry.
-    Ship to "".
-~ABS
-~LinearBelt ~ConveyerBelt ~observer::BinObserver
-~Aluminum ~Mold
-~IJM_110 ~IJM ~observer::BinObserver
-~CardboardBox ~PartsBin ~observer::BinSubject
- BinObservers left to process (should be zero) = 0.
-~PilotOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold 
-~Plastic ~dec::Polymer 
-~Blank ~dec::Cavity 
-~BackOfTheEnvelope ~strategy::RuntimeEstimate
-~ABS ~legacy_classes::CleanABS ~adapter::CleanMold
-~template_method::ProcessOrder
+
+
+
 2:
 	orderNum	= 2
 	comment		= Example order - one of everything.
@@ -50,7 +36,6 @@
 	UVInhibiter	= 2
 	packager	= Bulk
 	endOfOrder
-  <>Unknown stuffer || defaulting to 'None'.
   Setup injection line for 10000 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Process order:
@@ -65,21 +50,9 @@
         IJM_110 paused while CardboardBox parts bin was swapped.
         Linear conveyer belt paused while CardboardBox parts bin was swapped.
     Clean ABS mold: soak in alcohol, rinse with water, dry.
-    Ship to "".
-~ABS
-~LinearBelt ~ConveyerBelt ~observer::BinObserver
-~Aluminum ~Mold
-~IJM_110 ~IJM ~observer::BinObserver
-~CardboardBox ~PartsBin ~observer::BinSubject
- BinObservers left to process (should be zero) = 0.
-~PilotOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold 
-~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
-~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity 
-~BackOfTheEnvelope ~strategy::RuntimeEstimate
-~ABS ~legacy_classes::CleanABS ~adapter::CleanMold
-~template_method::ProcessOrder
+
+
+
 3:
 	orderNum		= 3
 	comment			= Max order - next of singles, all of everything else (orig specs).
@@ -95,7 +68,6 @@
 	Hydrophilic		= 2
 	packager		= ShrinkWrap
 	endOfOrder
-  <>Unknown stuffer || defaulting to 'None'.
   Setup injection line for 20000 order with ShrinkWrap packager:
     IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.
   Process order:
@@ -112,22 +84,9 @@
         Y-Split conveyer belt paused while ShellBox parts bin was swapped.
         Shrink wrap packager paused while ShellBox parts bin was swapped.
     Clean Poly mold: rinse with acetone, dry.
-    Ship to "".
-~Poly
-~ShrinkWrap ~factory_method::Packager ~observer::BinObserver
-~YSplitBelt ~ConveyerBelt ~observer::BinObserver
-~Aluminum ~Mold
-~IJM_120 ~IJM ~observer::BinObserver
-~ShellBox ~PartsBin ~observer::BinSubject
- BinObservers left to process (should be zero) = 0.
-~SmallOrder ~abstract_factory::InjectionLine
-~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold 
-~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
-~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
-~Calculation ~strategy::RuntimeEstimate
-~Poly ~legacy_classes::CleanPolys ~adapter::CleanMold
-~template_method::ProcessOrder
+
+
+
 4:
 	orderNum	= 4
 	comment		= Next of singles or last.
@@ -140,7 +99,6 @@
 	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
-  <>Unknown stuffer || defaulting to 'None'.
   Setup injection line for 50000 order with HardPack packager:
     IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
   Process order:
@@ -159,22 +117,9 @@
         Linear conveyer belt paused while PalletBox parts bin was swapped.
         Hard pack packager paused while PalletBox parts bin was swapped.
     Clean Poly mold: rinse with acetone, dry.
-    Ship to "".
-~Poly
-~HardPack ~factory_method::Packager ~observer::BinObserver
-~LinearBelt ~ConveyerBelt ~observer::BinObserver
-~Steel ~Mold
-~IJM_210 ~IJM ~observer::BinObserver
-~PalletBox ~PartsBin ~observer::BinSubject
- BinObservers left to process (should be zero) = 0.
-~MediumOrder ~abstract_factory::InjectionLine
-~Hero ~bridge::Shape ~Carbide ~bridge::Platform
-~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold 
-~Plastic ~dec::Polymer 
-~Blank ~dec::Cavity 
-~Historical ~strategy::RuntimeEstimate
-~Poly ~legacy_classes::CleanPolys ~adapter::CleanMold
-~template_method::ProcessOrder
+
+
+
 5:
 	orderNum	= 5
 	comment		= Next of singles or last.
@@ -186,38 +131,24 @@
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
-  <>Unknown stuffer || defaulting to 'None'.
-  Setup injection line for 100000 order with HardPack packager:
-    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  <>Size exceeds mold lifetime |100000| defaulting to MediumOrder of 50000.
+  Setup injection line for 50000 order with HardPack packager:
+    IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
   Process order:
-    Create hero mold from mill with 2 cavities - steps: D1C1D1G7.
-      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill steel block into 2 hero shapes with dimpled finish.
+    Create hero mold from mill with 1 cavities - steps: D1C1D1G7.
+      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill steel block into 1 hero shape with dimpled finish.
     Insert tags [] of width 0/20 mm, blank tag is 20 mm.
     Load plastic bin with PET and color bin with green.
       Recipe: PET(45) green(5) = 50 cc.
-      Volume: hero(50) * 2 cavities = 100 cc.
-    Cycle IJM_220 for PET 50000 times, estimated run time = 424 hours.
+      Volume: hero(50) * 1 cavity = 50 cc.
+    Cycle IJM_210 for PET 50000 times, estimated run time = 419 hours.
       Close - mix - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
       Whenever PalletBox parts bin was full...
-        IJM_220 paused while PalletBox parts bin was swapped.
-        Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+        IJM_210 paused while PalletBox parts bin was swapped.
+        Linear conveyer belt paused while PalletBox parts bin was swapped.
         Hard pack packager paused while PalletBox parts bin was swapped.
     Clean PET steel mold: heat to 895 C.
-    Ship to "".
-~PET
-~HardPack ~factory_method::Packager ~observer::BinObserver
-~YSplitBelt ~ConveyerBelt ~observer::BinObserver
-~Steel ~Mold
-~IJM_220 ~IJM ~observer::BinObserver
-~PalletBox ~PartsBin ~observer::BinSubject
- BinObservers left to process (should be zero) = 0.
-~LargeOrder ~abstract_factory::InjectionLine
-~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
-~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold ~CofR::GetMold 
-~Plastic ~dec::Polymer 
-~Blank ~dec::Cavity 
-~Projection ~strategy::RuntimeEstimate
-~PET ~legacy_classes::PETCleanup ~adapter::CleanMold
-~template_method::ProcessOrder
+
+
 
 

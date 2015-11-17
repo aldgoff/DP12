@@ -8,7 +8,7 @@
 #ifndef MACROS_H_
 #define MACROS_H_
 
-const unsigned flags = 0x0E;	// Dtor instrumentation controlled by bit flags.
+const unsigned flags = 0x00;	// Dtor instrumentation controlled by bit flags.
 #define DTOR(x, flag) if(flag & flags) { cout << x; }
 
 enum DtorFlags {

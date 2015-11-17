@@ -182,7 +182,7 @@
 	mold		= hero
 	color		= green
 	plastic		= PET
-	moldLoc		= sisterCompany
+	moldLoc		= mill
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
@@ -190,7 +190,8 @@
   Setup injection line for 100000 order with HardPack packager:
     IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
   Process order:
-    Borrow hero mold from sister company.
+    Create hero mold from mill with 2 cavities - steps: D1C1D1G7.
+      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill steel block into 2 hero shapes with dimpled finish.
     Insert tags [] of width 0/20 mm, blank tag is 20 mm.
     Load plastic bin with PET and color bin with green.
       Recipe: PET(45) green(5) = 50 cc.

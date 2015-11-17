@@ -6,12 +6,12 @@
     Polypropylene
     Polyethelene
   PET
-  ... (3,11)
+  ... (11,15)
   Sythetics - come pre-colored
     Styrene
     Nylon66
 
-2. Run sizes: (default: 100)
+2. Order sizes: (default: 100)
   10,000
   20,000
   50,000
@@ -22,11 +22,11 @@
   400,000 defaults to 200,000
   
 11. Shapes: (default: duck)
-  duck (35 cc)
-  car (40 cc)
-  hero (50 cc)
+  duck (35 cc) - [Mill steps: D3C2D2G4]
+  car (40 cc) - [Mill steps: D2C8D1G3]
+  hero (50 cc) - [Mill steps: D1C1D1G7]
   ... (5)
-  dino (30 cc)
+  dino (30 cc) - [Mill steps: G5D2C1]
 
 18. Colors: (no default)
   black
@@ -35,7 +35,7 @@
   orange
   yellow
   green
-  ... (4)
+  ... (3)
   blue
   violet
   gray
@@ -80,7 +80,7 @@
   smooth (default)
   rippled
   dimpled
-  ... (15)
+  ... (16)
   sanded
   satin
   
@@ -123,7 +123,7 @@
   ... (7)
   Micro fibers
 
-4. IJM: (domain: size)
+4. IJM: (domain: order size)
   10,000 - IJM_110
   20,000 - IJM_120
   50,000 - IJM_210
@@ -132,7 +132,7 @@
   100,000 - IJM_220
   200,000 - IJM_240
 
-5-6. Mold metal & cavites: (domain: size)
+5-6. Mold metal & cavites: (domain: order size)
   10,000 - Aluminum(1)
   20,000 - Aluminum(2)
   50,000 - Steel(1)
@@ -141,16 +141,13 @@
   100,000 - Steel(2)
   200,000 - Steel(4)
 
-7. Conveyer belts: (domain: size)
-  10,000 - Linear
-  20,000 - Y-split
-  50,000 - Linear
+7. Conveyer belts: (domain: cavities)
+  1 - Linear
+  2 - Y-split
   ... (1,14)
-  40,000 - V-level
-  100,000 - Y-split
-  200,000 - V-level
+  4 - V-level
 
-8. Parts bins: (domain: size)
+8. Parts bins: (domain: order size)
   10,000 - Cardboard box
   20,000 - Shell box
   50,000 - Pallot box
@@ -166,8 +163,8 @@
   hard pack
   ... (2)
   ziploc
-...... (8,13,16,18)
-Stuffers: (another Observer) (domain: order["stuffer"])
+...... (8,13,17,19)
+Stuffers: (another machine to pause) (domain: order["stuffer"])
   Air (default - does nothing, i.e., no fill to do.)
   Popcorn (styrene propcorn)
   Bubblewrap (bubble wrap)
@@ -198,10 +195,10 @@ Stuffers: (another Observer) (domain: order["stuffer"])
   Synthetics (Styrene, Nilon66)
   	Ozone wash
 
-9-10. Setup the injection run: (domain: plastic)
+9-10. Setup the injection run: (domains: order size, Packager and Stuffer)
   Setup the injection line:
     IJM
-    Mold
+    Mold(cavities)
     Conveyer belt
     Packager
     Parts bin

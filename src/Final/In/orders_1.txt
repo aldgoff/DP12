@@ -48,7 +48,7 @@
 	mold		= hero
 	color		= green
 	plastic		= PET
-	moldLoc		= sisterCompany
+	moldLoc		= mill
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
