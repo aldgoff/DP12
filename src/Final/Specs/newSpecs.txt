@@ -55,18 +55,18 @@
 
 22. Run time estimates (hours): (domain: size) (Dependencies: cavities, legacy, metal, volume, plastics)
   BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
-  Calculation(25k):       runTime = orderSize/cavities*legacy::cycletime(metal, shape->volume)/3600;
+  Calculation(25k):       runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
   Historical(50k):
-    cycletime = legacy::cycleTime_sec(metal, shape->volume)
-    runTime = legacy::setupAvg_min + orderSize/cavities*cycletime + legacy::teardownAvg_min;
+    cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
+    runTime = legacy_classes::setupAvg_min + orderSize/cavities*cycletime + legacy_classes::teardownAvg_min;
   Default to highest fidelty estimate.
   ... (10)
   Projection(100k): 
-    cycletime = legacy::cycleTime_sec(metal, shape->volume)
-    rejectRate_pcnt = if(PET) then legacy::rejectRateHigh_pcnt else legacy::rejectRateLow_pcnt
-    runTime = legacy::setupAvg_min
+    cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
+    rejectRate_pcnt = if(PET) then legacy_classes::rejectRateHigh_pcnt else legacy_classes::rejectRateLow_pcnt
+    runTime = legacy_classes::setupAvg_min
             + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime
-            + legacy::teardownAvg_min;
+            + legacy_classes::teardownAvg_min;
   
 12. Mold locations: (domain: order["moldLoc"])
   Inventory (default)

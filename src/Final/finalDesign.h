@@ -26,8 +26,8 @@ int cycleTime_sec(string metal, int volume_cc) {
 
 const int setupAvg_min = 118;
 const int teardownAvg_min = 54;
-const float rejectRateLow_pcnt = 0.2;
-const float rejectRateHigh_pcnt = 1.1;
+const float rejectRateLow_pcnt = 0.4;
+const float rejectRateHigh_pcnt = 1.2;
 
 class CleanABS {
 public: ~CleanABS() { DTORF("~legacy_classes::CleanABS "); }
