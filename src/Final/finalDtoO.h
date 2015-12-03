@@ -8,9 +8,6 @@
 #ifndef FINAL_FINAL_D_TO_O_H_
 #define FINAL_FINAL_D_TO_O_H_
 
-#include <map>
-using namespace std;
-
 namespace final_d_to_o {
 
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
@@ -18,22 +15,36 @@ const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
 
 namespace legacy_classes {	// Can't change these.
 
+int cycleTime_sec(string metal, int volume_cc) {
+	int heatCapacityAdjustment = 0;
+
+	if(		metal == "aluminum")	heatCapacityAdjustment = -2;
+	else if(metal == "steel")		heatCapacityAdjustment = +5;
+
+	return 20 + heatCapacityAdjustment + 0.1*volume_cc;
+}
+
+const int setupAvg_min = 118;
+const int teardownAvg_min = 54;
+const float rejectRateLow_pcnt = 0.4;
+const float rejectRateHigh_pcnt = 1.2;
+
 class CleanABS {
-public: ~CleanABS() { DTORF("~CleanABS "); }
+public: ~CleanABS() { DTORF("~legacy_classes::CleanABS "); }
 	void clean() {
 		cout << "    Clean ABS mold: soak in alcohol, rinse with water, dry.\n";
 	}
 };
 
 class CleanPolys {
-public: ~CleanPolys() { DTORF("~CleanPolys "); }
+public: ~CleanPolys() { DTORF("~legacy_classes::CleanPolys "); }
 	void prepForReuse() {
 		cout << "    Clean Poly mold: rinse with acetone, dry.\n";
 	}
 };
 
 class PETCleanup {
-public: ~PETCleanup() { DTORF("~PETCleanup "); }
+public: ~PETCleanup() { DTORF("~legacy_classes::PETCleanup "); }
 	void carbonize() { // Use only on stainless steel.
 		cout << "    Clean PET steel mold: heat to 895 C.\n";
 	}
@@ -99,13 +110,13 @@ namespace decorator {		// DP 6.
 
 }
 
-namespace factory_method {	// DP 3.
+namespace factory_method {	// DP 4.
 
 // Seam point - add another class.
 
 }
 
-namespace template_method {	// DP 4.
+namespace template_method {	// DP 3.
 
 // Seam point - add another polymorphic step.
 // Seam point - add another constant step.
@@ -114,7 +125,8 @@ namespace template_method {	// DP 4.
 }
 
 void process(map<string,string>& order) {
-
+	// Fill in the namespaces above with your design pattern class hierarchies.
+	// Call your order processing class from here <myProcess>->run(order);
 }
 
 pair<string,string> parse(string line) {

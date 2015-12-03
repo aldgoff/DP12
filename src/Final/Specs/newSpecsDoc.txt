@@ -28,12 +28,12 @@
 10. Add ability to handle run size of 100,000 (LargeOrder):
 	10.1 IJM_220.
 	10.2 Steel molds with 2 cavities.
-	10.3 New estimation algorithm: Projection:
+	10.3 New estimation algorithm: Projection orderSize<=100,000:
 		 10.3.1 cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
 		 10.3.2 rejectRate_pcnt = if(PET) then legacy_classes::rejectRateHigh_pcnt else legacy_classes::rejectRateLow_pcnt
-		 10.3.3 runTime = legacy_classes::setupAvg_min
-						+ (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime
-			 			+ legacy_classes::teardownAvg_min;
+		 10.3.3 runTime = (legacy_classes::setupAvg_min
+						+ (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime/60
+			 			+ legacy_classes::teardownAvg_min)/60;
 11. Add Styrene as a new synthetic plastic:
 	11.1 Injection: Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
 	11.2 Cleaning: ozone wash.

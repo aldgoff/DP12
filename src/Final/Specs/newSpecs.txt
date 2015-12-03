@@ -54,19 +54,22 @@
   Synthetics - Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject
 
 22. Run time estimates (hours): (domain: size) (Dependencies: cavities, legacy, metal, volume, plastics)
-  BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
-  Calculation(25k):       runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
-  Historical(50k):
+  BackOfTheEnvelope(orderSize<=10k): runTime = orderSize/cavities*(1/60);
+  Calculation(orderSize<=25k):       runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
+  Historical(orderSize<=50k):
     cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
     runTime = legacy_classes::setupAvg_min + orderSize/cavities*cycletime + legacy_classes::teardownAvg_min;
-  Default to highest fidelty estimate.
+	runTime = (legacy_classes::setupAvg_min + (orderSize/cavities)*cycletime/60 + legacy_classes::teardownAvg_min)/60;
+		int cycleTime = cycleTime_sec(order["metal"], volume_cc);
+		return (setupAvg_min + (orderSize/cavities)*cycleTime/60 + teardownAvg_min)/60;
+  Default to highest fidelity estimate.
   ... (10)
-  Projection(100k): 
+  Projection(orderSize<=100k): 
     cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
     rejectRate_pcnt = if(PET) then legacy_classes::rejectRateHigh_pcnt else legacy_classes::rejectRateLow_pcnt
-    runTime = legacy_classes::setupAvg_min
-            + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime
-            + legacy_classes::teardownAvg_min;
+    runTime = (legacy_classes::setupAvg_min
+            + (1 + 0.01*rejectRate_pcnt)*orderSize/cavities*cycletime/60
+            + legacy_classes::teardownAvg_min)/60;
   
 12. Mold locations: (domain: order["moldLoc"])
   Inventory (default)

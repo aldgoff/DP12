@@ -173,19 +173,16 @@ public:
 	static RuntimeEstimate* selectEstimationAlgorithm(map<string,string>& order);
 };
 class BackOfTheEnvelope : public RuntimeEstimate {
-public:
-	BackOfTheEnvelope() {}
-	~BackOfTheEnvelope() { DTORF("~BackOfTheEnvelope "); }
+public:	~BackOfTheEnvelope() { DTORF("~BackOfTheEnvelope "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
-		return (orderSize/cavities)/60;
+		int cycleTime = 60; // Seconds.
+		return (orderSize/cavities)*cycleTime/3600;
 	}
 };
 class Calculation : public RuntimeEstimate {
-public:
-	Calculation() {}
-	~Calculation() { DTORF("~Calculation "); }
+public:	~Calculation() { DTORF("~Calculation "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
@@ -195,9 +192,7 @@ public:
 	}
 };
 class Historical : public RuntimeEstimate {
-public:
-	Historical() {}
-	~Historical() { DTORF("~Historical "); }
+public:	~Historical() { DTORF("~Historical "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		using namespace legacy_classes;
@@ -1324,7 +1319,7 @@ protected:
 		if(packager && cushion)
 			cout << " and ";
 		if(cushion)
-		cout << cushion->fill() << " stuffer";
+			cout << cushion->fill() << " stuffer";
 		cout << ":\n";
 
 		cout << "    ";

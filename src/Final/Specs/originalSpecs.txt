@@ -36,12 +36,12 @@
   PET - Close - mix - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject
 
 22. Run time estimates (hours): (domain: size) (Dependencies: cavities, legacy, metal, volume, plastics)
-  BackOfTheEnvelope(10k): runTime = orderSize/cavities*(1/60);
-  Calculation(25k):       runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
-  Historical(50k):
+  BackOfTheEnvelope(orderSize<=10k): runTime = orderSize/cavities*(1/60);
+  Calculation(orderSize<=25k):       runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
+  Historical(orderSize<=50k):
     cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
-    runTime = legacy_classes::setupAvg_min + orderSize/cavities*cycletime + legacy_classes::teardownAvg_min;
-  Default to highest fidelty estimate.
+  	runTime = (legacy_classes::setupAvg_min + (orderSize/cavities)*cycletime/60 + legacy_classes::teardownAvg_min)/60;
+  Default to highest fidelity estimate.
  
 12. Mold locations: (domain: order["moldLoc"])
   Inventory (default)

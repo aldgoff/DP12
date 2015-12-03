@@ -1,4 +1,3 @@
-
 <<< final original >>>
 1:
 	orderNum	= 1
@@ -406,5 +405,4 @@
 ~Historical ~strategy::RuntimeEstimate
 ~ABS ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
-
 

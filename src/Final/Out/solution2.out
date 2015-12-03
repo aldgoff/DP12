@@ -1,4 +1,3 @@
-
 <<< final solution >>>
 1:
 	orderNum	= 1
@@ -412,5 +411,4 @@
 ~Projection ~strategy::RuntimeEstimate
 ~Synthetic ~adapter::CleanMold
 ~template_method::ProcessOrder
-
 

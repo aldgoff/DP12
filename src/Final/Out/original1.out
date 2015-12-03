@@ -1,4 +1,3 @@
-
 <<< final original >>>
 1:
 	orderNum	= 1
@@ -210,5 +209,4 @@
 ~Historical ~strategy::RuntimeEstimate
 ~PET ~legacy_classes::PETCleanup ~adapter::CleanMold
 ~template_method::ProcessOrder
-
 

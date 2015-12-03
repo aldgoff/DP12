@@ -46,6 +46,17 @@ namespace final_original {
  * Duration: 2:15 - ouch.
  */
 
+/* Lessons Learned:
+ *   1. Run time estimates ambiguous about size boundaries, be explicit.
+ *   2. The reject rate variables differed between specs and code.
+ *   3. The formulas were murky about units, be specific.
+ *   4. Add cycle time value to output, helps students debug run time estimates.
+ *   	4.1 New line: Estimates: cycle time = 30 secs, run time = 419 hours.
+ *   5. Single/plural cavities when "mold from mill" needs to be implemented.
+ *   6. Original1Base.out and Original1Dtor.out names should be swapped.
+ *   7. Additive orders may differ based on implementation (vector verus map).
+ *
+ */
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
 #define DTORF(x) if(on) { cout << x; }
 
@@ -154,6 +165,18 @@ CleanMold* CleanMold::getCleaning(map<string,string>& order) {
 
 namespace strategy {		// DP 1.
 
+/*
+22. Run time estimates (hours): (domain: size)
+	22.1 order size <= 10,000: BackOfTheEnvelope
+		 runTime = orderSize/cavities*(1/60);
+	22.2 orderSize<=25,000: Calculation
+		 runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
+	22.3 orderSize<=50,000: Historical
+		cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
+		runTime   = (legacy_classes::setupAvg_min + (orderSize/cavities)*cycletime/60 + legacy_classes::teardownAvg_min)/60;
+	22.4 Default to highest fidelity estimate.
+		 22.4.1 cout << "    <>Using most sophisticated estimation algorithm for orders greater than 100000.\n";
+ */
 class RuntimeEstimate {	// If the algorithms are varying...
 protected:
 	int orderSize;
@@ -175,19 +198,16 @@ public:
 	static RuntimeEstimate* selectEstimationAlgorithm(map<string,string>& order);
 };
 class BackOfTheEnvelope : public RuntimeEstimate {
-public:
-	BackOfTheEnvelope() {}
-	~BackOfTheEnvelope() { DTORF("~BackOfTheEnvelope "); }
+public:	~BackOfTheEnvelope() { DTORF("~BackOfTheEnvelope "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
-		return (orderSize/cavities)/60;
+		int cycleTime = 60; // Seconds.
+		return (orderSize/cavities)*cycleTime/3600;
 	}
 };
 class Calculation : public RuntimeEstimate {
-public:
-	Calculation() {}
-	~Calculation() { DTORF("~Calculation "); }
+public:	~Calculation() { DTORF("~Calculation "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
@@ -197,9 +217,7 @@ public:
 	}
 };
 class Historical : public RuntimeEstimate {
-public:
-	Historical() {}
-	~Historical() { DTORF("~Historical "); }
+public:	~Historical() { DTORF("~Historical "); }
 public:
 	virtual int operator()(map<string,string>& order) {
 		using namespace legacy_classes;
