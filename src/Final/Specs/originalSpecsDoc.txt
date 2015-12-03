@@ -121,7 +121,7 @@
 	22.2 25,000: Calculation
 		 runTime = orderSize/cavities*legacy_classes::cycleTime_sec(metal, shape->volume)/3600;
 	22.3 50,000: Historical
-		cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)
+		cycletime = legacy_classes::cycleTime_sec(metal, shape->volume)/3600
 		runTime   = legacy_classes::setupAvg_min + orderSize/cavities*cycletime + legacy_classes::teardownAvg_min;
 	22.4 Default to highest fidelty estimate.
 		 22.4.1 cout << "    <>Using most sophisticated estimation algorithm for orders greater than 100000.\n";
