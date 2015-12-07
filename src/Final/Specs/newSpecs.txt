@@ -155,7 +155,7 @@
   20,000 - Shell box
   50,000 - Pallot box
   ... (14)
-  40,000 - Pallot box
+  40,000 - Shell box
   100,000 - Pallot box
   200,000 - Crate
   Default to largest if size > max.

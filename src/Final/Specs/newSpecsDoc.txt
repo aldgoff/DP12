@@ -37,6 +37,8 @@
 11. Add Styrene as a new synthetic plastic:
 	11.1 Injection: Close - mix - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
 	11.2 Cleaning: ozone wash.
+	11.3 Synthetics come pre-colored, modify recipe line:
+		 11.3.1 cout << "      Recipe: <color>-<plastic>(<vol>) <additive1>(<vol>)... = <shape vol> cc.\n";
 12. Add purchase as new mold location, between sister company and mill.
 13. Add Stuffing machine for styrene popcorn:
 	13.1 Popcorn ("styrene popcorn").
@@ -49,7 +51,7 @@
 	14.3 V-Level converyer belt.
 	14.4 New parts bin, Crate.
 15. Add Nylon66 as a new synthetic plastic:
-	15.1 Injection: heat to 480 - inject at 150 PSI - cool to 390 - shock eject.
+	15.1 Injection: Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
 	15.1 Cleaning: ozone wash.
 16. Add two new finishes:
 	16.1 sanded

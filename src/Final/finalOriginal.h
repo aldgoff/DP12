@@ -55,8 +55,10 @@ namespace final_original {
  *   5. Single/plural cavities when "mold from mill" needs to be implemented.
  *   6. Original1Base.out and Original1Dtor.out names should be swapped.
  *   7. Additive orders may differ based on implementation (vector verus map).
- *
+ *   8. Additives list will be order dependent for map<T>, but not for vector<T>.
+ *   9. Canonical form for metal names: aluminum & steel versus Aluminum & Steel.
  */
+
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
 #define DTORF(x) if(on) { cout << x; }
 
