@@ -6,7 +6,7 @@
  *
  * Varies: If the parts are varying, use the Builder pattern.
  *
- * Desc: missed squash merge.
+ * Desc: missed squash merge. Trying to correct.
  *
  * Possible Examples:
  * 	1) Vehicles (
