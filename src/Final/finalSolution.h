@@ -104,21 +104,21 @@ public:
 class ABS : public CleanMold {
 	legacy_classes::CleanABS plastic;
 public: ~ABS() { DTORF("~ABS "); }
-	virtual void clean(const string& metal) {
+	void clean(const string& metal) {
 		plastic.clean();
 	}
 };
 class Poly : public CleanMold {
 	legacy_classes::CleanPolys plastic;
 public: ~Poly() { DTORF("~Poly "); }
-	virtual void clean(const string& metal) {
+	void clean(const string& metal) {
 		plastic.prepForReuse();
 	}
 };
 class PET : public CleanMold {
 	legacy_classes::PETCleanup plastic;
 public: ~PET() { DTORF("~PET "); }
-	virtual void clean(const string& metal) {
+	void clean(const string& metal) {
 		if(metal == "steel")
 			plastic.carbonize();
 		else

@@ -11,6 +11,7 @@
 #include "../DP.h"
 
 #include "../Final/finalDesign.h"
+#include "../Final/finalGuided.h"
 #include "../Final/finalDtoO.h"
 #include "../Final/finalOriginal.h"
 #include "../Final/finalOtoS.h"
@@ -31,12 +32,13 @@ public:
 
 		// final <command> src/Final/In/orders_1/2.txt
 		if(		opt == "design")	final_design::demo(args[2]);
+		else if(opt == "guided")	final_guided::demo(args[2]);
 		else if(opt == "DtoO")		final_d_to_o::demo(args[2]);
 		else if(opt == "original")	final_original::demo(args[2]);
 		else if(opt == "OtoS")		final_o_to_s::demo(args[2]);
 		else if(opt == "solution")	final_solution::demo(args[2]);
 		else {
-			cout << "<< final [design|DtoO|original|OtoS|solution]";
+			cout << "<< final [design|guided|DtoO|original|OtoS|solution]";
 			cout << " [src/Final/In/orders_1/2.txt] >>\n";
 			return 0;
 		}

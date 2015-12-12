@@ -66,19 +66,19 @@ namespace adapter {			// DP 2.
 
 // Seam point - add another interface.
 
-}
+} // adapter
 
 namespace strategy {		// DP 1.
 
 // Seam point - add another algorithm.
 
-}
+} // strategy
 
 namespace observer {		// DP 5.
 
 // Seam point - add another listener.
 
-}
+} // observer
 
 namespace abstract_factory {// DP 9.
 
@@ -89,32 +89,32 @@ namespace abstract_factory {// DP 9.
 // Seam point - add another type N.
 // Seam point - add another family.
 
-}
+} // abstract_factory
 
 namespace bridge {			// DP 8.
 
 // Seam Point - add another implementation.
 // Seam Point - add another abstraction.
 
-}
+} // bridge
 
 namespace chain_of_resp {	// DP 7.
 
 // Seam points - add another responder.
 
-}
+} // chain_of_resp
 
 namespace decorator {		// DP 6.
 
 // Seam point - add another option.
 
-}
+} // decorator
 
 namespace factory_method {	// DP 4.
 
 // Seam point - add another class.
 
-}
+} // factory_method
 
 namespace template_method {	// DP 3.
 
@@ -122,7 +122,7 @@ namespace template_method {	// DP 3.
 // Seam point - add another constant step.
 // Seam point - convert a constant step into a polymorphic step.
 
-}
+} // template_method
 
 void process(map<string,string>& order) {
 	// Fill in the namespaces above with your design pattern class hierarchies.

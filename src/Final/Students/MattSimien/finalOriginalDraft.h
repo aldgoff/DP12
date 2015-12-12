@@ -162,6 +162,12 @@ namespace final_design {
 		int volume;
 	};
 
+	//GLOBAL VARIABLES - Start - Get Rid of If you Have TIME! ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	int amountOfCavities_G;
+	Finish finalFinish_G;
+	string moldMetal_G;
+	//GLOBAL VARIABLES - END +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 	namespace adapter {			// DP 2.
 		class CleanMoldProcess {
 		public: virtual ~CleanMoldProcess() {
@@ -345,29 +351,24 @@ namespace final_design {
 	}
 	public:
 		virtual void print() = 0;
-		virtual string getMoldMetalLC() = 0;
-		virtual int getCavityCount() = 0;
 		int cavityCount;
 	};
 	class Aluminum : public MoldMetal {
-	public: Aluminum(int cavityNum) : MoldMetal(cavityNum) {}
+	public: Aluminum(int cavityNum) : MoldMetal(cavityNum) { moldMetal_G = "aluminum"; }
 	public: virtual ~Aluminum() {
 		DTORF(" ~Aluminum");
 	}
 	public:
 		void print() { cout << "Aluminum(" << cavityCount << ")"; }
-		string getMoldMetalLC() { return "aluminum"; }
-		int getCavityCount() { return cavityCount; }
 	};
 	class Steel : public MoldMetal {
-	public: Steel(int cavityNum) : MoldMetal(cavityNum) {}
+	public: Steel(int cavityNum) : MoldMetal(cavityNum) { moldMetal_G = "steel"; }
 	public: virtual ~Steel() {
 		DTORF(" ~Steel");
 	}
 	public:
 		void print() { cout << "Steel(" << cavityCount << ")"; }
-		string getMoldMetalLC() { return "steel"; }
-		int getCavityCount() { return cavityCount; }
+
 	};
 
 	class InjectionMoldMachine : public observer::BinObserver {
@@ -504,7 +505,7 @@ namespace final_design {
 		public:
 			PartsBin* create_Bin() { return new CardboardBox; }
 			InjectionMoldMachine* create_Injection_Mold_Machine(observer::BinSubject& alpha) { return new IJM_110_m(alpha); }
-			MoldMetal* create_Mold_Metal() { return new Aluminum(1); }
+			MoldMetal* create_Mold_Metal() { amountOfCavities_G = 1; return new Aluminum(1); }
 
 			ConveyerBelt* create_Conveyor_Belt(observer::BinSubject& alpha) { return new Linear(alpha); }
 
@@ -517,7 +518,7 @@ namespace final_design {
 			PartsBin* create_Bin() { return new ShellBox; }
 			InjectionMoldMachine* create_Injection_Mold_Machine(observer::BinSubject& alpha) { return new IJM_120_m(alpha); }
 			MoldMetal* create_Mold_Metal() {
-				return new Aluminum(2);
+				amountOfCavities_G = 2;  return new Aluminum(2);
 			}
 			ConveyerBelt* create_Conveyor_Belt(observer::BinSubject& alpha) { return new Y_Split(alpha); }
 		};
@@ -529,7 +530,7 @@ namespace final_design {
 			PartsBin* create_Bin() { return new PalletBox; }
 			InjectionMoldMachine* create_Injection_Mold_Machine(observer::BinSubject& alpha) { return new IJM_210_m(alpha); }
 			MoldMetal* create_Mold_Metal() {
-				return new Steel(1);
+				amountOfCavities_G = 1; return new Steel(1);
 			}
 			ConveyerBelt* create_Conveyor_Belt(observer::BinSubject& alpha) { return new Linear(alpha); }
 		};
@@ -597,9 +598,8 @@ namespace final_design {
 		class MillPlats {
 		public:
 			Shape* shape;
-			MoldMetal* userMetal;
 		public:
-			MillPlats(Shape* inputShape, MoldMetal* inputMetal) : shape(inputShape), userMetal(inputMetal) {}
+			MillPlats(Shape* inputShape) : shape(inputShape) {}
 			virtual ~MillPlats() {
 				if (shape) delete shape;
 				DTORF(" ~bridge::MillPlats");
@@ -607,11 +607,11 @@ namespace final_design {
 		public:
 			virtual void run() { shape->printName(); }
 		public:
-			static MillPlats* makeObject(Finish finish, Shape* shape, MoldMetal* inMetal);
+			static MillPlats* makeObject(Finish finish, Shape* shape);
 		};
 		class Smooth : public MillPlats {
 		public:
-			Smooth(Shape* inputShape, MoldMetal* inputMetal) : MillPlats(inputShape, inputMetal) {}
+			Smooth(Shape* inputShape) : MillPlats(inputShape) {}
 			virtual ~Smooth() {
 				DTORF(" ~Smooth");
 			}
@@ -620,24 +620,24 @@ namespace final_design {
 				cout << "    Create ";
 				shape->printName();
 				cout << " mold from mill with ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " cavities";
 				cout << " - steps: ";
 				shape->printMillSteps();
 				cout << ".\n      using HighCarbon tools (drill, cut, and high speed grind) to mill ";
-				cout << userMetal->getMoldMetalLC();
+				cout << moldMetal_G;
 				cout << " block into ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " ";
 				shape->printName();
-				string printCorrectShape = (userMetal->getCavityCount() > 1) ? " shapes" : " shape";
+				string printCorrectShape = (amountOfCavities_G > 1) ? " shapes" : " shape";
 				cout << printCorrectShape << " with ";
 				cout << "smooth finish.\n";
 			}
 		};
 		class Rippled : public MillPlats {
 		public:
-			Rippled(Shape* inputShape, MoldMetal* inputMetal) : MillPlats(inputShape, inputMetal) {}
+			Rippled(Shape* inputShape) : MillPlats(inputShape) {}
 			virtual ~Rippled() {
 				DTORF(" ~Rippled");
 			}
@@ -646,17 +646,17 @@ namespace final_design {
 				cout << "    Create ";
 				shape->printName();
 				cout << " mold from mill with ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " cavities";
 				cout << " - steps: ";
 				shape->printMillSteps();
 				cout << ".\n      using Carbide tools (high speed drill, cross cut, and layer grind) to mill ";
-				cout << userMetal->getMoldMetalLC();
+				cout << moldMetal_G;
 				cout << " block into ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " ";
 				shape->printName();
-				string printCorrectShape = (userMetal->getCavityCount() > 1) ? " shapes" : " shape";
+				string printCorrectShape = (amountOfCavities_G > 1) ? " shapes" : " shape";
 				cout << printCorrectShape << " with ";
 				cout << "rippled finish.\n";
 
@@ -664,7 +664,7 @@ namespace final_design {
 		};
 		class Dimpled : public MillPlats {
 		public:
-			Dimpled(Shape* inputShape, MoldMetal* inputMetal) : MillPlats(inputShape, inputMetal) {}
+			Dimpled(Shape* inputShape) : MillPlats(inputShape) {}
 			virtual ~Dimpled() {
 				DTORF(" ~Dimpled");
 			}
@@ -673,26 +673,26 @@ namespace final_design {
 				cout << "    Create ";
 				shape->printName();
 				cout << " mold from mill with ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " cavities";
 				cout << " - steps: ";
 				shape->printMillSteps();
 				cout << ".\n      using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind) to mill ";
-				cout << userMetal->getMoldMetalLC();
+				cout << moldMetal_G;
 				cout << " block into ";
-				cout << userMetal->getCavityCount();
+				cout << amountOfCavities_G;
 				cout << " ";
 				shape->printName();
-				string printCorrectShape = (userMetal->getCavityCount() > 1) ? " shapes" : " shape";
+				string printCorrectShape = (amountOfCavities_G > 1) ? " shapes" : " shape";
 				cout << printCorrectShape << " with ";
 				cout << "dimpled finish.\n";
 
 			}
 		};
-		MillPlats* MillPlats::makeObject(Finish finish, Shape* shape, MoldMetal* inMetal) {
-			if (SMOOTH == finish) return new Smooth(shape, inMetal);
-			if (RIPPLED == finish) return new Rippled(shape, inMetal);
-			if (DIMPLED == finish) return new Dimpled(shape, inMetal);
+		MillPlats* MillPlats::makeObject(Finish finish, Shape* shape) {
+			if (SMOOTH == finish) return new Smooth(shape);
+			if (RIPPLED == finish) return new Rippled(shape);
+			if (DIMPLED == finish) return new Dimpled(shape);
 		}
 		// Seam Point - add another implementation.
 		// Seam Point - add another abstraction.
@@ -712,7 +712,7 @@ namespace final_design {
 		public:
 			void setSuccessor(MoldLocation* next) { successor = next; }
 		public:
-			virtual void delegate(MoldLoc location, Mold moldChoice, Finish finChoice, MoldMetal* userMetal) {
+			virtual void delegate(MoldLoc location, Mold moldChoice) {
 				cout << "How did you get here?";
 			}
 		public:
@@ -724,14 +724,14 @@ namespace final_design {
 				DTORF(" ~Inventory");
 			}
 		public:
-			virtual void delegate(MoldLoc location, Mold moldChoice, Finish finChoice, MoldMetal* userMetal) {
+			virtual void delegate(MoldLoc location, Mold moldChoice) {
 				if (INVENTORY == location) {
 					cout << "    Pull ";
 					cout << MoldDictionaryToString[moldChoice];
 					cout << " mold from inventory.\n";
 				}
 				else {
-					successor->delegate(location, moldChoice, finChoice, userMetal);
+					successor->delegate(location, moldChoice);
 				}
 			}
 		};
@@ -741,14 +741,14 @@ namespace final_design {
 				DTORF(" ~SisterCompany");
 			}
 		public:
-			virtual void delegate(MoldLoc location, Mold moldChoice, Finish finChoice, MoldMetal* userMetal) {
+			virtual void delegate(MoldLoc location, Mold moldChoice) {
 				if (SISTER_COMPANY == location) {
 					cout << "    Borrow ";
 					cout << MoldDictionaryToString[moldChoice];
 					cout << " mold from sister company.\n";
 				}
 				else {
-					successor->delegate(location, moldChoice, finChoice,  userMetal);
+					successor->delegate(location, moldChoice);
 				}
 			}
 		};
@@ -758,17 +758,10 @@ namespace final_design {
 				DTORF(" ~Mill");
 			}
 		public:
-			virtual void delegate(MoldLoc location, Mold moldChoice, Finish finChoice, MoldMetal* userMetal) {
-				if (MILL == location) {
-					bridge::Shape* currentShape = bridge::Shape::makeObject(moldChoice);
-					bridge::MillPlats* currentMillPlat = bridge::MillPlats::makeObject(finChoice, currentShape, userMetal);
-					currentMillPlat->run();
-
-					delete currentMillPlat;
-				}
-				else {
-					successor->delegate(location, moldChoice, finChoice, userMetal);
-				}
+			virtual void delegate(MoldLoc location, Mold moldChoice) {
+				bridge::Shape* currentShape = bridge::Shape::makeObject(moldChoice);
+				bridge::MillPlats* currentMillPlat = bridge::MillPlats::makeObject(finalFinish_G, currentShape);
+				currentMillPlat->run();
 			}
 		};
 
@@ -1043,6 +1036,7 @@ namespace final_design {
 			else {
 				finishChoice = SMOOTH;
 			}
+			finalFinish_G = finishChoice;
 
 			//Find the order Number in the order
 			it = order.find("orderNum");
@@ -1100,7 +1094,6 @@ namespace final_design {
 			else {
 				cout << "    <>Can't find place || to get |" << MoldDictionaryToString[moldChoice] << "| mold from with || finish, defaulting to smooth " << MoldDictionaryToString[moldChoice] << " from inventory.\n";
 				moldLocChoice = INVENTORY;
-				getMold(false);
 			}
 
 			//Find the Tags choices in the order
@@ -1164,22 +1157,6 @@ namespace final_design {
 			pretendPartsBinIsFull();
 			cleanUsedMold();
 
-			delete decoratorObject;
-			delete mixtureObject;
-			delete math;
-			delete orders;
-			delete cleaner;
-			delete machine;
-			delete belt;
-			delete packaging;
-			delete bin;
-			delete metal;
-			delete injectionLine;
-			delete moldLocation;
-
-
-
-
 		}
 
 
@@ -1209,21 +1186,18 @@ namespace final_design {
 			cout << ".\n";
 		}
 
-		void getMold(bool runDelegate = true) {
+		void getMold() {
 			MoldLoc chain[] = { INVENTORY,SISTER_COMPANY,MILL };
 			moldLocation = chain_of_resp::MoldLocation::makeObject(chain[0]);
 
 			chain_of_resp::MoldLocation* current = moldLocation;
-			for (int i = 1; i < COUNT(chain); i++) {
+			for (int i = 0; i < COUNT(chain); i++) {
 				chain_of_resp::MoldLocation* next = chain_of_resp::MoldLocation::makeObject(chain[i]);
 				current->setSuccessor(next);
 				current = next;
 			}
 
-			current->setSuccessor(new chain_of_resp::MoldLocation);
-			if (runDelegate) {
-				moldLocation->delegate(moldLocChoice, moldChoice, finishChoice, metal);
-			}
+			moldLocation->delegate(moldLocChoice, moldChoice);
 		}
 
 		void getTags() {
@@ -1265,9 +1239,9 @@ namespace final_design {
 			}
 			mixtureObject->behavior();
 			cout << " = " << shapeVolume << " cc.\n";
-			int totalVolume = shapeVolume * metal->getCavityCount();
-			string cavity = (metal->getCavityCount() > 1) ? " cavities = " : " cavity = ";
-			cout << "      Volume: " << MoldDictionaryToString[moldChoice] << "(" << shapeVolume << ") * " << metal->getCavityCount() << cavity << totalVolume << " cc.\n";
+			int totalVolume = shapeVolume * amountOfCavities_G;
+			string cavity = (amountOfCavities_G > 1) ? " cavities = " : " cavity = ";
+			cout << "      Volume: " << MoldDictionaryToString[moldChoice] << "(" << shapeVolume << ") * " << amountOfCavities_G << cavity << totalVolume << " cc.\n";
 		}
 
 		void getRunTimeCalculation() {
@@ -1281,9 +1255,9 @@ namespace final_design {
 			else if (orderSize <= 50000) {
 				math = new strategy::Historical;
 			}
-			cout << "    Cycle "; machine->print(); cout << " for " << PlasticDictionaryToString[plasticChoice] << " " << orderSize / metal->getCavityCount() << " times, estimated run time = ";
+			cout << "    Cycle "; machine->print(); cout << " for " << PlasticDictionaryToString[plasticChoice] << " " << orderSize / amountOfCavities_G << " times, estimated run time = ";
 
-			math->compute(orderSize, metal->getCavityCount(), shapeVolume, metal->getMoldMetalLC()); cout << ".\n";
+			math->compute(orderSize, amountOfCavities_G, shapeVolume, moldMetal_G); cout << ".\n";
 		}
 
 		void getIJMSteps() {
@@ -1308,7 +1282,7 @@ namespace final_design {
 
 		void cleanUsedMold() {
 			cleaner = adapter::CleanMoldProcess::makeObject(plasticChoice);
-			cleaner->myWay(metal->getMoldMetalLC());
+			cleaner->myWay(moldMetal_G);
 		}
 	private:
 		Plastic plasticChoice;
