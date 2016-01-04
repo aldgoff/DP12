@@ -166,6 +166,9 @@ public:
 		value << 10000 << "*" << 60 << "/" << 3600 << ".\n";
 		return value.str();
 	}
+	virtual string name() {
+		return "algorithm";
+	}
 public:
 	static RuntimeEstimate* selectEstimationAlgorithm(map<string,string>& order);
 };
@@ -174,7 +177,7 @@ public:	~BackOfTheEnvelope() { DTORF("~BackOfTheEnvelope "); }
 public:
 	int operator()(map<string,string>& order) {
 		RuntimeEstimate::runTimeEst_hrs(order);
-		cycleTime = 40;
+		cycleTime = 39;
 		return (orderSize/cavities)*cycleTime/3600;
 	}
 	string formula() {
@@ -184,6 +187,9 @@ public:
 		stringstream value;
 		value << "(" << orderSize/cavities << ")*" << cycleTime << "/" << 3600;
 		return value.str();
+	}
+	virtual string name() {
+		return "BackOfTheEnvelope";
 	}
 };
 class Calculation : public RuntimeEstimate {
@@ -209,6 +215,9 @@ public:
 			  << cycleTime << "(" << metal << "," << volume_cc << ")"
 			  << "/" << 3600;
 		return value.str();
+	}
+	virtual string name() {
+		return "Calculation";
 	}
 };
 class Historical : public RuntimeEstimate {
@@ -236,6 +245,9 @@ public:
 			  << cycleTime << "(" << metal << "," << volume_cc << ")/" << 60
 			  << " + " << teardownAvg_min << ")/60";
 		return value.str();
+	}
+	virtual string name() {
+		return "Historical";
 	}
 };
 // Seam point - add another algorithm.
@@ -1166,7 +1178,9 @@ public:
 // Seam Point - add another abstraction.
 
 Shape* Shape::getShape(map<string,string>& order) {
-	Platform* platform = Platform::getPlatform(order);
+	Platform* platform = 0;
+	if(order["moldLoc"] == "mill")
+		platform = Platform::getPlatform(order);
 
 	if(order["mold"] == "duck")		return new Duck(platform);
 	if(order["mold"] == "car")		return new Car(platform);
@@ -1232,7 +1246,7 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
-#define ProcessInherit ProcessOrder6	// Pedagogy: successively replace with 0,1,2,3...
+#define ProcessInherit ProcessOrder5	// Pedagogy: successively replace with 0,1,2,3...
 
 class ProcessOrder0 { // Architecture.
 public:
@@ -1280,7 +1294,7 @@ protected: // Template Method methods.
 		cout << "    Volume: <mold>(vol) * <cavities> cavities = vol cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		cout << "  Estimated run time = x hour(s).\n";
+		cout << "  Estimated run time (algorithm) = x hour(s).\n";
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cout << "    Close - heat to <temp> - inject at <pressure>";
@@ -1375,7 +1389,7 @@ protected: // Template Method methods.
 		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = vol cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		cout << "  Estimated run time = x hour(s).\n";
+		cout << "  Estimated run time (algorithm) = x hour(s).\n";
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cout << "    Close - heat to <temp> - inject at <pressure>";
@@ -1473,7 +1487,7 @@ protected: // Template Method methods.
 		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = vol cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		cout << "  Estimated run time = x hour(s).\n";
+		cout << "  Estimated run time (algorithm) = x hour(s).\n";
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cout << "    Close - heat to <temp> - inject at <pressure>";
@@ -1595,7 +1609,7 @@ protected: // Template Method methods.
 		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = vol cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		cout << "  Estimated run time = x hour(s).\n";
+		cout << "  Estimated run time (algorithm) = x hour(s).\n";
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cout << "    Close - heat to <temp> - inject at <pressure>";
@@ -1727,7 +1741,7 @@ protected: // Template Method methods.
 		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = vol cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		cout << "  Estimated run time = x hour(s).\n";
+		cout << "  Estimated run time (algorithm) = x hour(s).\n";
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cout << "    Close - heat to <temp> - inject at <pressure>";
@@ -1873,7 +1887,8 @@ protected: // Template Method methods.
 		unsigned runtime = (*runtimeEst)(order);
 
 		string hour_s = runtime==1 ? " hour" : " hours";
-		cout << "  Estimated run time = " << runtime << hour_s << ".\n";
+		cout << "  Estimated run time (" << runtimeEst->name()
+			 << ") = " << runtime << hour_s << ".\n";
 		cout << "    " << runtimeEst->formula() << ".\n";
 		cout << "    " << runtimeEst->values() << ".\n";
 	}
@@ -2031,7 +2046,8 @@ protected: // Template Method methods.
 		unsigned runtime = (*runtimeEst)(order);
 
 		string hour_s = runtime==1 ? " hour" : " hours";
-		cout << "  Estimated run time = " << runtime << hour_s << ".\n";
+		cout << "  Estimated run time (" << runtimeEst->name()
+			 << ") = " << runtime << hour_s << ".\n";
 		cout << "    " << runtimeEst->formula() << ".\n";
 		cout << "    " << runtimeEst->values() << ".\n";
 	}
