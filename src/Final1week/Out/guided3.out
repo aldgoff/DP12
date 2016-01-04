@@ -1,0 +1,184 @@
+<<< final guided >>>
+1:
+	orderNum	= 1
+	comment		= Null order - check default behaviors.
+	endOfOrder
+  <>Unknown plastic || defaulting to ABS.
+  <>No size specified, defaulting to 100.
+  <>Unknown packager || defaulting to Bulk.
+  <>Unknown mold || defaulting to duck.
+  <>Unknown moldLoc || defaulting to inventory.
+  <>Unknown color || defaulting to black.
+  <>Unknown metal || defaulting to steel.
+  <>Unknown finish || defaulting to smooth.
+Process order:
+  Setup injection line for 100 order with Bulk packager:
+    IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
+  <Acquire> duck mold from inventory.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with ABS and color bin with black.
+    Recipe: ABS(vol) black(vol) <additive(<vol>) list> = vol cc.
+    Volume: duck(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for ABS <run> times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_110 ~IJM
+~Aluminum ~Mold
+~LinearBelt ~ConveyerBelt
+~CardboardBox ~PartsBin
+~PilotOrder ~abstract_factory::InjectionLine
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+2:
+	orderNum	= 2
+	comment		= Example order - one of everything.
+	size		= 10000
+	mold		= duck
+	color		= red
+	plastic		= ABS
+	moldLoc		= inventory
+	finish		= smooth
+	tags		= ModelNumber
+	UVInhibiter	= 2
+	packager	= Bulk
+	endOfOrder
+  <>Unknown metal || defaulting to steel.
+Process order:
+  Setup injection line for 10000 order with Bulk packager:
+    IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
+  <Acquire> duck mold from inventory.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with ABS and color bin with red.
+    Recipe: ABS(vol) red(vol) <additive(<vol>) list> = vol cc.
+    Volume: duck(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for ABS <run> times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_110 ~IJM
+~Aluminum ~Mold
+~LinearBelt ~ConveyerBelt
+~CardboardBox ~PartsBin
+~PilotOrder ~abstract_factory::InjectionLine
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+3:
+	orderNum		= 3
+	comment			= Max order - next of singles, all of everything else (orig specs).
+	size			= 20000
+	mold			= car
+	color			= orange
+	plastic			= Polypropylene
+	moldLoc			= mill
+	finish			= smooth
+	tags			= ModelNumber Country Date
+	UVInhibiter		= 2
+	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
+	endOfOrder
+  <>Unknown metal || defaulting to steel.
+Process order:
+  Setup injection line for 20000 order with ShrinkWrap packager:
+    IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.
+  <Acquire> car mold from mill.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with Polypropylene and color bin with orange.
+    Recipe: Polypropylene(vol) orange(vol) <additive(<vol>) list> = vol cc.
+    Volume: car(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for Polypropylene <run> times.
+    Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of Poly: rinse with acetone, dry.
+~PropyleneOrder
+~IJM_120 ~IJM
+~Aluminum ~Mold
+~YSplitBelt ~ConveyerBelt
+~ShellBox ~PartsBin
+~SmallOrder ~abstract_factory::InjectionLine
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+4:
+	orderNum	= 4
+	comment		= Next of singles or last.
+	size		= 50000
+	mold		= hero
+	color		= yellow
+	plastic		= Polyethelene
+	moldLoc		= mill
+	finish		= rippled
+	tags		= ModelNum date
+	packager	= HardPack
+	endOfOrder
+  <>Unknown metal || defaulting to steel.
+Process order:
+  Setup injection line for 50000 order with HardPack packager:
+    IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
+  <Acquire> hero mold from mill.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with Polyethelene and color bin with yellow.
+    Recipe: Polyethelene(vol) yellow(vol) <additive(<vol>) list> = vol cc.
+    Volume: hero(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for Polyethelene <run> times.
+    Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of Poly: rinse with acetone, dry.
+~EtheleneOrder
+~IJM_210 ~IJM
+~Steel ~Mold
+~LinearBelt ~ConveyerBelt
+~PalletBox ~PartsBin
+~MediumOrder ~abstract_factory::InjectionLine
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+5:
+	orderNum	= 5
+	comment		= Next of singles or last.
+	size		= 100000
+	mold		= hero
+	color		= green
+	plastic		= PET
+	moldLoc		= mill
+	finish		= dimpled
+	packager	= HardPack
+	endOfOrder
+  <>Unknown metal || defaulting to steel.
+Process order:
+  Setup injection line for 100000 order with HardPack packager:
+    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  <Acquire> hero mold from mill.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with PET and color bin with green.
+    Recipe: PET(vol) green(vol) <additive(<vol>) list> = vol cc.
+    Volume: hero(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for PET <run> times.
+    Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean steel mold of PET: heat to 895 C.
+~PETOrder
+~IJM_220 ~IJM
+~Steel ~Mold
+~YSplitBelt ~ConveyerBelt
+~PalletBox ~PartsBin
+~LargeOrder ~abstract_factory::InjectionLine
+~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
+~template_method::ProcessOrder
+
+

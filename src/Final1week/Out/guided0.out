@@ -1,0 +1,143 @@
+<<< final guided >>>
+1:
+	orderNum	= 1
+	comment		= Null order - check default behaviors.
+	endOfOrder
+  <>Unknown plastic || defaulting to ABS.
+Process order:
+  Setup injection line for <size> order with <packager> packager:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  <Acquire> <mold> mold from <moldLoc>.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with <plastic> and color bin with <color>.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
+    Volume: <mold>(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for <plastic> <run> times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of <plastic>: <cleaning steps>.
+~ABSOrder
+~template_method::ProcessOrder
+
+2:
+	orderNum	= 2
+	comment		= Example order - one of everything.
+	size		= 10000
+	mold		= duck
+	color		= red
+	plastic		= ABS
+	moldLoc		= inventory
+	finish		= smooth
+	tags		= ModelNumber
+	UVInhibiter	= 2
+	packager	= Bulk
+	endOfOrder
+Process order:
+  Setup injection line for <size> order with <packager> packager:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  <Acquire> <mold> mold from <moldLoc>.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with <plastic> and color bin with <color>.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
+    Volume: <mold>(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for <plastic> <run> times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of <plastic>: <cleaning steps>.
+~ABSOrder
+~template_method::ProcessOrder
+
+3:
+	orderNum		= 3
+	comment			= Max order - next of singles, all of everything else (orig specs).
+	size			= 20000
+	mold			= car
+	color			= orange
+	plastic			= Polypropylene
+	moldLoc			= mill
+	finish			= smooth
+	tags			= ModelNumber Country Date
+	UVInhibiter		= 2
+	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
+	endOfOrder
+Process order:
+  Setup injection line for <size> order with <packager> packager:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  <Acquire> <mold> mold from <moldLoc>.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with <plastic> and color bin with <color>.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
+    Volume: <mold>(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for <plastic> <run> times.
+    Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of <plastic>: <cleaning steps>.
+~PropyleneOrder
+~template_method::ProcessOrder
+
+4:
+	orderNum	= 4
+	comment		= Next of singles or last.
+	size		= 50000
+	mold		= hero
+	color		= yellow
+	plastic		= Polyethelene
+	moldLoc		= mill
+	finish		= rippled
+	tags		= ModelNum date
+	packager	= HardPack
+	endOfOrder
+Process order:
+  Setup injection line for <size> order with <packager> packager:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  <Acquire> <mold> mold from <moldLoc>.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with <plastic> and color bin with <color>.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
+    Volume: <mold>(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for <plastic> <run> times.
+    Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of <plastic>: <cleaning steps>.
+~EtheleneOrder
+~template_method::ProcessOrder
+
+5:
+	orderNum	= 5
+	comment		= Next of singles or last.
+	size		= 100000
+	mold		= hero
+	color		= green
+	plastic		= PET
+	moldLoc		= mill
+	finish		= dimpled
+	packager	= HardPack
+	endOfOrder
+Process order:
+  Setup injection line for <size> order with <packager> packager:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  <Acquire> <mold> mold from <moldLoc>.
+  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Load plastic bin with <plastic> and color bin with <color>.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
+    Volume: <mold>(vol) * <cavities> cavities = vol cc.
+  Estimated run time = x hours.
+  Cycle <IJM> for <plastic> <run> times.
+    Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
+    Whenever <partsBin> parts bin was full:
+      List of upstream machines to pause...
+  Clean mold of <plastic>: <cleaning steps>.
+~PETOrder
+~template_method::ProcessOrder
+
+

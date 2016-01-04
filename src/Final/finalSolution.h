@@ -1295,7 +1295,7 @@ protected:
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 
-		bin		= injectionLine->createPackageBin(order);			// Observer Subject.
+		bin		= injectionLine->createPackageBin(order);		// Observer Subject.
 
 		ijm		= injectionLine->createIJM(order, bin);			// Observer.
 		mold	= injectionLine->createMold(order);				// CofR, # of cavities.

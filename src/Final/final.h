@@ -11,11 +11,12 @@
 #include "../DP.h"
 
 #include "../Final/finalDesign.h"
-#include "../Final/finalGuided.h"
 #include "../Final/finalDtoO.h"
 #include "../Final/finalOriginal.h"
 #include "../Final/finalOtoS.h"
 #include "../Final/finalSolution.h"
+
+#include "../Final1week/finalGuided.h"
 
 namespace final {
 

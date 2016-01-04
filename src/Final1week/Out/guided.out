@@ -1,0 +1,133 @@
+<<< final guided >>>
+1:
+	orderNum	= 1
+	comment		= Null order - check default behaviors.
+	endOfOrder
+  <>Unknown plastic || defaulting to ABS.
+  <>No size specified, defaulting to 100.
+  Setup injection line for 100 order:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  Process order:
+    Get mold...
+    Insert tags...
+    Load plastic...
+    Load additives...
+    Run time estimate...
+    Cycle: close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Simulate full parts bin...
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+2:
+	orderNum	= 2
+	comment		= Example order - one of everything.
+	size		= 10000
+	mold		= duck
+	color		= red
+	plastic		= ABS
+	moldLoc		= inventory
+	tags		= ModelNumber
+	UVInhibiter	= 2
+	packager	= Bulk
+	endOfOrder
+  Setup injection line for 10000 order:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  Process order:
+    Get mold...
+    Insert tags...
+    Load plastic...
+    Load additives...
+    Run time estimate...
+    Cycle: close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Simulate full parts bin...
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+3:
+	orderNum		= 3
+	comment			= Max order - next of singles, all of everything else (orig specs).
+	size			= 20000
+	mold			= car
+	color			= orange
+	plastic			= Polypropylene
+	moldLoc			= mill
+	finish			= smooth
+	tags			= ModelNumber Country Date
+	UVInhibiter		= 2
+	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
+	endOfOrder
+  Setup injection line for 20000 order:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  Process order:
+    Get mold...
+    Insert tags...
+    Load plastic...
+    Load additives...
+    Run time estimate...
+    Cycle: close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+    Simulate full parts bin...
+  Clean mold of Poly: rinse with acetone, dry.
+~PolyOrder
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+4:
+	orderNum	= 4
+	comment		= Next of singles or last.
+	size		= 50000
+	mold		= hero
+	color		= yellow
+	plastic		= Polyethelene
+	moldLoc		= mill
+	finish		= rippled
+	tags		= ModelNum date
+	packager	= HardPack
+	endOfOrder
+  Setup injection line for 50000 order:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  Process order:
+    Get mold...
+    Insert tags...
+    Load plastic...
+    Load additives...
+    Run time estimate...
+    Cycle: close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+    Simulate full parts bin...
+  Clean mold of Poly: rinse with acetone, dry.
+~PolyOrder
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+5:
+	orderNum	= 5
+	comment		= Next of singles or last.
+	size		= 100000
+	mold		= hero
+	color		= green
+	plastic		= PET
+	moldLoc		= mill
+	finish		= dimpled
+	packager	= HardPack
+	endOfOrder
+  Setup injection line for 100000 order:
+    <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
+  Process order:
+    Get mold...
+    Insert tags...
+    Load plastic...
+    Load additives...
+    Run time estimate...
+    Cycle: close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
+    Simulate full parts bin...
+  Clean aluminum mold of PET: rinse with soap and water, dry.
+~PETOrder
+~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
+~template_method::ProcessOrder
+
+

@@ -1,0 +1,113 @@
+1:
+	orderNum	= 1
+	comment		= Null order - check default behaviors.
+	endOfOrder
+2:
+	orderNum	= 2
+	comment		= Example order - one of everything.
+	size		= 10000
+	mold		= duck
+	color		= red
+	plastic		= ABS
+	moldLoc		= inventory
+	finish		= smooth
+	tags		= ModelNumber
+	UVInhibiter	= 2
+	packager	= Bulk
+	endOfOrder
+3:
+	orderNum		= 3
+	comment			= Max order - next of singles, all of everything else (orig specs).
+	size			= 20000
+	mold			= car
+	color			= orange
+	plastic			= Polypropylene
+	moldLoc			= mill
+	finish			= smooth
+	tags			= ModelNumber Country Date
+	UVInhibiter		= 2
+	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
+	endOfOrder
+4:
+	orderNum	= 4
+	comment		= Next of singles or last.
+	size		= 50000
+	mold		= hero
+	color		= yellow
+	plastic		= Polyethelene
+	moldLoc		= mill
+	finish		= rippled
+	tags		= ModelNum date
+	packager	= HardPack
+	endOfOrder
+5:
+	orderNum	= 5
+	comment		= Next of singles or last.
+	size		= 100000
+	mold		= hero
+	color		= green
+	plastic		= PET
+	moldLoc		= mill
+	finish		= dimpled
+	packager	= HardPack
+	endOfOrder
+6:
+	orderNum	= 6
+	comment		= New Specs: new singles, all of new groups.
+	size		= 40000
+	mold		= dino
+	color		= blue
+	plastic		= PET
+	moldLoc		= sisterCompany
+	tags		= IncCounter PartNumber RecycleCode
+	MicroFibers	= 3
+	packager	= ZipLock
+	stuffer		= Air
+	address		= MegaCorp, 1 Apple, Santa Clara, CA 92200
+	endOfOrder
+7:
+	orderNum	= 7
+	comment		= New Specs: next singles, or last.
+	size		= 100000
+	mold		= dino
+	color		= violet
+	plastic		= Styrene
+	moldLoc		= purchase
+	finish		= sanded
+	packager	= ZipLock
+	stuffer		= Popcorn
+	address		= Anytown, CA
+	endOfOrder
+8:
+	orderNum	= 8
+	comment		= New Specs: next singles, or last.
+	size		= 200000
+	mold		= dino
+	color		= gray
+	plastic		= Nylon66
+	moldLoc		= mill
+	finish		= sanded
+	packager	= ZipLock
+	stuffer		= Bubblewrap
+	address		= Wherever, USA
+	endOfOrder
+9:
+	orderNum		= 9
+	comment			= New Specs: max out, mill or last.
+	size			= 400000
+	mold			= dino
+	color			= white
+	plastic			= Nylon66
+	moldLoc			= mill
+	finish			= satin
+	tags			= IncCounter PartNumber RecycleCode ModelNumber Country Date
+	MicroFibers		= 3
+	UVInhibiter		= 2
+	Hydrophilic		= 2
+	AntiBacterial	= 1
+	packager		= ZipLock
+	stuffer			= Foam
+	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
+	endOfOrder
