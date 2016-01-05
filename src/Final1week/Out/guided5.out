@@ -9,7 +9,6 @@
   <>Unknown mold || defaulting to duck.
   <>Unknown moldLoc || defaulting to inventory.
   <>Unknown color || defaulting to black.
-  <>Unknown metal || defaulting to Steel.
   <>Unknown finish || defaulting to smooth.
 Process order:
   Setup injection line for 100 order:
@@ -17,12 +16,10 @@ Process order:
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with ABS and color bin with black.
-    Recipe: ABS(vol) black(vol) <additive(<vol>) list> = vol cc.
-    Volume: duck(vol) * <cavities> cavities = vol cc.
-  Estimated run time (BackOfTheEnvelope) = 1 hour.
-    (orderSize/cavities)*cycleTime/3600.
-    (100)*39/3600.
-  Cycle IJM_110 for ABS 100 times.
+    Recipe: ABS(35) black(3) <additive(<vol>) list> = (38) cc.
+    Volume: duck(38) * 1 cavity = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
+  Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
       Whenever CardboardBox parts bin was full...
         IJM_110 paused while CardboardBox parts bin was swapped.
@@ -35,7 +32,7 @@ Process order:
 ~CardboardBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
-~BackOfTheEnvelope ~strategy::RuntimeEstimate
+~Duck ~bridge::Shape
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -52,19 +49,16 @@ Process order:
 	UVInhibiter	= 2
 	packager	= Bulk
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 10000 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with ABS and color bin with red.
-    Recipe: ABS(vol) red(vol) <additive(<vol>) list> = vol cc.
-    Volume: duck(vol) * <cavities> cavities = vol cc.
-  Estimated run time (BackOfTheEnvelope) = 108 hours.
-    (orderSize/cavities)*cycleTime/3600.
-    (10000)*39/3600.
-  Cycle IJM_110 for ABS 10000 times.
+    Recipe: ABS(35) red(3) <additive(<vol>) list> = (38) cc.
+    Volume: duck(38) * 1 cavity = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
+  Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
       Whenever CardboardBox parts bin was full...
         IJM_110 paused while CardboardBox parts bin was swapped.
@@ -77,7 +71,7 @@ Process order:
 ~CardboardBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
-~BackOfTheEnvelope ~strategy::RuntimeEstimate
+~Duck ~bridge::Shape
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -96,19 +90,16 @@ Process order:
 	Hydrophilic		= 2
 	packager		= ShrinkWrap
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 20000 order with ShrinkWrap packager:
     IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.
   <Acquire> car mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polypropylene and color bin with orange.
-    Recipe: Polypropylene(vol) orange(vol) <additive(<vol>) list> = vol cc.
-    Volume: car(vol) * <cavities> cavities = vol cc.
-  Estimated run time (Calculation) = 50 hours.
-    (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/3600.
-    (10000)*18(Aluminum,0)/3600.
-  Cycle IJM_120 for Polypropylene 10000 times.
+    Recipe: Polypropylene(40) orange(4) <additive(<vol>) list> = (44) cc.
+    Volume: car(44) * 2 cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
+  Cycle IJM_120 for Polypropylene <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
       Whenever ShellBox parts bin was full...
         IJM_120 paused while ShellBox parts bin was swapped.
@@ -123,7 +114,7 @@ Process order:
 ~ShellBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~SmallOrder ~abstract_factory::InjectionLine
-~Calculation ~strategy::RuntimeEstimate
+~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -139,19 +130,16 @@ Process order:
 	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 50000 order with HardPack packager:
     IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
   <Acquire> hero mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polyethelene and color bin with yellow.
-    Recipe: Polyethelene(vol) yellow(vol) <additive(<vol>) list> = vol cc.
-    Volume: hero(vol) * <cavities> cavities = vol cc.
-  Estimated run time (Historical) = 350 hours.
-    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (50000)*25(Steel,0)/60 + 54)/60.
-  Cycle IJM_210 for Polyethelene 50000 times.
+    Recipe: Polyethelene(50) yellow(5) <additive(<vol>) list> = (55) cc.
+    Volume: hero(55) * 1 cavity = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
+  Cycle IJM_210 for Polyethelene <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
       Whenever PalletBox parts bin was full...
         IJM_210 paused while PalletBox parts bin was swapped.
@@ -166,7 +154,7 @@ Process order:
 ~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~MediumOrder ~abstract_factory::InjectionLine
-~Historical ~strategy::RuntimeEstimate
+~Hero ~bridge::Shape ~Carbide ~bridge::Platform
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -181,19 +169,16 @@ Process order:
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 100000 order with HardPack packager:
     IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
   <Acquire> hero mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with PET and color bin with green.
-    Recipe: PET(vol) green(vol) <additive(<vol>) list> = vol cc.
-    Volume: hero(vol) * <cavities> cavities = vol cc.
-  Estimated run time (Historical) = 350 hours.
-    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (50000)*25(Steel,0)/60 + 54)/60.
-  Cycle IJM_220 for PET 50000 times.
+    Recipe: PET(50) green(5) <additive(<vol>) list> = (55) cc.
+    Volume: hero(55) * 2 cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
+  Cycle IJM_220 for PET <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
       Whenever PalletBox parts bin was full...
         IJM_220 paused while PalletBox parts bin was swapped.
@@ -208,7 +193,7 @@ Process order:
 ~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~LargeOrder ~abstract_factory::InjectionLine
-~Historical ~strategy::RuntimeEstimate
+~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
 ~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
 ~template_method::ProcessOrder
 
