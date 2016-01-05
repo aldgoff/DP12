@@ -17,6 +17,7 @@
 #include "../Final/finalSolution.h"
 
 #include "../Final1week/finalGuided.h"
+#include "../Final1week/finalGComp.h"
 
 namespace final {
 

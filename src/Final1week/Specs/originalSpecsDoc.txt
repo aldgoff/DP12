@@ -1,19 +1,19 @@
 1. Process Order (domains: size, packager, moldLoc, tags, plastic, color, additives, mold)
-   1.0. "Process order:"
-   1.1. "  Setup injection line for <size> order with <packager> packager:"
-        1.1.1. "    <IJM> - <metal>(<cavities>) - <belt> belt - <partsBin>."
-   1.2. "  <Acquire> mold from <moldLoc>."
-   1.3. "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm."
-   1.4. "  Load plastic bin with <plastic> and color bin with <color>."
-        1.4.1. "    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc."
-        1.4.2. "    Volume: <mold>(vol) * <cavities> cavities = vol cc."
-   1.5. "  Estimated run time (algorithm) = x hour(s)."
-   1.6. "  Cycle <IJM> for <plastic> <run> times."
-        1.6.1. "    Close - heat to <temp> - inject at <pressure> PSI - cool to <temp> - separate - <technique> eject."
-        1.6.2. "    Whenever <partsBin> parts bin was full:"
-               1.6.2.1. "      List of upstream machines to pause..."
-               1.6.2.n. "      ..."
-   1.7. "  Clean mold of <plastic>: <cleaning steps>."
+   "Process order:"
+   "  Setup injection line for <size> order with <packager> packager:"
+   "    <IJM> - <metal>(<cavities>) - <belt> belt - <partsBin>."
+   "  <Acquire> <mold> mold from <moldLoc>."
+   "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm."
+   "  Load plastic bin with <plastic> and color bin with <color>."
+   "    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc."
+   "    Volume: <mold>(vol) * <cavities> cavities = (vol) cc."
+   "  Estimated run time (algorithm) = x hour(s)."
+   "  Cycle <IJM> for <plastic> <run> times."
+   "    Close - heat to <temp> - inject at <pressure> PSI - cool to <temp> - separate - <mannor of> eject."
+   "    Whenever <partsBin> parts bin was full:"
+   "      List of upstream machines to pause..."
+   "      ..."
+   "  Clean mold of <plastic>: <cleaning steps>."
 2. System can handle four types of plastics: (domain: order["plastic"])
    2.1. ABS
    2.2. Polypropylene
@@ -28,14 +28,13 @@
    3.4. PET: Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
 
 4. Set defaults for missing or unknown parameters.
-   4.1. Plastic       - "  <>Unknown plastic |plastic| defaulting to ABS."
-   4.2. Order size    - "  <>No size specified, defaulting to 100."
-   4.3. Packager      - "  <>Unknown packager |packager| defaulting to bulk."
-   4.4. Mold          - "  <>Unknown mold |mold| defaulting to duck."
-   4.5. Mold location - "  <>Unknown mold location |location| defaulting to inventory."
-   4.6. Color         - "  <>Unknown color |color| defaulting to black.
-   4.7. Metal         - "  <>Unknown metal |metal| defaulting to steel.
-   4.8. Finish        - "  <>Unknown finish |finish| defaulting to smooth.
+   4.1. Order size    - "  <>No size specified, defaulting to 100."
+   4.2. Packager      - "  <>Unknown packager |packager| defaulting to bulk."
+   4.3. Mold          - "  <>Unknown mold |mold| defaulting to duck."
+   4.4. Mold location - "  <>Unknown mold location |location| defaulting to inventory."
+   4.5. Color         - "  <>Unknown color |color| defaulting to black.
+   4.6. Metal         - "  <>Unknown metal |metal| defaulting to steel.
+   4.7. Finish        - "  <>Unknown finish |finish| defaulting to smooth.
 
 5. Clean the molds: (domains: order["plastic"] and metal)
    5.1. Use existing cleaning methods (see namespace legacy_classes)

@@ -19,7 +19,7 @@ Process order:
   Load plastic bin with ABS and color bin with black.
     Recipe: ABS(vol) black(vol) <additive(<vol>) list> = vol cc.
     Volume: duck(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hour(s).
+  Estimated run time (algorithm) = x hour(s).
   Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
       Whenever CardboardBox parts bin was full...
@@ -58,7 +58,7 @@ Process order:
   Load plastic bin with ABS and color bin with red.
     Recipe: ABS(vol) red(vol) <additive(<vol>) list> = vol cc.
     Volume: duck(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hour(s).
+  Estimated run time (algorithm) = x hour(s).
   Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
       Whenever CardboardBox parts bin was full...
@@ -99,7 +99,7 @@ Process order:
   Load plastic bin with Polypropylene and color bin with orange.
     Recipe: Polypropylene(vol) orange(vol) <additive(<vol>) list> = vol cc.
     Volume: car(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hour(s).
+  Estimated run time (algorithm) = x hour(s).
   Cycle IJM_120 for Polypropylene <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
       Whenever ShellBox parts bin was full...
@@ -139,7 +139,7 @@ Process order:
   Load plastic bin with Polyethelene and color bin with yellow.
     Recipe: Polyethelene(vol) yellow(vol) <additive(<vol>) list> = vol cc.
     Volume: hero(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hour(s).
+  Estimated run time (algorithm) = x hour(s).
   Cycle IJM_210 for Polyethelene <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
       Whenever PalletBox parts bin was full...
@@ -178,7 +178,7 @@ Process order:
   Load plastic bin with PET and color bin with green.
     Recipe: PET(vol) green(vol) <additive(<vol>) list> = vol cc.
     Volume: hero(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hour(s).
+  Estimated run time (algorithm) = x hour(s).
   Cycle IJM_220 for PET <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
       Whenever PalletBox parts bin was full...

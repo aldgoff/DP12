@@ -10,13 +10,14 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with <plastic> and color bin with <color>.
-    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
-    Volume: <mold>(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hours.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
       List of upstream machines to pause...
+      ...
   Clean mold of <plastic>: <cleaning steps>.
 ~ABSOrder
 ~template_method::ProcessOrder
@@ -40,13 +41,14 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with <plastic> and color bin with <color>.
-    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
-    Volume: <mold>(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hours.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
       List of upstream machines to pause...
+      ...
   Clean mold of <plastic>: <cleaning steps>.
 ~ABSOrder
 ~template_method::ProcessOrder
@@ -72,13 +74,14 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with <plastic> and color bin with <color>.
-    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
-    Volume: <mold>(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hours.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
       List of upstream machines to pause...
+      ...
   Clean mold of <plastic>: <cleaning steps>.
 ~PropyleneOrder
 ~template_method::ProcessOrder
@@ -101,13 +104,14 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with <plastic> and color bin with <color>.
-    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
-    Volume: <mold>(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hours.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
       List of upstream machines to pause...
+      ...
   Clean mold of <plastic>: <cleaning steps>.
 ~EtheleneOrder
 ~template_method::ProcessOrder
@@ -129,13 +133,14 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with <plastic> and color bin with <color>.
-    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = vol cc.
-    Volume: <mold>(vol) * <cavities> cavities = vol cc.
-  Estimated run time = x hours.
+    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
+  Estimated run time (algorithm) = x hour(s).
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
       List of upstream machines to pause...
+      ...
   Clean mold of <plastic>: <cleaning steps>.
 ~PETOrder
 ~template_method::ProcessOrder

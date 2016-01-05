@@ -1,14 +1,14 @@
 /*
- * finalGuided.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
+ * finalGComp.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
  *
  *  Created on: <MMDDCCYY>
  *      Author: <studentName>
  */
 
-#ifndef FINAL_GUIDED_H_
-#define FINAL_GUIDED_H_
+#ifndef FINAL_G_COMP_H_
+#define FINAL_G_COMP_H_
 
-namespace final_guided {
+namespace final_g_comp {
 
 /* Instruction Steps:
  * 1. Have fully folded
@@ -2213,6 +2213,6 @@ void demo(const string& orderFile) {
 	}
 }
 
-} // final_guided
+} // final_g_comp
 
-#endif /* FINAL_GUIDED_H_ */
+#endif /* FINAL_G_COMP_H_ */
