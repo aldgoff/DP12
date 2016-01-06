@@ -40,15 +40,15 @@
 5. Clean the molds: (domains: order["plastic"] and metal)
    5.1. Use existing cleaning methods (see namespace legacy_classes)
 		5.1.1. ABS - soak in alcohol, rinse with water, dry.
-				 use legacy method clean()
+			   use legacy method clean()
 		5.1.2. Poly - rinse with acetone, dry.
-				 use legacy method prepForReuse()
+			   use legacy method prepForReuse()
 		5.1.3. PET
 			   5.1.3.1. Aluminum - rinse with soap and water, dry.
-						  use legacy method purify()
+						use legacy method purify()
 			   5.1.3.2. Steel - carbonize (heat to 895 C).
-						  use legacy method carbonize()
-   5.2 cout << "  Clean <metal> mold of <plastic>: <cleaning steps>.\n";
+						use legacy method carbonize()
+   5.2 cout << "  Clean <metal> mold of <plastic>: <cleaning steps>."
 
 6. Support four injection molding machines: (domain: order["size"])
    6.1.  10,000 - IJM_110 - good for aluminum molds with 1 cavity
@@ -70,17 +70,16 @@
 	10.3. 50,000 - PallotBox
 		  10.3.1. Default to largest if size > max
 
-<< Swap 11 & 12 >>
-11. Support three upline machines pausing when parts bin is full:
-	11.1. IJM
-	11.2. Conveyer belt
-	11.3. Packager (unless Bulk Packager)
-12. Implement the following three Packagers: (domain: order["packager"])
-	12.1. Bulk (default, just dump parts to the parts bin)
-	12.2. ShrinkWrap
-	12.3. HardPack
-	12.4. If Packager unknown, default to Bulk (none)
-		  12.4.1 "  <>Unknown packager |<packager>| defaulting to None."
+11. Implement the following three Packagers: (domain: order["packager"])
+	11.1. Bulk (default, just dump parts to the parts bin)
+	11.2. ShrinkWrap
+	11.3. HardPack
+	11.4. If Packager unknown, default to Bulk (none)
+		  11.4.1. "  <>Unknown packager |<packager>| defaulting to None."
+12. Support three upline machines pausing when parts bin is full:
+	12.1. IJM
+	12.2. Conveyer belt
+	12.3. Packager (unless Bulk Packager)
 
 
 

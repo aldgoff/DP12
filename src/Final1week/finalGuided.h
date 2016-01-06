@@ -81,10 +81,9 @@ namespace adapter {			// DP 2.
  *    1.1. Why pass metal to the clean method?
  * 2. Unfold ABS class
  *    2.1. Unfold clean method
- * 3. Unfold Poly class
- * 4. Unfold the Factory Method
- * 5. Students complete the classes
- * 6. Unfold the rest.
+ * 3. Unfold the Factory Method
+ * 4. Students complete the classes from the specs
+ * 5. Unfold the rest.
  */
 
 class CleanMold {
@@ -408,7 +407,7 @@ public:
 public:
 	string setup() { return "IJM_220"; }
 };
-// Seam point - add another type 1.
+// Seam point - add another IJM type.
 
 class Block {
 public:
@@ -439,7 +438,7 @@ public:
 public:
 	string metal() { return "Steel"; }
 };
-// Seam point - add another type 2.
+// Seam point - add another Block type.
 
 class ConveyerBelt {
 public:
@@ -462,7 +461,7 @@ public:
 public:
 	string setup() {return "Y-Split conveyer belt"; }
 };
-// Seam point - add another type 3.
+// Seam point - add another ConveyerBelt type.
 
 class PartsBin {
 public:
@@ -492,7 +491,7 @@ public:
 public:
 	string setup() { return "PalletBox"; }
 };
-// Seam point - add another type N.
+// Seam point - add another PartsBin type.
 
 class InjectionLine {	// If the families are varying...
 public:
@@ -578,16 +577,15 @@ public:
 		return new PalletBox;
 	}
 };
-
-// Seam point - add another family.
+// Seam point - add another InjectionLine family.
 
 InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 	unsigned size = atoi(order["size"].c_str());
 
-	if(size <=  10000)		return new PilotOrder;
-	if(size <=  20000)		return new SmallOrder;
-	if(size <=  50000)		return new MediumOrder;
-	if(size <= 100000)		return new LargeOrder;
+	if(size <=  10000)	return new PilotOrder;
+	if(size <=  20000)	return new SmallOrder;
+	if(size <=  50000)	return new MediumOrder;
+	if(size <= 100000)	return new LargeOrder;
 	// Seam point - add another order size.
 
 	return new InjectionLine;
@@ -637,7 +635,7 @@ public:
 public:
 	string setup() { return "IJM_220"; }
 };
-// Seam point - add another Injection Molding machine.
+// Seam point - add another IJM type.
 
 class Block {
 public:
@@ -668,6 +666,7 @@ public:
 public:
 	string metal() { return "Steel"; }
 };
+// Seam point - add another Block type.
 
 class ConveyerBelt : public BinObserver {
 public:
@@ -695,7 +694,7 @@ public:
 public:
 	string setup() {return "Y-Split conveyer belt"; }
 };
-// Seam point - add another conveyer belt.
+// Seam point - add another ConveyerBelt type.
 
 class PartsBin : public BinSubject {
 public:
@@ -725,7 +724,7 @@ public:
 public:
 	string setup() { return "PalletBox"; }
 };
-// Seam point - add another parts bin.
+// Seam point - add another PartsBin type.
 
 class InjectionLine {	// If the families are varying...
 public:
@@ -811,15 +810,15 @@ public:
 		return new PalletBox();
 	}
 };
-// Seam point - add another family.
+// Seam point - add another InjectionLine family.
 
 InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 	unsigned size = atoi(order["size"].c_str());
 
-	if(size <=  10000)		return new PilotOrder;
-	if(size <=  20000)		return new SmallOrder;
-	if(size <=  50000)		return new MediumOrder;
-	if(size <= 100000)		return new LargeOrder;
+	if(size <=  10000)	return new PilotOrder;
+	if(size <=  20000)	return new SmallOrder;
+	if(size <=  50000)	return new MediumOrder;
+	if(size <= 100000)	return new LargeOrder;
 	// Seam point - add another order size.
 
 	return new InjectionLine;
@@ -1254,8 +1253,14 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
-#define ProcessInherit ProcessOrder5	// Pedagogy: successively replace with 0,1,2,3...
+#define ProcessInherit ProcessOrder3 // Pedagogy: successively replace with 0,1,2,3...
 
+#ifndef ProcessChain
+#include "PC/processOrder0.h"	// Architecture - Template Method(4), Factory Method(3).
+#include "PC/processOrder1.h"	// Defaults and order specs.
+#include "PC/processOrder2.h"	// Clean molds - Adapter(2).
+#include "PC/processOrder3.h"	// Setup injection line - Abstract Factory(9).
+#else
 class ProcessOrder0 { // Architecture - Template Method(4), Factory Method(3).
 public:
 	ProcessOrder0()
@@ -1278,28 +1283,32 @@ public:
 	}
 protected: // Template Method methods.
 	void setupLine(map<string,string>& order) {
-		cout << "  Setup injection line for ";
-		cout << "<size>" << " order";
-		cout << " with " << "<packager>" << " packager:\n";
+		cout << "  Setup injection line for "
+			 << "<size>" << " order"
+			 << " with " << "<packager>" << " packager:\n";
 
-		cout << "    ";
-		cout << "<IJM> - ";
-		cout << "<metal>(<cavities>) - ";
-		cout << "<belt> belt - ";
-		cout << "<bin>.\n";
+		cout << "    "
+			 << "<IJM> - "
+			 << "<metal>(<cavities>) - "
+			 << "<belt> belt - "
+			 << "<bin>.\n";
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> <mold> mold from <moldLoc>.\n";
+		cout << "  <Acquire> <mold> mold"
+			 << " from <moldLoc>.\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with <plastic> and color bin with <color>.\n";
+		cout << "  Load plastic bin with <plastic>"
+			 << " and color bin with <color>.\n";
 	}
 	void loadAdditives(map<string,string>& order) {
-		cout << "    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.\n";
-		cout << "    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.\n";
+		cout << "    Recipe: <plastic>(vol) "
+			 << "<color>(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Volume: <mold>(vol) * "
+			 << "<cavities> cavities = (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1308,8 +1317,8 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure> PSI";
-		cout << " - cool to <temp> - separate - <manner of> eject.\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject.\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {
 		cout << "    Whenever <partsBin> parts bin was full:\n";
@@ -1368,31 +1377,32 @@ protected: // Template Method methods.
 		}
 	}
 	void setupLine(map<string,string>& order) {
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
-		cout << " with " << order["packager"] << " packager:\n";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order"
+			 << " with " << order["packager"] << " packager:\n";
 
-		cout << "    ";
-		cout << "<IJM> - ";
-		cout << "<metal>(<cavities>) - ";
-		cout << "<belt> belt - ";
-		cout << "<bin>.\n";
+		cout << "    "
+			 << "<IJM> - "
+			 << "<metal>(<cavities>) - "
+			 << "<belt> belt - "
+			 << "<bin>.\n";
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> " << order["mold"] << " mold";
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> " << order["mold"] << " mold"
+			 << " from " << order["moldLoc"] << ".\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
-		cout << "    Recipe: " << order["plastic"] << "(vol) ";
-		cout << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
-		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) "
+			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Volume: " << order["mold"] << "(vol) * "
+			 << "<cavities> cavities = (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1401,8 +1411,8 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {
 		cout << "    Whenever <partsBin> parts bin was full:\n";
@@ -1464,31 +1474,32 @@ protected: // Template Method methods.
 		}
 	}
 	void setupLine(map<string,string>& order) {
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
-		cout << " with " << order["packager"] << " packager:\n";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order"
+			 << " with " << order["packager"] << " packager:\n";
 
-		cout << "    ";
-		cout << "<IJM> - ";
-		cout << "<metal>(<cavities>) - ";
-		cout << "<belt> belt - ";
-		cout << "<bin>.\n";
+		cout << "    "
+			 << "<IJM> - "
+			 << "<metal>(<cavities>) - "
+			 << "<belt> belt - "
+			 << "<bin>.\n";
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> " << order["mold"] << " mold";
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> " << order["mold"] << " mold"
+			 << " from " << order["moldLoc"] << ".\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
-		cout << "    Recipe: " << order["plastic"] << "(vol) ";
-		cout << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
-		cout << "    Volume: " << order["mold"] << "(vol) * <cavities> cavities = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) "
+			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Volume: " << order["mold"] << "(vol) * "
+			 << "<cavities> cavities = (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1497,8 +1508,8 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {
 		cout << "    Whenever <partsBin> parts bin was full:\n";
@@ -1506,7 +1517,9 @@ protected: // Template Method methods.
 		cout << "      ...\n";
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -1584,44 +1597,39 @@ protected: // Template Method methods.
 		belt  = injectionLine->createConveyerBelt(order);
 		bin	  = injectionLine->createPartsBin(order);
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
-		cout << " with " << order["packager"] << " packager:\n";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order"
+			 << " with " << order["packager"] << " packager:\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> " << order["mold"] << " mold";
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> " << order["mold"] << " mold"
+			 << " from " << order["moldLoc"] << ".\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
-		cout << "    Recipe: " << order["plastic"] << "(vol) ";
-		cout << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) "
+			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
 
-		cout << "    Volume: " << order["mold"] << "(vol) * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= (vol) cc.\n";
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(vol) * "
+			 << cavities << plural
+			 << "= (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1630,8 +1638,8 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {
 		cout << "    Whenever <partsBin> parts bin was full:\n";
@@ -1639,7 +1647,9 @@ protected: // Template Method methods.
 		cout << "      ...\n";
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -1647,6 +1657,7 @@ protected: // Helper methods.
 		cout << "  Cycle <IJM> for " << order["plastic"] << " <run> times.\n";
 	}
 };
+#endif
 class ProcessOrder4 { // Packager and pausing upstream machines - Observer(5).
 	adapter::CleanMold*					cleaning;
 	abstract_factory2::InjectionLine*	injectionLine;
@@ -1725,46 +1736,41 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> " << order["mold"] << " mold";
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> " << order["mold"] << " mold"
+			 << " from " << order["moldLoc"] << ".\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
-		cout << "    Recipe: " << order["plastic"] << "(vol) ";
-		cout << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) "
+			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
 
-		cout << "    Volume: " << order["mold"] << "(vol) * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= (vol) cc.\n";
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(vol) * "
+			 << cavities << plural
+			 << "= (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1773,14 +1779,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -1870,21 +1878,19 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 	}
 	void getMold(map<string,string>& order) {
 		using namespace bridge;
@@ -1907,21 +1913,20 @@ protected: // Template Method methods.
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
-		int plasticVol = shape->volume_cc;
-		int colorVol = 0.10*plasticVol;
-		int totalVol = plasticVol + colorVol;
+		int shapeVol = shape->volume_cc;
+		int colorVol = 0.10*shapeVol;
+		int plasticVol = shapeVol - colorVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") ";
-		cout << order["color"] << "(" << colorVol << ") ";
-		cout << "<additive(<vol>) list> = (" << totalVol << ") cc.\n";
+		int totalVol = cavities*shapeVol;
 
-		cout << "    Volume: " << order["mold"] << "(" << totalVol << ") * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+			 << order["color"] << "(" << colorVol << ") "
+			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
+			 << cavities << plural
+			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -1930,14 +1935,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -2034,21 +2041,19 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 
 		stringstream cavities;
 		cavities << block->cavities;
@@ -2075,21 +2080,20 @@ protected: // Template Method methods.
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
-		int plasticVol = shape->volume_cc;
-		int colorVol = 0.10*plasticVol;
-		int totalVol = plasticVol + colorVol;
+		int shapeVol = shape->volume_cc;
+		int colorVol = 0.10*shapeVol;
+		int plasticVol = shapeVol - colorVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") ";
-		cout << order["color"] << "(" << colorVol << ") ";
-		cout << "<additive(<vol>) list> = (" << totalVol << ") cc.\n";
+		int totalVol = cavities*shapeVol;
 
-		cout << "    Volume: " << order["mold"] << "(" << totalVol << ") * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+			 << order["color"] << "(" << colorVol << ") "
+			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
+			 << cavities << plural
+			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -2098,14 +2102,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -2205,21 +2211,19 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 
 		stringstream cavities;
 		cavities << block->cavities;
@@ -2267,21 +2271,20 @@ protected: // Template Method methods.
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
-		int plasticVol = shape->volume_cc;
-		int colorVol = 0.10*plasticVol;
-		int totalVol = plasticVol + colorVol;
+		int shapeVol = shape->volume_cc;
+		int colorVol = 0.10*shapeVol;
+		int plasticVol = shapeVol - colorVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") ";
-		cout << order["color"] << "(" << colorVol << ") ";
-		cout << "<additive(<vol>) list> = (" << totalVol << ") cc.\n";
+		int totalVol = cavities*shapeVol;
 
-		cout << "    Volume: " << order["mold"] << "(" << totalVol << ") * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+			 << order["color"] << "(" << colorVol << ") "
+			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
+			 << cavities << plural
+			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -2290,14 +2293,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -2400,21 +2405,19 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 
 		stringstream cavities;
 		cavities << block->cavities;
@@ -2472,17 +2475,14 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") ";
-		cout << "+ " << order["color"] << "(" << colorVol << ")";
-		cout << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+			 << "+ " << order["color"] << "(" << colorVol << ")"
+			 << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
 
-		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= " << totalVol << " cc.\n";
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
+			 << cavities << plural
+			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -2491,14 +2491,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
@@ -2604,21 +2606,19 @@ protected: // Template Method methods.
 
 		packager = Packager::makeObject(order,bin);		// FM & Observer.
 
-		cout << "  Setup injection line for ";
-		cout << order["size"] << " order";
+		cout << "  Setup injection line for "
+			 << order["size"] << " order";
 		if(packager)
 			cout << " with " << packager->wrap() << " packager";
 		cout << ":\n";
 
-		cout << "    ";
-		cout << ijm->setup() << " - ";
-		cout << block->setup() << " - ";
-		cout << belt->setup() << " - ";
-		cout << bin->setup() << ".\n";
+		cout << "    "
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
 
-		stringstream metal;
-		metal << block->metal();
-		order["metal"] = metal.str();
+		order["metal"] = block->metal();
 
 		stringstream cavities;
 		cavities << block->cavities;
@@ -2676,17 +2676,14 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") ";
-		cout << "+ " << order["color"] << "(" << colorVol << ")";
-		cout << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+			 << "+ " << order["color"] << "(" << colorVol << ")"
+			 << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
 
-		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * ";
-		cout << cavities;
-		if(cavities == 1)
-			cout << " cavity ";
-		else
-			cout << " cavities ";
-		cout << "= " << totalVol << " cc.\n";
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
+		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
+			 << cavities << plural
+			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		using namespace strategy;
@@ -2705,14 +2702,16 @@ protected: // Template Method methods.
 	}
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
-		cout << "    Close - heat to <temp> - inject at <pressure>";
-		cout << " PSI - cool to <temp> - separate - <manner of> eject\n";
+		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
+			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
-		cleaning = adapter::CleanMold::getCleaning(order);
+		using namespace adapter;
+
+		cleaning = CleanMold::getCleaning(order);
 		cleaning->clean(order["metal"]);
 	}
 protected: // Helper methods.
