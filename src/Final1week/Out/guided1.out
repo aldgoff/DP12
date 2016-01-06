@@ -9,7 +9,6 @@
   <>Unknown mold || defaulting to duck.
   <>Unknown moldLoc || defaulting to inventory.
   <>Unknown color || defaulting to black.
-  <>Unknown metal || defaulting to Steel.
   <>Unknown finish || defaulting to smooth.
 Process order:
   Setup injection line for 100 order with Bulk packager:
@@ -20,6 +19,8 @@ Process order:
     Recipe: ABS(vol) black(vol) <additive(<vol>) list> = (vol) cc.
     Volume: duck(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
@@ -42,7 +43,6 @@ Process order:
 	UVInhibiter	= 2
 	packager	= Bulk
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 10000 order with Bulk packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
@@ -52,6 +52,8 @@ Process order:
     Recipe: ABS(vol) red(vol) <additive(<vol>) list> = (vol) cc.
     Volume: duck(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
@@ -76,7 +78,6 @@ Process order:
 	Hydrophilic		= 2
 	packager		= ShrinkWrap
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 20000 order with ShrinkWrap packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
@@ -86,6 +87,8 @@ Process order:
     Recipe: Polypropylene(vol) orange(vol) <additive(<vol>) list> = (vol) cc.
     Volume: car(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for Polypropylene <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
@@ -107,7 +110,6 @@ Process order:
 	tags		= ModelNum date
 	packager	= HardPack
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 50000 order with HardPack packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
@@ -117,6 +119,8 @@ Process order:
     Recipe: Polyethelene(vol) yellow(vol) <additive(<vol>) list> = (vol) cc.
     Volume: hero(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for Polyethelene <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
@@ -137,7 +141,6 @@ Process order:
 	finish		= dimpled
 	packager	= HardPack
 	endOfOrder
-  <>Unknown metal || defaulting to Steel.
 Process order:
   Setup injection line for 100000 order with HardPack packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
@@ -147,6 +150,8 @@ Process order:
     Recipe: PET(vol) green(vol) <additive(<vol>) list> = (vol) cc.
     Volume: hero(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for PET <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:

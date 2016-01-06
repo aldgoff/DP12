@@ -8,6 +8,8 @@
    "    Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc."
    "    Volume: <mold>(vol) * <cavities> cavities = (vol) cc."
    "  Estimated run time (algorithm) = x hour(s)."
+   "    Formula:"
+   "    Values:"
    "  Cycle <IJM> for <plastic> <run> times."
    "    Close - heat to <temp> - inject at <pressure> PSI - cool to <temp> - separate - <mannor of> eject."
    "    Whenever <partsBin> parts bin was full:"
@@ -33,8 +35,7 @@
    4.3. Mold          - "  <>Unknown mold |mold| defaulting to duck."
    4.4. Mold location - "  <>Unknown mold location |location| defaulting to inventory."
    4.5. Color         - "  <>Unknown color |color| defaulting to black.
-   4.6. Metal         - "  <>Unknown metal |metal| defaulting to steel.
-   4.7. Finish        - "  <>Unknown finish |finish| defaulting to smooth.
+   4.6. Finish        - "  <>Unknown finish |finish| defaulting to smooth.
 
 5. Clean the molds: (domains: order["plastic"] and metal)
    5.1. Use existing cleaning methods (see namespace legacy_classes)

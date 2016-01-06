@@ -14,13 +14,13 @@ Process order:
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Pull duck mold from inventory.
-  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with ABS and color bin with black.
-    Recipe: ABS(35) black(3) <additive(<vol>) list> = (38) cc.
-    Volume: duck(38) * 1 cavity = (vol) cc.
-  Estimated run time (algorithm) = x hour(s).
-    Formula:
-    Values:
+    Recipe: ABS(32) + black(3) = (35) cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
+  Estimated run time (BackOfTheEnvelope) = 1 hour.
+    (orderSize/cavities)*cycleTime/3600.
+    (100)*39/3600.
   Cycle IJM_110 for ABS 100 times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever CardboardBox parts bin was full...
@@ -36,6 +36,9 @@ Process order:
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~BackOfTheEnvelope ~strategy::RuntimeEstimate
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -56,13 +59,13 @@ Process order:
   Setup injection line for 10000 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Pull duck mold from inventory.
-  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Insert tags [ModelNumber] of width 2/20 mm, blank tag is 18 mm.
   Load plastic bin with ABS and color bin with red.
-    Recipe: ABS(35) red(3) <additive(<vol>) list> = (38) cc.
-    Volume: duck(38) * 1 cavity = (vol) cc.
-  Estimated run time (algorithm) = x hour(s).
-    Formula:
-    Values:
+    Recipe: ABS(30) + red(3) + UVInhibiter(2) = (35) cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
+  Estimated run time (BackOfTheEnvelope) = 108 hours.
+    (orderSize/cavities)*cycleTime/3600.
+    (10000)*39/3600.
   Cycle IJM_110 for ABS 10000 times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever CardboardBox parts bin was full...
@@ -78,6 +81,9 @@ Process order:
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity 
+~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
+~BackOfTheEnvelope ~strategy::RuntimeEstimate
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -102,13 +108,13 @@ Process order:
   Create car mold from mill with 2 cavities - steps: D2C8D1G3
     using HighCarbon tools (drill, cut, and high speed grind)
     to mill Aluminum block into 2 car shapes with smooth finish.
-  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
   Load plastic bin with Polypropylene and color bin with orange.
-    Recipe: Polypropylene(40) orange(4) <additive(<vol>) list> = (44) cc.
-    Volume: car(44) * 2 cavities = (vol) cc.
-  Estimated run time (algorithm) = x hour(s).
-    Formula:
-    Values:
+    Recipe: Polypropylene(31) + orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = (40) cc.
+    Volume: car(40) * 2 cavities = 80 cc.
+  Estimated run time (Calculation) = 61 hours.
+    (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/3600.
+    (10000)*22(Aluminum,40)/3600.
   Cycle IJM_120 for Polypropylene 10000 times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
     Whenever ShellBox parts bin was full...
@@ -126,6 +132,9 @@ Process order:
 ~SmallOrder ~abstract_factory::InjectionLine
 ~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
+~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
+~Calculation ~strategy::RuntimeEstimate
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -147,13 +156,15 @@ Process order:
   Create hero mold from mill with 1 cavity - steps: D1C1D1G7
     using Carbide tools (high speed drill, cross cut, and layer grind)
     to mill Steel block into 1 hero shape with rippled finish.
-  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+    Ignoring unknown tag ModelNum.
+    Ignoring unknown tag date.
   Load plastic bin with Polyethelene and color bin with yellow.
-    Recipe: Polyethelene(50) yellow(5) <additive(<vol>) list> = (55) cc.
-    Volume: hero(55) * 1 cavity = (vol) cc.
-  Estimated run time (algorithm) = x hour(s).
-    Formula:
-    Values:
+    Recipe: Polyethelene(45) + yellow(5) = (50) cc.
+    Volume: hero(50) * 1 cavity = 50 cc.
+  Estimated run time (Historical) = 419 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*30(Steel,50)/60 + 54)/60.
   Cycle IJM_210 for Polyethelene 50000 times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
     Whenever PalletBox parts bin was full...
@@ -171,6 +182,9 @@ Process order:
 ~MediumOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~Carbide ~bridge::Platform
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
 
@@ -191,13 +205,13 @@ Process order:
   Create hero mold from mill with 2 cavities - steps: D1C1D1G7
     using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind)
     to mill Steel block into 2 hero shapes with dimpled finish.
-  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with PET and color bin with green.
-    Recipe: PET(50) green(5) <additive(<vol>) list> = (55) cc.
-    Volume: hero(55) * 2 cavities = (vol) cc.
-  Estimated run time (algorithm) = x hour(s).
-    Formula:
-    Values:
+    Recipe: PET(45) + green(5) = (50) cc.
+    Volume: hero(50) * 2 cavities = 100 cc.
+  Estimated run time (Historical) = 419 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*30(Steel,50)/60 + 54)/60.
   Cycle IJM_220 for PET 50000 times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
     Whenever PalletBox parts bin was full...
@@ -215,6 +229,9 @@ Process order:
 ~LargeOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
 ~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
 ~template_method::ProcessOrder
 

@@ -13,6 +13,8 @@ Process order:
     Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
@@ -44,6 +46,8 @@ Process order:
     Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
     Whenever <partsBin> parts bin was full:
@@ -77,6 +81,8 @@ Process order:
     Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
@@ -107,6 +113,8 @@ Process order:
     Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
@@ -136,6 +144,8 @@ Process order:
     Recipe: <plastic>(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
+    Formula:
+    Values:
   Cycle <IJM> for <plastic> <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
     Whenever <partsBin> parts bin was full:
