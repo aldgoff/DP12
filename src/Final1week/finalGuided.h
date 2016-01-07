@@ -371,7 +371,7 @@ Packager* Packager::makeObject(map<string,string>& order, BinSubject* bin) {
 
 } // factory_method
 
-#define ProcessChain	// When undefined compiles files in PC dir.
+#undef ProcessChain	// When undefined compiles files in PC dir.
 
 #ifndef ProcessChain
 #include "PC/abstractFactory1.h"	// DP 9.
@@ -1081,13 +1081,9 @@ namespace decorator {		// DP 6.
 class Cavity {	// If the options are varying...
 public:
 	const unsigned space_mm;
-private:
-	unsigned blank_mm;
-protected:
-	unsigned tags_mm;
 public:
 	Cavity(unsigned width_mm=20)
-	  : space_mm(width_mm), blank_mm(space_mm), tags_mm(0)
+	  : space_mm(width_mm)
 	{}
 	virtual ~Cavity() { DTORF("~dec::Cavity "); }
 public:
@@ -1095,9 +1091,7 @@ public:
 	virtual string list() { return ""; }
 public:
 	unsigned computeBlankWidth(unsigned tags) {
-		tags_mm = tags;
-		blank_mm = space_mm - tags_mm;
-		return blank_mm;
+		return(space_mm - tags);
 	}
 public:
 	static stringstream unknownTags;
@@ -1258,7 +1252,7 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
-#define ProcessInherit ProcessOrder4 // Pedagogy: successively replace with 0,1,2,3...
+#define ProcessInherit ProcessOrder9 // Pedagogy: successively replace with 0,1,2,3...
 
 #ifndef ProcessChain
 #include "PC/processOrder0.h"	// Architecture - Template Method(4), Factory Method(3).
@@ -1267,7 +1261,10 @@ namespace template_method {	// DP 3.
 #include "PC/processOrder3.h"	// Setup injection line - Abstract Factory(9).
 #include "PC/processOrder4.h"	// Packager, pausing upstream machines - Observer(5).
 #include "PC/processOrder5.h"	// Mold Shape & Platform - Bridge(8).
-#include "PC/processOrder6.h"	// Acquire mold - CofR(7)..
+#include "PC/processOrder6.h"	// Acquire mold - CofR(7).
+#include "PC/processOrder7.h"	// Tags - Decorator(6).
+#include "PC/processOrder8.h"	// Additives - Decorator(6).
+#include "PC/processOrder9.h"	// Estimated run time - Strategy(1).
 #else
 class ProcessOrder0 { // Architecture - Template Method(4), Factory Method(3).
 public:
@@ -2151,7 +2148,6 @@ protected: // Helper methods.
 			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
-#endif
 class ProcessOrder7 { // Tags - Decorator(6).
 	adapter::CleanMold*					cleaning;
 	abstract_factory2::InjectionLine*	injectionLine;
@@ -2191,7 +2187,6 @@ public:
 	}
 public:
 	void run(map<string,string>& order) {
-		defaults(order);
 		cout << "Process order:\n";
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
@@ -2204,30 +2199,14 @@ public:
 		cleanMold(order);					// 2 - Adapter
 	}
 protected: // Template Method methods.
-	void defaults(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		using namespace factory_method;
+		using namespace abstract_factory2;
+
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
-	}
-	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-		using namespace factory_method;
-		using namespace abstract_factory2;
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 
@@ -2279,20 +2258,25 @@ protected: // Template Method methods.
 			tags = Cavity::addTags(tags, list);
 		}
 
-		list = tags->list();		// Strip trailing blank.
-		int size = list.size();
-		char tagString[size+1];
-		strcpy(tagString, list.c_str());
-		if(size) tagString[size-1] = '\0';
+		string tagString = tags->list();		// Strip trailing blank.
+		int size = tagString.size();
+		if(size) tagString.erase(tagString.size()-1, 1);
+//		tagString.back() = '\0';	// Are these C++/11?
+//		tagString.pop_back();
 
-		cout << "  Insert tags [" << tagString << "]";
-		cout << " of width "<< tags->width_mm() << "/";
-		cout << tags->space_mm << " mm, blank tag is ";
-		cout << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
+		cout << "  Insert tags [" << tagString << "]"
+			 << " of width "<< tags->width_mm() << "/"
+			 << tags->space_mm << " mm, blank tag is "
+			 << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
 		cout << Cavity::unknownTags.str();
-		Cavity::unknownTags.str("");
+
+		Cavity::unknownTags.str("");	// Clear.
 	}
 	void loadBins(map<string,string>& order) {
+		if(order.find("color") == order.end()) {
+			legacy_classes::defaulting(order, "color", "black");
+		}
+
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with " << order["color"] << ".\n";
 	}
@@ -2385,7 +2369,6 @@ public:
 	}
 public:
 	void run(map<string,string>& order) {
-		defaults(order);
 		cout << "Process order:\n";
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
@@ -2398,30 +2381,14 @@ public:
 		cleanMold(order);					// 2 - Adapter
 	}
 protected: // Template Method methods.
-	void defaults(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		using namespace factory_method;
+		using namespace abstract_factory2;
+
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
-	}
-	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-		using namespace factory_method;
-		using namespace abstract_factory2;
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 
@@ -2473,20 +2440,25 @@ protected: // Template Method methods.
 			tags = Cavity::addTags(tags, list);
 		}
 
-		list = tags->list();		// Strip trailing blank.
-		int size = list.size();
-		char tagString[size+1];
-		strcpy(tagString, list.c_str());
-		if(size) tagString[size-1] = '\0';
+		string tagString = tags->list();		// Strip trailing blank.
+		int size = tagString.size();
+		if(size) tagString.erase(tagString.size()-1, 1);
+//		tagString.back() = '\0';	// Are these C++/11?
+//		tagString.pop_back();
 
-		cout << "  Insert tags [" << tagString << "]";
-		cout << " of width "<< tags->width_mm() << "/";
-		cout << tags->space_mm << " mm, blank tag is ";
-		cout << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
+		cout << "  Insert tags [" << tagString << "]"
+			 << " of width "<< tags->width_mm() << "/"
+			 << tags->space_mm << " mm, blank tag is "
+			 << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
 		cout << Cavity::unknownTags.str();
-		Cavity::unknownTags.str("");
+
+		Cavity::unknownTags.str("");	// Clear.
 	}
 	void loadBins(map<string,string>& order) {
+		if(order.find("color") == order.end()) {
+			legacy_classes::defaulting(order, "color", "black");
+		}
+
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with " << order["color"] << ".\n";
 	}
@@ -2503,9 +2475,9 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
-			 << order["color"] << "(" << colorVol << ") "
-			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
+		cout << "      Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+			 << order["color"] << "(" << colorVol << ")"
+			 << additives->idNvol() << " = " << shapeVol << " cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -2586,7 +2558,6 @@ public:
 	}
 public:
 	void run(map<string,string>& order) {
-		defaults(order);
 		cout << "Process order:\n";
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
@@ -2599,30 +2570,14 @@ public:
 		cleanMold(order);					// 2 - Adapter
 	}
 protected: // Template Method methods.
-	void defaults(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		using namespace factory_method;
+		using namespace abstract_factory2;
+
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
-	}
-	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-		using namespace factory_method;
-		using namespace abstract_factory2;
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 
@@ -2674,20 +2629,25 @@ protected: // Template Method methods.
 			tags = Cavity::addTags(tags, list);
 		}
 
-		list = tags->list();		// Strip trailing blank.
-		int size = list.size();
-		char tagString[size+1];
-		strcpy(tagString, list.c_str());
-		if(size) tagString[size-1] = '\0';
+		string tagString = tags->list();		// Strip trailing blank.
+		int size = tagString.size();
+		if(size) tagString.erase(tagString.size()-1, 1);
+//		tagString.back() = '\0';	// Are these C++/11?
+//		tagString.pop_back();
 
-		cout << "  Insert tags [" << tagString << "]";
-		cout << " of width "<< tags->width_mm() << "/";
-		cout << tags->space_mm << " mm, blank tag is ";
-		cout << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
+		cout << "  Insert tags [" << tagString << "]"
+			 << " of width "<< tags->width_mm() << "/"
+			 << tags->space_mm << " mm, blank tag is "
+			 << tags->computeBlankWidth(tags->width_mm()) << " mm.\n";
 		cout << Cavity::unknownTags.str();
-		Cavity::unknownTags.str("");
+
+		Cavity::unknownTags.str("");	// Clear.
 	}
 	void loadBins(map<string,string>& order) {
+		if(order.find("color") == order.end()) {
+			legacy_classes::defaulting(order, "color", "black");
+		}
+
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with " << order["color"] << ".\n";
 	}
@@ -2704,9 +2664,9 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
-			 << "+ " << order["color"] << "(" << colorVol << ")"
-			 << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
+		cout << "      Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+			 << order["color"] << "(" << colorVol << ")"
+			 << additives->idNvol() << " = " << shapeVol << " cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -2716,9 +2676,6 @@ protected: // Template Method methods.
 	void runtimeEstimate(map<string,string>& order) {
 		using namespace strategy;
 
-		char n[10];
-		sprintf(n, "%d", block->cavities);
-		order["cavities"] = n;
 		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
 		unsigned runtime = (*runtimeEst)(order);
 
@@ -2752,6 +2709,7 @@ protected: // Helper methods.
 			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
+#endif
 
 class ABSOrder : public ProcessInherit {
 public: ~ABSOrder() { DTORF("~ABSOrder\n"); }
