@@ -67,6 +67,7 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for <plastic> <run> times.\n";
+		cout << "  Cycle <IJM> for "
+			 << "<plastic> <run> times.\n";
 	}
 };

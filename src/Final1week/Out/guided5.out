@@ -5,19 +5,18 @@
 	endOfOrder
   <>Unknown plastic || defaulting to ABS.
   <>No size specified, defaulting to 100.
-  <>Unknown packager || defaulting to Bulk.
-  <>Unknown mold || defaulting to duck.
   <>Unknown moldLoc || defaulting to inventory.
-  <>Unknown color || defaulting to black.
-  <>Unknown finish || defaulting to smooth.
 Process order:
+  <>Unknown packager || defaulting to None.
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
+  <>Unknown mold || defaulting to duck.
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
+  <>Unknown color || defaulting to black.
   Load plastic bin with ABS and color bin with black.
-    Recipe: ABS(35) black(3) <additive(<vol>) list> = (38) cc.
-    Volume: duck(38) * 1 cavity = (vol) cc.
+    Recipe: ABS(32) black(3) <additive(<vol>) list> = (35) cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -57,8 +56,8 @@ Process order:
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with ABS and color bin with red.
-    Recipe: ABS(35) red(3) <additive(<vol>) list> = (38) cc.
-    Volume: duck(38) * 1 cavity = (vol) cc.
+    Recipe: ABS(32) red(3) <additive(<vol>) list> = (35) cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -100,8 +99,8 @@ Process order:
   <Acquire> car mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polypropylene and color bin with orange.
-    Recipe: Polypropylene(40) orange(4) <additive(<vol>) list> = (44) cc.
-    Volume: car(44) * 2 cavities = (vol) cc.
+    Recipe: Polypropylene(36) orange(4) <additive(<vol>) list> = (40) cc.
+    Volume: car(40) * 2 cavities = 80 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -142,8 +141,8 @@ Process order:
   <Acquire> hero mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polyethelene and color bin with yellow.
-    Recipe: Polyethelene(50) yellow(5) <additive(<vol>) list> = (55) cc.
-    Volume: hero(55) * 1 cavity = (vol) cc.
+    Recipe: Polyethelene(45) yellow(5) <additive(<vol>) list> = (50) cc.
+    Volume: hero(50) * 1 cavity = 50 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -183,8 +182,8 @@ Process order:
   <Acquire> hero mold from mill.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with PET and color bin with green.
-    Recipe: PET(50) green(5) <additive(<vol>) list> = (55) cc.
-    Volume: hero(55) * 2 cavities = (vol) cc.
+    Recipe: PET(45) green(5) <additive(<vol>) list> = (50) cc.
+    Volume: hero(50) * 2 cavities = 100 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:

@@ -298,7 +298,8 @@ public:
 public:
 	virtual void update(BinSubject* bin=0) {}
 };
-// Seam point - add another listener (in other namespaces; the listeners are base classes).
+// Seam point - add another listener (in other namespaces;
+// the listeners are base classes in other design patterns).
 
 BinSubject::~BinSubject() {
 	DTORF("~observer::BinSubject\n");
@@ -370,6 +371,12 @@ Packager* Packager::makeObject(map<string,string>& order, BinSubject* bin) {
 
 } // factory_method
 
+#define ProcessChain	// When undefined compiles files in PC dir.
+
+#ifndef ProcessChain
+#include "PC/abstractFactory1.h"	// DP 9.
+#include "PC/abstractFactory2.h"	// DP 9.
+#else
 namespace abstract_factory1 {// DP 9.
 
 class IJM {
@@ -825,6 +832,7 @@ InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 }
 
 } // abstract_factory2
+#endif
 
 namespace bridge {			// DP 8.
 
@@ -874,17 +882,20 @@ Platform* Platform::getPlatform(map<string,string>& order) {
 	string metal = order["metal"];	// Added to order by TM.setupLine().
 	string finish = order["finish"];
 
-	if(metal == "Aluminum")						return new HighCarbon;
-	if(metal == "Steel" && finish == "smooth")	return new HighCarbon;
-	if(metal == "Steel" && finish == "rippled")	return new Carbide;
-	if(metal == "Steel" && finish == "dimpled")	return new DiamondTipped;
-	// Seam Point - add another implementation.
+	if(metal == "Aluminum")	{		return new HighCarbon; }
+	else if(metal == "Steel") {
+		if(finish == "smooth")		return new HighCarbon;
+		if(finish == "rippled")		return new Carbide;
+		if(finish == "dimpled")		return new DiamondTipped;
+		// Seam Point - add another finish.
 
-	cout << "    <>Unknown metal |" << metal << "| or finish |" << finish << "|.";
-	order["metal"]  = "Steel";
-	order["finish"] = "smooth";
-	cout << " Defaulting to " << order["metal"] << " and " << order["finish"];
-	cout << " with HighCarbon platform.\n";
+		legacy_classes::defaulting(order, "finish", "smooth");
+	}
+	// Seam Point - add another metal.
+	else {
+		legacy_classes::defaulting(order, "metal", "Steel");
+	}
+
 	return new HighCarbon;
 }
 
@@ -977,17 +988,11 @@ public:
 public:
 	virtual Shape* from(map<string,string>& order) {
 		Shape* shape = Shape::getShape(order);
-		cout << "  <>Can't find place |" << order["moldLoc"] << "|";
-		cout << " to get |" << order["mold"] << "| mold from";
-		cout << " with |" << order["finish"] << "| finish,";
 
-		order["moldLoc"] = "inventory";
-		if(order["mold"]	== "")	order["mold"]	 = "duck";
-		if(order["finish"]	== "")	order["finish"]	 = "smooth";
+		legacy_classes::defaulting(order, "moldLoc", "inventory");
 
-		cout << " defaulting to ";
-		cout << order["finish"] << " " << order["mold"];
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  Pull " << order["mold"] << " mold "
+			 << "from " << order["moldLoc"] << ".\n";
 
 		return shape;
 	}
@@ -1253,13 +1258,16 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
-#define ProcessInherit ProcessOrder3 // Pedagogy: successively replace with 0,1,2,3...
+#define ProcessInherit ProcessOrder4 // Pedagogy: successively replace with 0,1,2,3...
 
 #ifndef ProcessChain
 #include "PC/processOrder0.h"	// Architecture - Template Method(4), Factory Method(3).
 #include "PC/processOrder1.h"	// Defaults and order specs.
 #include "PC/processOrder2.h"	// Clean molds - Adapter(2).
 #include "PC/processOrder3.h"	// Setup injection line - Abstract Factory(9).
+#include "PC/processOrder4.h"	// Packager, pausing upstream machines - Observer(5).
+#include "PC/processOrder5.h"	// Mold Shape & Platform - Bridge(8).
+#include "PC/processOrder6.h"	// Acquire mold - CofR(7)..
 #else
 class ProcessOrder0 { // Architecture - Template Method(4), Factory Method(3).
 public:
@@ -1330,7 +1338,8 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for <plastic> <run> times.\n";
+		cout << "  Cycle <IJM> for "
+			 << "<plastic> <run> times.\n";
 	}
 };
 class ProcessOrder1 { // Defaults and order specs.
@@ -1424,7 +1433,8 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for " << order["plastic"] << " <run> times.\n";
+		cout << "  Cycle <IJM> for "
+			 << order["plastic"] << " <run> times.\n";
 	}
 };
 class ProcessOrder2 { // Clean molds - Adapter(2).
@@ -1524,7 +1534,8 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for " << order["plastic"] << " <run> times.\n";
+		cout << "  Cycle <IJM> for "
+			 << order["plastic"] << " <run> times.\n";
 	}
 };
 class ProcessOrder3 { // Setup injection line - Abstract Factory(9).
@@ -1654,11 +1665,11 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for " << order["plastic"] << " <run> times.\n";
+		cout << "  Cycle <IJM> for "
+			 << order["plastic"] << " <run> times.\n";
 	}
 };
-#endif
-class ProcessOrder4 { // Packager and pausing upstream machines - Observer(5).
+class ProcessOrder4 { // Packager, pausing upstream machines - Observer(5).
 	adapter::CleanMold*					cleaning;
 	abstract_factory2::InjectionLine*	injectionLine;
 	abstract_factory2::IJM*				ijm;
@@ -1706,9 +1717,9 @@ protected: // Template Method methods.
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
+//		if(order.find("packager") == order.end()) {
+//			legacy_classes::defaulting(order, "packager", "Bulk");
+//		}
 		if(order.find("mold") == order.end()) {
 			legacy_classes::defaulting(order, "mold", "duck");
 		}
@@ -1732,9 +1743,9 @@ protected: // Template Method methods.
 
 		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
 		block = injectionLine->createBlock(order);
-		belt  = injectionLine->createConveyerBelt(order,bin);// Observer.
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
 
-		packager = Packager::makeObject(order,bin);		// FM & Observer.
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order";
@@ -1749,6 +1760,10 @@ protected: // Template Method methods.
 			 << bin->setup() << ".\n";
 
 		order["metal"] = block->metal();
+
+		stringstream cavities;
+		cavities << block->cavities;
+		order["cavities"] = cavities.str();
 	}
 	void getMold(map<string,string>& order) {
 		cout << "  <Acquire> " << order["mold"] << " mold"
@@ -1793,8 +1808,8 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " <run> times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " <run> times.\n";
 	}
 };
 class ProcessOrder5 { // Mold Shape & Platform - Bridge(8).
@@ -1848,21 +1863,21 @@ protected: // Template Method methods.
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
+//		if(order.find("packager") == order.end()) {
+//			legacy_classes::defaulting(order, "packager", "Bulk");
+//		}
+//		if(order.find("mold") == order.end()) {
+//			legacy_classes::defaulting(order, "mold", "duck");
+//		}
 		if(order.find("moldLoc") == order.end()) {
 			legacy_classes::defaulting(order, "moldLoc", "inventory");
 		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
+//		if(order.find("color") == order.end()) {
+//			legacy_classes::defaulting(order, "color", "black");
+//		}
+//		if(order.find("finish") == order.end()) {
+//			legacy_classes::defaulting(order, "finish", "smooth");
+//		}
 	}
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
 		using namespace factory_method;
@@ -1891,24 +1906,32 @@ protected: // Template Method methods.
 			 << bin->setup() << ".\n";
 
 		order["metal"] = block->metal();
+
+		stringstream cavities;
+		cavities << block->cavities;
+		order["cavities"] = cavities.str();
 	}
 	void getMold(map<string,string>& order) {
 		using namespace bridge;
 
 		shape = Shape::getShape(order);	// Volume_cc.
-		char str[80];
-		sprintf(str, "%d", shape->volume_cc);
-		order["volume"] = str;
+		stringstream volume;
+		volume << shape->volume_cc;
+		order["volume"] = volume.str();
 
-		cout << "  <Acquire> " << order["mold"] << " mold";
-		cout << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> " << order["mold"] << " mold"
+			 << " from " << order["moldLoc"] << ".\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		if(order.find("color") == order.end()) {
+			legacy_classes::defaulting(order, "color", "black");
+		}
+
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
@@ -1919,9 +1942,9 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
 			 << order["color"] << "(" << colorVol << ") "
-			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -1953,8 +1976,8 @@ protected: // Helper methods.
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/cavities;
 
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " " << runSize << " times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
 class ProcessOrder6 { // Acquire mold - CofR(7).
@@ -2011,21 +2034,21 @@ protected: // Template Method methods.
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
+//		if(order.find("packager") == order.end()) {
+//			legacy_classes::defaulting(order, "packager", "Bulk");
+//		}
+//		if(order.find("mold") == order.end()) {
+//			legacy_classes::defaulting(order, "mold", "duck");
+//		}
+//		if(order.find("moldLoc") == order.end()) {
+//			legacy_classes::defaulting(order, "moldLoc", "inventory");
+//		}
+//		if(order.find("color") == order.end()) {
+//			legacy_classes::defaulting(order, "color", "black");
+//		}
+//		if(order.find("finish") == order.end()) {
+//			legacy_classes::defaulting(order, "finish", "smooth");
+//		}
 	}
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
 		using namespace factory_method;
@@ -2037,9 +2060,9 @@ protected: // Template Method methods.
 
 		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
 		block = injectionLine->createBlock(order);
-		belt  = injectionLine->createConveyerBelt(order,bin);// Observer.
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
 
-		packager = Packager::makeObject(order,bin);		// FM & Observer.
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order";
@@ -2066,14 +2089,18 @@ protected: // Template Method methods.
 		mold = Mold::acquireMold(order);
 
 		shape = mold->from(order);	// Volume_cc.
-		char str[80];
-		sprintf(str, "%d", shape->volume_cc);
-		order["volume"] = str;
+		stringstream volume;
+		volume << shape->volume_cc;
+		order["volume"] = volume.str();
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
+		if(order.find("color") == order.end()) {
+			legacy_classes::defaulting(order, "color", "black");
+		}
+
 		cout << "  Load plastic bin with " << order["plastic"];
 		cout << " and color bin with " << order["color"] << ".\n";
 	}
@@ -2086,9 +2113,9 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
 			 << order["color"] << "(" << colorVol << ") "
-			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -2120,10 +2147,11 @@ protected: // Helper methods.
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/cavities;
 
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " " << runSize << " times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
+#endif
 class ProcessOrder7 { // Tags - Decorator(6).
 	adapter::CleanMold*					cleaning;
 	abstract_factory2::InjectionLine*	injectionLine;
@@ -2207,9 +2235,9 @@ protected: // Template Method methods.
 
 		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
 		block = injectionLine->createBlock(order);
-		belt  = injectionLine->createConveyerBelt(order,bin);// Observer.
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
 
-		packager = Packager::makeObject(order,bin);		// FM & Observer.
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order";
@@ -2236,9 +2264,9 @@ protected: // Template Method methods.
 		mold = Mold::acquireMold(order);
 
 		shape = mold->from(order);	// Volume_cc.
-		char str[80];
-		sprintf(str, "%d", shape->volume_cc);
-		order["volume"] = str;
+		stringstream volume;
+		volume << shape->volume_cc;
+		order["volume"] = volume.str();
 	}
 	void insertTags(map<string,string>& order) {
 		using namespace decorator;
@@ -2265,8 +2293,8 @@ protected: // Template Method methods.
 		Cavity::unknownTags.str("");
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
@@ -2277,9 +2305,9 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << shapeVol << ") "
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
 			 << order["color"] << "(" << colorVol << ") "
-			 << "<additive(<vol>) list> = (" << plasticVol << ") cc.\n";
+			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -2311,8 +2339,8 @@ protected: // Helper methods.
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/cavities;
 
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " " << runSize << " times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
 class ProcessOrder8 { // Additives - Decorator(6).
@@ -2401,9 +2429,9 @@ protected: // Template Method methods.
 
 		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
 		block = injectionLine->createBlock(order);
-		belt  = injectionLine->createConveyerBelt(order,bin);// Observer.
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
 
-		packager = Packager::makeObject(order,bin);		// FM & Observer.
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order";
@@ -2430,9 +2458,9 @@ protected: // Template Method methods.
 		mold = Mold::acquireMold(order);
 
 		shape = mold->from(order);	// Volume_cc.
-		char str[80];
-		sprintf(str, "%d", shape->volume_cc);
-		order["volume"] = str;
+		stringstream volume;
+		volume << shape->volume_cc;
+		order["volume"] = volume.str();
 	}
 	void insertTags(map<string,string>& order) {
 		using namespace decorator;
@@ -2459,8 +2487,8 @@ protected: // Template Method methods.
 		Cavity::unknownTags.str("");
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		using namespace decorator;
@@ -2476,8 +2504,8 @@ protected: // Template Method methods.
 		int totalVol = cavities*shapeVol;
 
 		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
-			 << "+ " << order["color"] << "(" << colorVol << ")"
-			 << additives->idNvol() << " = (" << shapeVol << ") cc.\n";
+			 << order["color"] << "(" << colorVol << ") "
+			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(" << shapeVol << ") * "
@@ -2509,8 +2537,8 @@ protected: // Helper methods.
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/cavities;
 
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " " << runSize << " times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
 class ProcessOrder9 { // Estimated run time - Strategy(1).
@@ -2602,9 +2630,9 @@ protected: // Template Method methods.
 
 		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
 		block = injectionLine->createBlock(order);
-		belt  = injectionLine->createConveyerBelt(order,bin);// Observer.
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
 
-		packager = Packager::makeObject(order,bin);		// FM & Observer.
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order";
@@ -2631,9 +2659,9 @@ protected: // Template Method methods.
 		mold = Mold::acquireMold(order);
 
 		shape = mold->from(order);	// Volume_cc.
-		char str[80];
-		sprintf(str, "%d", shape->volume_cc);
-		order["volume"] = str;
+		stringstream volume;
+		volume << shape->volume_cc;
+		order["volume"] = volume.str();
 	}
 	void insertTags(map<string,string>& order) {
 		using namespace decorator;
@@ -2660,8 +2688,8 @@ protected: // Template Method methods.
 		Cavity::unknownTags.str("");
 	}
 	void loadBins(map<string,string>& order) {
-		cout << "  Load plastic bin with " << order["plastic"];
-		cout << " and color bin with " << order["color"] << ".\n";
+		cout << "  Load plastic bin with " << order["plastic"]
+			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		using namespace decorator;
@@ -2720,8 +2748,8 @@ protected: // Helper methods.
 		int orderSize = atoi(order["size"].c_str());
 		int runSize = orderSize/cavities;
 
-		cout << "  Cycle " << ijm->setup() << " for ";
-		cout << order["plastic"] << " " << runSize << " times.\n";
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
 

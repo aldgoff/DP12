@@ -5,13 +5,13 @@
 	endOfOrder
   <>Unknown plastic || defaulting to ABS.
   <>No size specified, defaulting to 100.
-  <>Unknown packager || defaulting to Bulk.
   <>Unknown mold || defaulting to duck.
   <>Unknown moldLoc || defaulting to inventory.
   <>Unknown color || defaulting to black.
   <>Unknown finish || defaulting to smooth.
 Process order:
-  Setup injection line for 100 order with Bulk packager:
+  <>Unknown packager || defaulting to None.
+  Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
@@ -21,17 +21,18 @@ Process order:
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
-  Cycle <IJM> for ABS <run> times.
+  Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
-    Whenever <partsBin> parts bin was full:
-      List of upstream machines to pause...
-      ...
+    Whenever CardboardBox parts bin was full...
+      IJM_110 paused while CardboardBox parts bin was swapped.
+      Linear conveyer belt paused while CardboardBox parts bin was swapped.
   Clean mold of ABS: soak in alcohol, rinse with water, dry.
 ~ABSOrder
-~IJM_110 ~IJM
+~IJM_110 ~IJM ~observer::BinObserver
 ~Aluminum ~Block
-~LinearBelt ~ConveyerBelt
-~CardboardBox ~PartsBin
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~CardboardBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
@@ -50,7 +51,7 @@ Process order:
 	packager	= Bulk
 	endOfOrder
 Process order:
-  Setup injection line for 10000 order with Bulk packager:
+  Setup injection line for 10000 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <Acquire> duck mold from inventory.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
@@ -60,17 +61,18 @@ Process order:
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
-  Cycle <IJM> for ABS <run> times.
+  Cycle IJM_110 for ABS <run> times.
     Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
-    Whenever <partsBin> parts bin was full:
-      List of upstream machines to pause...
-      ...
+    Whenever CardboardBox parts bin was full...
+      IJM_110 paused while CardboardBox parts bin was swapped.
+      Linear conveyer belt paused while CardboardBox parts bin was swapped.
   Clean mold of ABS: soak in alcohol, rinse with water, dry.
 ~ABSOrder
-~IJM_110 ~IJM
+~IJM_110 ~IJM ~observer::BinObserver
 ~Aluminum ~Block
-~LinearBelt ~ConveyerBelt
-~CardboardBox ~PartsBin
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~CardboardBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
 ~template_method::ProcessOrder
@@ -101,17 +103,20 @@ Process order:
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
-  Cycle <IJM> for Polypropylene <run> times.
+  Cycle IJM_120 for Polypropylene <run> times.
     Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
-    Whenever <partsBin> parts bin was full:
-      List of upstream machines to pause...
-      ...
+    Whenever ShellBox parts bin was full...
+      IJM_120 paused while ShellBox parts bin was swapped.
+      Y-Split conveyer belt paused while ShellBox parts bin was swapped.
+      Shrink wrap packager paused while ShellBox parts bin was swapped.
   Clean mold of Poly: rinse with acetone, dry.
 ~PropyleneOrder
-~IJM_120 ~IJM
+~IJM_120 ~IJM ~observer::BinObserver
 ~Aluminum ~Block
-~YSplitBelt ~ConveyerBelt
-~ShellBox ~PartsBin
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~ShrinkWrap ~factory_method::Packager ~observer::BinObserver
+~ShellBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
 ~SmallOrder ~abstract_factory::InjectionLine
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
@@ -139,17 +144,20 @@ Process order:
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
-  Cycle <IJM> for Polyethelene <run> times.
+  Cycle IJM_210 for Polyethelene <run> times.
     Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
-    Whenever <partsBin> parts bin was full:
-      List of upstream machines to pause...
-      ...
+    Whenever PalletBox parts bin was full...
+      IJM_210 paused while PalletBox parts bin was swapped.
+      Linear conveyer belt paused while PalletBox parts bin was swapped.
+      Hard pack packager paused while PalletBox parts bin was swapped.
   Clean mold of Poly: rinse with acetone, dry.
 ~EtheleneOrder
-~IJM_210 ~IJM
+~IJM_210 ~IJM ~observer::BinObserver
 ~Steel ~Block
-~LinearBelt ~ConveyerBelt
-~PalletBox ~PartsBin
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~HardPack ~factory_method::Packager ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
 ~MediumOrder ~abstract_factory::InjectionLine
 ~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
 ~template_method::ProcessOrder
@@ -176,17 +184,20 @@ Process order:
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
-  Cycle <IJM> for PET <run> times.
+  Cycle IJM_220 for PET <run> times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
-    Whenever <partsBin> parts bin was full:
-      List of upstream machines to pause...
-      ...
+    Whenever PalletBox parts bin was full...
+      IJM_220 paused while PalletBox parts bin was swapped.
+      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+      Hard pack packager paused while PalletBox parts bin was swapped.
   Clean Steel mold of PET: heat to 895 C.
 ~PETOrder
-~IJM_220 ~IJM
+~IJM_220 ~IJM ~observer::BinObserver
 ~Steel ~Block
-~YSplitBelt ~ConveyerBelt
-~PalletBox ~PartsBin
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~HardPack ~factory_method::Packager ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
 ~LargeOrder ~abstract_factory::InjectionLine
 ~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
 ~template_method::ProcessOrder

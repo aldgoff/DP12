@@ -5,12 +5,12 @@
 	endOfOrder
   <>Unknown plastic || defaulting to ABS.
   <>No size specified, defaulting to 100.
-  <>Unknown packager || defaulting to Bulk.
   <>Unknown mold || defaulting to duck.
   <>Unknown moldLoc || defaulting to inventory.
   <>Unknown color || defaulting to black.
   <>Unknown finish || defaulting to smooth.
 Process order:
+  <>Unknown packager || defaulting to None.
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <Acquire> duck mold from inventory.

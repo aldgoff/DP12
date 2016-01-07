@@ -1,10 +1,28 @@
-class ProcessOrder2 { // Clean molds - Adapter(2).
-	adapter::CleanMold*	cleaning;
+class ProcessOrder4 { // Packager, pausing upstream machines - Observer(5).
+	adapter::CleanMold*					cleaning;
+	abstract_factory2::InjectionLine*	injectionLine;
+	abstract_factory2::IJM*				ijm;
+	abstract_factory2::Block*			block;
+	abstract_factory2::ConveyerBelt*	belt;
+	abstract_factory2::PartsBin*		bin;	// Inherits from observer::BinSubject.
+	factory_method::Packager*			packager;
 public:
-	ProcessOrder2()
+	ProcessOrder4()
 		: cleaning(0)
+		, injectionLine(0)
+		, ijm(0)
+		, block(0)
+		, belt(0)
+		, bin(0)
+		, packager(0)
 	{}
-	virtual ~ProcessOrder2() {
+	virtual ~ProcessOrder4() {
+		delete ijm;
+		delete block;
+		delete belt;
+		delete packager;
+		delete bin;
+		delete injectionLine;
 		delete cleaning;
 		DTORF("~template_method::ProcessOrder\n");
 	}
@@ -28,9 +46,9 @@ protected: // Template Method methods.
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
+//		if(order.find("packager") == order.end()) {
+//			legacy_classes::defaulting(order, "packager", "Bulk");
+//		}
 		if(order.find("mold") == order.end()) {
 			legacy_classes::defaulting(order, "mold", "duck");
 		}
@@ -44,16 +62,33 @@ protected: // Template Method methods.
 			legacy_classes::defaulting(order, "finish", "smooth");
 		}
 	}
-	void setupLine(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		using namespace factory_method;
+		using namespace abstract_factory2;
+
+		injectionLine = InjectionLine::createInjectionLine(order);
+
+		bin	  = injectionLine->createPartsBin(order);		// Observer Subject.
+
+		ijm	  = injectionLine->createIJM(order,bin);			// Observer.
+		block = injectionLine->createBlock(order);
+		belt  = injectionLine->createConveyerBelt(order,bin);	// Observer.
+
+		packager = Packager::makeObject(order,bin);			// FM & Observer.
+
 		cout << "  Setup injection line for "
-			 << order["size"] << " order"
-			 << " with " << order["packager"] << " packager:\n";
+			 << order["size"] << " order";
+		if(packager)
+			cout << " with " << packager->wrap() << " packager";
+		cout << ":\n";
 
 		cout << "    "
-			 << "<IJM> - "
-			 << "<metal>(<cavities>) - "
-			 << "<belt> belt - "
-			 << "<bin>.\n";
+			 << ijm->setup() << " - "
+			 << block->setup() << " - "
+			 << belt->setup() << " - "
+			 << bin->setup() << ".\n";
+
+		order["metal"] = block->metal();
 	}
 	void getMold(map<string,string>& order) {
 		cout << "  <Acquire> " << order["mold"] << " mold"
@@ -67,10 +102,15 @@ protected: // Template Method methods.
 			 << " and color bin with " << order["color"] << ".\n";
 	}
 	void loadAdditives(map<string,string>& order) {
+		int cavities = block->cavities;
+
 		cout << "    Recipe: " << order["plastic"] << "(vol) "
 			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+
+		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: " << order["mold"] << "(vol) * "
-			 << "<cavities> cavities = (vol) cc.\n";
+			 << cavities << plural
+			 << "= (vol) cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
 		cout << "  Estimated run time (algorithm) = x hour(s).\n";
@@ -82,10 +122,8 @@ protected: // Template Method methods.
 		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
 			 << " - cool to <temp> - separate - <manner of> eject\n";
 	}
-	void simulateFullPartsBin(map<string,string>& order) {
-		cout << "    Whenever <partsBin> parts bin was full:\n";
-		cout << "      List of upstream machines to pause...\n";
-		cout << "      ...\n";
+	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
+		bin->pause();
 	}
 	void cleanMold(map<string,string>& order) {
 		using namespace adapter;
@@ -95,7 +133,7 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for "
+		cout << "  Cycle " << ijm->setup() << " for "
 			 << order["plastic"] << " <run> times.\n";
 	}
 };
