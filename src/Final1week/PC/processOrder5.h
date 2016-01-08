@@ -31,7 +31,6 @@ public:
 	}
 public:
 	void run(map<string,string>& order) {
-		defaults(order);
 		cout << "Process order:\n";
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
@@ -44,30 +43,14 @@ public:
 		cleanMold(order);					// 2 - Adapter
 	}
 protected: // Template Method methods.
-	void defaults(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
+		using namespace factory_method;
+		using namespace abstract_factory2;
+
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-//		if(order.find("packager") == order.end()) {
-//			legacy_classes::defaulting(order, "packager", "Bulk");
-//		}
-//		if(order.find("mold") == order.end()) {
-//			legacy_classes::defaulting(order, "mold", "duck");
-//		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-//		if(order.find("color") == order.end()) {
-//			legacy_classes::defaulting(order, "color", "black");
-//		}
-//		if(order.find("finish") == order.end()) {
-//			legacy_classes::defaulting(order, "finish", "smooth");
-//		}
-	}
-	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-		using namespace factory_method;
-		using namespace abstract_factory2;
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 
@@ -145,7 +128,7 @@ protected: // Template Method methods.
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
-			 << " - cool to <temp> - separate - <manner of> eject\n";
+			 << " - cool to <temp> - separate - <manner of> eject.\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();

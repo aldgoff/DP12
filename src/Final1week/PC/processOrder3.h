@@ -25,7 +25,6 @@ public:
 	}
 public:
 	void run(map<string,string>& order) {
-		defaults(order);
 		cout << "Process order:\n";
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
@@ -38,29 +37,13 @@ public:
 		cleanMold(order);					// 2 - Adapter
 	}
 protected: // Template Method methods.
-	void defaults(map<string,string>& order) {
+	void setupLine(map<string,string>& order) {	// AF (order size).
+		using namespace abstract_factory1;
+
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
 			order["size"] = "100";
 		}
-		if(order.find("packager") == order.end()) {
-			legacy_classes::defaulting(order, "packager", "Bulk");
-		}
-		if(order.find("mold") == order.end()) {
-			legacy_classes::defaulting(order, "mold", "duck");
-		}
-		if(order.find("moldLoc") == order.end()) {
-			legacy_classes::defaulting(order, "moldLoc", "inventory");
-		}
-		if(order.find("color") == order.end()) {
-			legacy_classes::defaulting(order, "color", "black");
-		}
-		if(order.find("finish") == order.end()) {
-			legacy_classes::defaulting(order, "finish", "smooth");
-		}
-	}
-	void setupLine(map<string,string>& order) {	// AF (order size).
-		using namespace abstract_factory1;
 
 		injectionLine = InjectionLine::createInjectionLine(order);
 		ijm	  = injectionLine->createIJM(order);
@@ -70,7 +53,7 @@ protected: // Template Method methods.
 
 		cout << "  Setup injection line for "
 			 << order["size"] << " order"
-			 << " with " << order["packager"] << " packager:\n";
+			 << " with " << "<packager>" << " packager:\n";
 
 		cout << "    "
 			 << ijm->setup() << " - "
@@ -81,24 +64,24 @@ protected: // Template Method methods.
 		order["metal"] = block->metal();
 	}
 	void getMold(map<string,string>& order) {
-		cout << "  <Acquire> " << order["mold"] << " mold"
-			 << " from " << order["moldLoc"] << ".\n";
+		cout << "  <Acquire> <mold> mold"
+			 << " from <moldLoc>.\n";
 	}
 	void insertTags(map<string,string>& order) {
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
 		cout << "  Load plastic bin with " << order["plastic"]
-			 << " and color bin with " << order["color"] << ".\n";
+			 << " and color bin with <color>.\n";
 	}
 	void loadAdditives(map<string,string>& order) {
 		int cavities = block->cavities;
 
 		cout << "    Recipe: " << order["plastic"] << "(vol) "
-			 << order["color"] << "(vol) <additive(<vol>) list> = (vol) cc.\n";
+				 << "<color>(vol) <additive(<vol>) list> = (vol) cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
-		cout << "    Volume: " << order["mold"] << "(vol) * "
+		cout << "    Volume: <mold>(vol) * "
 			 << cavities << plural
 			 << "= (vol) cc.\n";
 	}
@@ -110,7 +93,7 @@ protected: // Template Method methods.
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
-			 << " - cool to <temp> - separate - <manner of> eject\n";
+			 << " - cool to <temp> - separate - <manner of> eject.\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {
 		cout << "    Whenever <partsBin> parts bin was full:\n";
@@ -125,7 +108,11 @@ protected: // Template Method methods.
 	}
 protected: // Helper methods.
 	void cycle(map<string,string>& order) {
-		cout << "  Cycle <IJM> for "
-			 << order["plastic"] << " <run> times.\n";
+		int cavities = block->cavities;
+		int orderSize = atoi(order["size"].c_str());
+		int runSize = orderSize/cavities;
+
+		cout << "  Cycle " << ijm->setup() << " for "
+			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };

@@ -4,20 +4,15 @@
 	comment		= Null order - check default behaviors.
 	endOfOrder
   <>Unknown plastic || defaulting to ABS.
-  <>No size specified, defaulting to 100.
-  <>Unknown packager || defaulting to Bulk.
-  <>Unknown mold || defaulting to duck.
-  <>Unknown moldLoc || defaulting to inventory.
-  <>Unknown color || defaulting to black.
-  <>Unknown finish || defaulting to smooth.
 Process order:
-  Setup injection line for 100 order with Bulk packager:
+  <>No size specified, defaulting to 100.
+  Setup injection line for 100 order with <packager> packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
-  <Acquire> duck mold from inventory.
+  <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
-  Load plastic bin with ABS and color bin with black.
-    Recipe: ABS(vol) black(vol) <additive(<vol>) list> = (vol) cc.
-    Volume: duck(vol) * <cavities> cavities = (vol) cc.
+  Load plastic bin with ABS and color bin with <color>.
+    Recipe: ABS(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -45,13 +40,13 @@ Process order:
 	packager	= Bulk
 	endOfOrder
 Process order:
-  Setup injection line for 10000 order with Bulk packager:
+  Setup injection line for 10000 order with <packager> packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
-  <Acquire> duck mold from inventory.
+  <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
-  Load plastic bin with ABS and color bin with red.
-    Recipe: ABS(vol) red(vol) <additive(<vol>) list> = (vol) cc.
-    Volume: duck(vol) * <cavities> cavities = (vol) cc.
+  Load plastic bin with ABS and color bin with <color>.
+    Recipe: ABS(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -81,13 +76,13 @@ Process order:
 	packager		= ShrinkWrap
 	endOfOrder
 Process order:
-  Setup injection line for 20000 order with ShrinkWrap packager:
+  Setup injection line for 20000 order with <packager> packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
-  <Acquire> car mold from mill.
+  <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
-  Load plastic bin with Polypropylene and color bin with orange.
-    Recipe: Polypropylene(vol) orange(vol) <additive(<vol>) list> = (vol) cc.
-    Volume: car(vol) * <cavities> cavities = (vol) cc.
+  Load plastic bin with Polypropylene and color bin with <color>.
+    Recipe: Polypropylene(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -114,13 +109,13 @@ Process order:
 	packager	= HardPack
 	endOfOrder
 Process order:
-  Setup injection line for 50000 order with HardPack packager:
+  Setup injection line for 50000 order with <packager> packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
-  <Acquire> hero mold from mill.
+  <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
-  Load plastic bin with Polyethelene and color bin with yellow.
-    Recipe: Polyethelene(vol) yellow(vol) <additive(<vol>) list> = (vol) cc.
-    Volume: hero(vol) * <cavities> cavities = (vol) cc.
+  Load plastic bin with Polyethelene and color bin with <color>.
+    Recipe: Polyethelene(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:
@@ -146,13 +141,13 @@ Process order:
 	packager	= HardPack
 	endOfOrder
 Process order:
-  Setup injection line for 100000 order with HardPack packager:
+  Setup injection line for 100000 order with <packager> packager:
     <IJM> - <metal>(<cavities>) - <belt> belt - <bin>.
-  <Acquire> hero mold from mill.
+  <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
-  Load plastic bin with PET and color bin with green.
-    Recipe: PET(vol) green(vol) <additive(<vol>) list> = (vol) cc.
-    Volume: hero(vol) * <cavities> cavities = (vol) cc.
+  Load plastic bin with PET and color bin with <color>.
+    Recipe: PET(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Volume: <mold>(vol) * <cavities> cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
     Values:

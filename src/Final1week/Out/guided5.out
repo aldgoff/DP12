@@ -4,14 +4,13 @@
 	comment		= Null order - check default behaviors.
 	endOfOrder
   <>Unknown plastic || defaulting to ABS.
-  <>No size specified, defaulting to 100.
-  <>Unknown moldLoc || defaulting to inventory.
 Process order:
+  <>No size specified, defaulting to 100.
   <>Unknown packager || defaulting to None.
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <>Unknown mold || defaulting to duck.
-  <Acquire> duck mold from inventory.
+  <Acquire> duck mold from .
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   <>Unknown color || defaulting to black.
   Load plastic bin with ABS and color bin with black.

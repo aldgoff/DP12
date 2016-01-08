@@ -163,7 +163,7 @@ protected: // Template Method methods.
 	virtual void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to <temp> - inject at <pressure> PSI"
-			 << " - cool to <temp> - separate - <manner of> eject\n";
+			 << " - cool to <temp> - separate - <manner of> eject.\n";
 	}
 	void simulateFullPartsBin(map<string,string>& order) {	// Observer (bin full).
 		bin->pause();
