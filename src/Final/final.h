@@ -17,6 +17,7 @@
 #include "../Final/finalSolution.h"
 
 #include "../Final1week/finalGuided.h"
+#include "../Final1week/finalPart1.h"
 
 namespace final {
 
@@ -32,8 +33,10 @@ public:
 			opt = args[1];
 
 		// final <command> src/Final/In/orders_1/2.txt
+		// final <command> src/Final1week/In/orders_1/2.txt
 		if(		opt == "design")	final_design::demo(args[2]);
 		else if(opt == "guided")	final_guided::demo(args[2]);
+		else if(opt == "part1")		final_part1::demo(args[2]);
 		else if(opt == "DtoO")		final_d_to_o::demo(args[2]);
 		else if(opt == "original")	final_original::demo(args[2]);
 		else if(opt == "OtoS")		final_o_to_s::demo(args[2]);
