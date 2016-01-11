@@ -149,7 +149,7 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "      Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
 			 << order["color"] << "(" << colorVol << ")"
 			 << additives->idNvol() << " = " << shapeVol << " cc.\n";
 

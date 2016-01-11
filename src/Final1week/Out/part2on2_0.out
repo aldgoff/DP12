@@ -1,0 +1,449 @@
+<<< final part1 >>>
+1:
+	orderNum	= 1
+	comment		= Null order - check default behaviors.
+	endOfOrder
+  <>Unknown plastic || defaulting to ABS.
+Process order:
+  <>No size specified, defaulting to 100.
+  <>Unknown packager || defaulting to None.
+  Setup injection line for 100 order:
+    IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
+  <>Unknown mold || defaulting to duck.
+  <>Unknown moldLoc || defaulting to inventory.
+  Pull duck mold from inventory.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+  <>Unknown color || defaulting to black.
+  Load plastic bin with ABS and color bin with black.
+      Recipe: ABS(32) black(3) = 35 cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
+  Estimated run time (BackOfTheEnvelope) = 1 hour.
+    (orderSize/cavities)*cycleTime/3600.
+    (100)*39/3600.
+  Cycle IJM_110 for ABS 100 times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever CardboardBox parts bin was full...
+      IJM_110 paused while CardboardBox parts bin was swapped.
+      Linear conveyer belt paused while CardboardBox parts bin was swapped.
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_110 ~IJM ~observer::BinObserver
+~Aluminum ~Block
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~CardboardBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~PilotOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~BackOfTheEnvelope ~strategy::RuntimeEstimate
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+2:
+	orderNum	= 2
+	comment		= Example order - one of everything.
+	size		= 10000
+	mold		= duck
+	color		= red
+	plastic		= ABS
+	moldLoc		= inventory
+	finish		= smooth
+	tags		= ModelNumber
+	UVInhibiter	= 2
+	packager	= Bulk
+	endOfOrder
+Process order:
+  Setup injection line for 10000 order:
+    IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
+  Pull duck mold from inventory.
+  Insert tags [ModelNumber] of width 2/20 mm, blank tag is 18 mm.
+  Load plastic bin with ABS and color bin with red.
+      Recipe: ABS(30) red(3) + UVInhibiter(2) = 35 cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
+  Estimated run time (BackOfTheEnvelope) = 108 hours.
+    (orderSize/cavities)*cycleTime/3600.
+    (10000)*39/3600.
+  Cycle IJM_110 for ABS 10000 times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever CardboardBox parts bin was full...
+      IJM_110 paused while CardboardBox parts bin was swapped.
+      Linear conveyer belt paused while CardboardBox parts bin was swapped.
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_110 ~IJM ~observer::BinObserver
+~Aluminum ~Block
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~CardboardBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~PilotOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity 
+~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
+~BackOfTheEnvelope ~strategy::RuntimeEstimate
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+3:
+	orderNum		= 3
+	comment			= Max order - next of singles, all of everything else (orig specs).
+	size			= 20000
+	mold			= car
+	color			= orange
+	plastic			= Polypropylene
+	moldLoc			= mill
+	finish			= smooth
+	tags			= ModelNumber Country Date
+	UVInhibiter		= 2
+	AntiBacterial	= 1
+	Hydrophilic		= 2
+	packager		= ShrinkWrap
+	endOfOrder
+Process order:
+  Setup injection line for 20000 order with ShrinkWrap packager:
+    IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.
+  Create car mold from mill with 2 cavities - steps: D2C8D1G3
+    using HighCarbon tools (drill, cut, and high speed grind)
+    to mill Aluminum block into 2 car shapes with smooth finish.
+  Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
+  Load plastic bin with Polypropylene and color bin with orange.
+      Recipe: Polypropylene(31) orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 40 cc.
+    Volume: car(40) * 2 cavities = 80 cc.
+  Estimated run time (Calculation) = 61 hours.
+    (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/3600.
+    (10000)*22(Aluminum,40)/3600.
+  Cycle IJM_120 for Polypropylene 10000 times.
+    Close - heat to 350 - inject at 90 PSI - cool to 290 - separate - smooth eject.
+    Whenever ShellBox parts bin was full...
+      IJM_120 paused while ShellBox parts bin was swapped.
+      Y-Split conveyer belt paused while ShellBox parts bin was swapped.
+      Shrink wrap packager paused while ShellBox parts bin was swapped.
+  Clean mold of Poly: rinse with acetone, dry.
+~PropyleneOrder
+~IJM_120 ~IJM ~observer::BinObserver
+~Aluminum ~Block
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~ShrinkWrap ~factory_method::Packager ~observer::BinObserver
+~ShellBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~SmallOrder ~abstract_factory::InjectionLine
+~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
+~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
+~Calculation ~strategy::RuntimeEstimate
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+4:
+	orderNum	= 4
+	comment		= Next of singles or last.
+	size		= 50000
+	mold		= hero
+	color		= yellow
+	plastic		= Polyethelene
+	moldLoc		= mill
+	finish		= rippled
+	tags		= ModelNum date
+	packager	= HardPack
+	endOfOrder
+Process order:
+  Setup injection line for 50000 order with HardPack packager:
+    IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
+  Create hero mold from mill with 1 cavity - steps: D1C1D1G7
+    using Carbide tools (high speed drill, cross cut, and layer grind)
+    to mill Steel block into 1 hero shape with rippled finish.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+    Ignoring unknown tag ModelNum.
+    Ignoring unknown tag date.
+  Load plastic bin with Polyethelene and color bin with yellow.
+      Recipe: Polyethelene(45) yellow(5) = 50 cc.
+    Volume: hero(50) * 1 cavity = 50 cc.
+  Estimated run time (Historical) = 419 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*30(Steel,50)/60 + 54)/60.
+  Cycle IJM_210 for Polyethelene 50000 times.
+    Close - heat to 360 - inject at 95 PSI - cool to 280 - separate - smooth eject.
+    Whenever PalletBox parts bin was full...
+      IJM_210 paused while PalletBox parts bin was swapped.
+      Linear conveyer belt paused while PalletBox parts bin was swapped.
+      Hard pack packager paused while PalletBox parts bin was swapped.
+  Clean mold of Poly: rinse with acetone, dry.
+~EtheleneOrder
+~IJM_210 ~IJM ~observer::BinObserver
+~Steel ~Block
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~HardPack ~factory_method::Packager ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~MediumOrder ~abstract_factory::InjectionLine
+~Hero ~bridge::Shape ~Carbide ~bridge::Platform
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~PolyClean ~legacy_classes::CleanPolys ~adapter::CleanMold
+~template_method::ProcessOrder
+
+5:
+	orderNum	= 5
+	comment		= Next of singles or last.
+	size		= 100000
+	mold		= hero
+	color		= green
+	plastic		= PET
+	moldLoc		= mill
+	finish		= dimpled
+	packager	= HardPack
+	endOfOrder
+Process order:
+  Setup injection line for 100000 order with HardPack packager:
+    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  Create hero mold from mill with 2 cavities - steps: D1C1D1G7
+    using DiamondTipped tools (precision drill, oil cooled cut, and cartoid grind)
+    to mill Steel block into 2 hero shapes with dimpled finish.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+  Load plastic bin with PET and color bin with green.
+      Recipe: PET(45) green(5) = 50 cc.
+    Volume: hero(50) * 2 cavities = 100 cc.
+  Estimated run time (Historical) = 419 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*30(Steel,50)/60 + 54)/60.
+  Cycle IJM_220 for PET 50000 times.
+    Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
+    Whenever PalletBox parts bin was full...
+      IJM_220 paused while PalletBox parts bin was swapped.
+      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+      Hard pack packager paused while PalletBox parts bin was swapped.
+  Clean Steel mold of PET: heat to 895 C.
+~PETOrder
+~IJM_220 ~IJM ~observer::BinObserver
+~Steel ~Block
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~HardPack ~factory_method::Packager ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~LargeOrder ~abstract_factory::InjectionLine
+~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
+~template_method::ProcessOrder
+
+6:
+	orderNum	= 6
+	comment		= New Specs: new singles, all of new groups.
+	size		= 40000
+	mold		= dino
+	color		= blue
+	plastic		= PET
+	moldLoc		= sisterCompany
+	tags		= IncCounter PartNumber RecycleCode
+	MicroFibers	= 3
+	packager	= ZipLock
+	stuffer		= Air
+	address		= MegaCorp, 1 Apple, Santa Clara, CA 92200
+	endOfOrder
+Process order:
+  <>Unknown packager |ZipLock| defaulting to None.
+  Setup injection line for 40000 order:
+    IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
+  <>Unknown mold |dino| defaulting to duck.
+  Borrow duck mold from sister company.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+    Ignoring unknown tag IncCounter.
+    Ignoring unknown tag PartNumber.
+    Ignoring unknown tag RecycleCode.
+  Load plastic bin with PET and color bin with blue.
+      Recipe: PET(32) blue(3) = 35 cc.
+    Volume: duck(35) * 1 cavity = 35 cc.
+  Estimated run time (Historical) = 313 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (40000)*28(Steel,35)/60 + 54)/60.
+  Cycle IJM_210 for PET 40000 times.
+    Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
+    Whenever PalletBox parts bin was full...
+      IJM_210 paused while PalletBox parts bin was swapped.
+      Linear conveyer belt paused while PalletBox parts bin was swapped.
+  Clean Steel mold of PET: heat to 895 C.
+~PETOrder
+~IJM_210 ~IJM ~observer::BinObserver
+~Steel ~Block
+~LinearBelt ~ConveyerBelt ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~MediumOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
+~template_method::ProcessOrder
+
+7:
+	orderNum	= 7
+	comment		= New Specs: next singles, or last.
+	size		= 100000
+	mold		= dino
+	color		= violet
+	plastic		= Styrene
+	moldLoc		= purchase
+	finish		= sanded
+	packager	= ZipLock
+	stuffer		= Popcorn
+	address		= Anytown, CA
+	endOfOrder
+  <>Unknown plastic |Styrene| defaulting to ABS.
+Process order:
+  <>Unknown packager |ZipLock| defaulting to None.
+  Setup injection line for 100000 order:
+    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  <>Unknown mold |dino| defaulting to duck.
+  <>Unknown moldLoc |purchase| defaulting to inventory.
+  Pull duck mold from inventory.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+  Load plastic bin with ABS and color bin with violet.
+      Recipe: ABS(32) violet(3) = 35 cc.
+    Volume: duck(35) * 2 cavities = 70 cc.
+  Estimated run time (Historical) = 391 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*28(Steel,35)/60 + 54)/60.
+  Cycle IJM_220 for ABS 50000 times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever PalletBox parts bin was full...
+      IJM_220 paused while PalletBox parts bin was swapped.
+      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_220 ~IJM ~observer::BinObserver
+~Steel ~Block
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~LargeOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+8:
+	orderNum	= 8
+	comment		= New Specs: next singles, or last.
+	size		= 200000
+	mold		= dino
+	color		= gray
+	plastic		= Nylon66
+	moldLoc		= mill
+	finish		= sanded
+	packager	= ZipLock
+	stuffer		= Bubblewrap
+	address		= Wherever, USA
+	endOfOrder
+  <>Unknown plastic |Nylon66| defaulting to ABS.
+Process order:
+  <>Unknown size |200000| defaulting to 100000.
+  <>Unknown packager |ZipLock| defaulting to None.
+  Setup injection line for 100000 order:
+    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  <>Unknown finish |sanded| defaulting to smooth.
+  <>Unknown mold |dino| defaulting to duck.
+  Create duck mold from mill with 2 cavities - steps: D2C4G1
+    using HighCarbon tools (drill, cut, and high speed grind)
+    to mill Steel block into 2 duck shapes with smooth finish.
+  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
+  Load plastic bin with ABS and color bin with gray.
+      Recipe: ABS(32) gray(3) = 35 cc.
+    Volume: duck(35) * 2 cavities = 70 cc.
+  Estimated run time (Historical) = 391 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*28(Steel,35)/60 + 54)/60.
+  Cycle IJM_220 for ABS 50000 times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever PalletBox parts bin was full...
+      IJM_220 paused while PalletBox parts bin was swapped.
+      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_220 ~IJM ~observer::BinObserver
+~Steel ~Block
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~LargeOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Blank ~dec::Cavity 
+~Plastic ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+9:
+	orderNum		= 9
+	comment			= New Specs: max out, mill or last.
+	size			= 400000
+	mold			= dino
+	color			= white
+	plastic			= Nylon66
+	moldLoc			= mill
+	finish			= satin
+	tags			= IncCounter PartNumber RecycleCode ModelNumber Country Date
+	MicroFibers		= 3
+	UVInhibiter		= 2
+	Hydrophilic		= 2
+	AntiBacterial	= 1
+	packager		= ZipLock
+	stuffer			= Foam
+	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
+	endOfOrder
+  <>Unknown plastic |Nylon66| defaulting to ABS.
+Process order:
+  <>Unknown size |400000| defaulting to 100000.
+  <>Unknown packager |ZipLock| defaulting to None.
+  Setup injection line for 100000 order:
+    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
+  <>Unknown finish |satin| defaulting to smooth.
+  <>Unknown mold |dino| defaulting to duck.
+  Create duck mold from mill with 2 cavities - steps: D2C4G1
+    using HighCarbon tools (drill, cut, and high speed grind)
+    to mill Steel block into 2 duck shapes with smooth finish.
+  Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
+    Ignoring unknown tag IncCounter.
+    Ignoring unknown tag PartNumber.
+    Ignoring unknown tag RecycleCode.
+  Load plastic bin with ABS and color bin with white.
+      Recipe: ABS(27) white(3) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 35 cc.
+    Volume: duck(35) * 2 cavities = 70 cc.
+  Estimated run time (Historical) = 391 hours.
+    (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
+    (118 + (50000)*28(Steel,35)/60 + 54)/60.
+  Cycle IJM_220 for ABS 50000 times.
+    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    Whenever PalletBox parts bin was full...
+      IJM_220 paused while PalletBox parts bin was swapped.
+      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+  Clean mold of ABS: soak in alcohol, rinse with water, dry.
+~ABSOrder
+~IJM_220 ~IJM ~observer::BinObserver
+~Steel ~Block
+~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~PalletBox ~PartsBin ~observer::BinSubject
+ BinObservers left to process (should be zero) = 0.
+~LargeOrder ~abstract_factory::InjectionLine
+~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
+~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
+~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
+~Historical ~strategy::RuntimeEstimate
+~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~template_method::ProcessOrder
+
+
