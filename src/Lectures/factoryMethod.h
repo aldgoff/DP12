@@ -1123,6 +1123,47 @@ void clientCode(int fr, int* res, string display, string crypto) {
 
 } // obsolete
 
+namespace experiment {	// When a factory is better than a ctor.
+/* Factories allow finer control of construction.
+ * Limited ranges or allowed values.
+ * Finite resources, restricted number of instances, etc.
+ */
+
+class Int {
+public:
+	int x;
+private: // Unrestricted ctor, made private so client must use factory method.
+	Int(int x) : x(x) {}
+public: // Conditionally restricted ctor; don't need factory method?
+	Int(int x, bool restricted) : x(0) {
+		if(restricted) {
+			if(x <= 7) Int::x = 6;
+			if(x >= 8) Int::x = 9;
+		}
+		else {
+			Int::x = x;
+		}
+	}
+public:
+	static Int createRestrictedInt(int value);
+};
+Int Int::createRestrictedInt(int value) {
+	if(value <= 7)	return Int(6);
+	if(value >= 8)	return Int(9);
+}
+
+void demo(int seqNo) {
+	cout << seqNo << ") << factoryMethod::experiment >>\n";
+//	Int integer(5);	// No longer allowed, ctor private.
+	Int integer = Int::createRestrictedInt(5);
+	cout << integer.x << endl;	// Was 5, now 6.
+	Int y = Int(12, true);
+	Int z = Int(12, false);
+	cout << y.x << " < " << z.x << endl;
+}
+
+} // experiment
+
 class Observer : public observer::DPObserver {
 public:
 	Observer(observer::ObserverSubject* subject, int seqNo)
@@ -1146,6 +1187,9 @@ public:
 	}
 	virtual void homeworkSolution() {
 		homework::solution::demo(seqNo);
+	}
+	virtual void experiment() {
+		experiment::demo(seqNo);
 	}
 	virtual void skeleton() {
 		cout << seqNo << ") << factory_method::skeleton >>\n";

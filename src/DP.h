@@ -62,6 +62,8 @@ public:
 		else if(opt == "hp")	homeworkProblem();
 		else if(opt == "hs")	homeworkSolution();
 
+		else if(opt == "e")	experiment();
+
 		else {
 			lecture();
 			homework();
@@ -97,6 +99,9 @@ public:
 	}
 	virtual void homeworkSolution() {
 		cout << seqNo << ") << design_pattern::homework::solution >>\n";
+	}
+	virtual void experiment() {
+		cout << seqNo << ") << design_pattern::experiment >>\n";
 	}
 	// Seam point - add another matrix entry point.
 	virtual void skeleton() {
@@ -216,7 +221,7 @@ class ObserverSubject {
 public:
 	list<DPObserver*>				obsDP;
 private:
-	list<DPObserver*>::iterator	it;
+	list<DPObserver*>::iterator		it;
 	list<MatrixObserver*>			obsMatrix;
 	list<MatrixObserver*>::iterator	itm;
 public:
