@@ -7,6 +7,7 @@
 Process order:
   <>No size specified, defaulting to 100.
   <>Unknown packager || defaulting to None.
+  <>Unknown stuffer || defaulting to None.
   Setup injection line for 100 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   <>Unknown mold || defaulting to duck.
@@ -34,7 +35,7 @@ Process order:
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
 ~Plastic ~dec::Polymer 
 ~BackOfTheEnvelope ~strategy::RuntimeEstimate
@@ -55,6 +56,7 @@ Process order:
 	packager	= Bulk
 	endOfOrder
 Process order:
+  <>Unknown stuffer || defaulting to None.
   Setup injection line for 10000 order:
     IJM_110 - Aluminum(1) - Linear conveyer belt - CardboardBox.
   Pull duck mold from inventory.
@@ -79,7 +81,7 @@ Process order:
  BinObservers left to process (should be zero) = 0.
 ~PilotOrder ~abstract_factory::InjectionLine
 ~Duck ~bridge::Shape
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity 
 ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
 ~BackOfTheEnvelope ~strategy::RuntimeEstimate
@@ -102,6 +104,7 @@ Process order:
 	packager		= ShrinkWrap
 	endOfOrder
 Process order:
+  <>Unknown stuffer || defaulting to None.
   Setup injection line for 20000 order with ShrinkWrap packager:
     IJM_120 - Aluminum(2) - Y-Split conveyer belt - ShellBox.
   Create car mold from mill with 2 cavities - steps: D2C8D1G3
@@ -130,7 +133,7 @@ Process order:
  BinObservers left to process (should be zero) = 0.
 ~SmallOrder ~abstract_factory::InjectionLine
 ~Car ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
 ~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
 ~Calculation ~strategy::RuntimeEstimate
@@ -150,6 +153,7 @@ Process order:
 	packager	= HardPack
 	endOfOrder
 Process order:
+  <>Unknown stuffer || defaulting to None.
   Setup injection line for 50000 order with HardPack packager:
     IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
   Create hero mold from mill with 1 cavity - steps: D1C1D1G7
@@ -180,7 +184,7 @@ Process order:
  BinObservers left to process (should be zero) = 0.
 ~MediumOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~Carbide ~bridge::Platform
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
 ~Plastic ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
@@ -199,6 +203,7 @@ Process order:
 	packager	= HardPack
 	endOfOrder
 Process order:
+  <>Unknown stuffer || defaulting to None.
   Setup injection line for 100000 order with HardPack packager:
     IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
   Create hero mold from mill with 2 cavities - steps: D1C1D1G7
@@ -227,7 +232,7 @@ Process order:
  BinObservers left to process (should be zero) = 0.
 ~LargeOrder ~abstract_factory::InjectionLine
 ~Hero ~bridge::Shape ~DiamondTipped ~bridge::Platform
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
 ~Plastic ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
@@ -249,39 +254,36 @@ Process order:
 	address		= MegaCorp, 1 Apple, Santa Clara, CA 92200
 	endOfOrder
 Process order:
-  <>Unknown packager |ZipLock| defaulting to None.
-  Setup injection line for 40000 order:
-    IJM_210 - Steel(1) - Linear conveyer belt - PalletBox.
-  <>Unknown mold |dino| defaulting to duck.
-  Borrow duck mold from sister company.
-  Insert tags [] of width 0/20 mm, blank tag is 20 mm.
-    Ignoring unknown tag IncCounter.
-    Ignoring unknown tag PartNumber.
-    Ignoring unknown tag RecycleCode.
+  Setup injection line for 40000 order with ZipLock packager:
+    IJM_140 - Aluminum(4) - V-Level conveyer belt - ShellBox.
+  Borrow dino mold from sister company.
+  Insert tags [IncCounter PartNumber RecycleCode] of width 12/20 mm, blank tag is 8 mm.
   Load plastic bin with PET and color bin with blue.
-    Recipe: PET(32) + blue(3) = 35 cc.
-    Volume: duck(35) * 1 cavity = 35 cc.
-  Estimated run time (Historical) = 313 hours.
+    Recipe: PET(24) + blue(3) + MicroFibers(3) = 30 cc.
+    Volume: dino(30) * 4 cavities = 120 cc.
+  Estimated run time (Historical) = 61 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (40000)*28(Steel,35)/60 + 54)/60.
-  Cycle IJM_210 for PET 40000 times.
+    (118 + (10000)*21(Aluminum,30)/60 + 54)/60.
+  Cycle IJM_140 for PET 10000 times.
     Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
-    Whenever PalletBox parts bin was full...
-      IJM_210 paused while PalletBox parts bin was swapped.
-      Linear conveyer belt paused while PalletBox parts bin was swapped.
-  Clean Steel mold of PET: heat to 895 C.
+    Whenever ShellBox parts bin was full...
+      IJM_140 paused while ShellBox parts bin was swapped.
+      V-Level conveyer belt paused while ShellBox parts bin was swapped.
+      ZipLock packager paused while ShellBox parts bin was swapped.
+  Clean Aluminum mold of PET: rinse with soap and water, dry.
   Ship to "MegaCorp, 1 Apple, Santa Clara, CA 92200".
 ~PETOrder
-~IJM_210 ~IJM ~observer::BinObserver
-~Steel ~Block
-~LinearBelt ~ConveyerBelt ~observer::BinObserver
-~PalletBox ~PartsBin ~observer::BinSubject
+~IJM_140 ~IJM ~observer::BinObserver
+~Aluminum ~Block
+~VLevelBelt ~ConveyerBelt ~observer::BinObserver
+~ZipLock ~factory_method::Packager ~observer::BinObserver
+~ShellBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
-~MediumOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
-~Blank ~dec::Cavity 
-~Plastic ~dec::Polymer 
+~FastOrder ~abstract_factory::InjectionLine
+~Dino ~bridge::Shape
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~RecycleCode ~Tags ~PartNumber ~Tags ~IncCounter ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
+~MicroFibers ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
 ~PETClean ~legacy_classes::CleanupPET ~adapter::CleanMold
 ~template_method::ProcessOrder
@@ -300,35 +302,36 @@ Process order:
 	address		= Anytown, CA
 	endOfOrder
 Process order:
-  <>Unknown packager |ZipLock| defaulting to None.
-  Setup injection line for 100000 order:
+  Setup injection line for 100000 order with ZipLock packager and styrene popcorn stuffer:
     IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
-  <>Unknown mold |dino| defaulting to duck.
-  <>Unknown moldLoc |purchase| defaulting to inventory.
-  Pull duck mold from inventory.
+    Acquire dino mold via purchase.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with violet-Styrene.
-    Recipe: violet-Styrene(35) = 35 cc.
-    Volume: duck(35) * 2 cavities = 70 cc.
+    Recipe: violet-Styrene(30) = 30 cc.
+    Volume: dino(30) * 2 cavities = 60 cc.
   Estimated run time (Historical) = 391 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (50000)*28(Steel,35)/60 + 54)/60.
+    (118 + (50000)*28(Steel,30)/60 + 54)/60.
   Cycle IJM_220 for Styrene 50000 times.
     Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
     Whenever PalletBox parts bin was full...
       IJM_220 paused while PalletBox parts bin was swapped.
       Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+      ZipLock packager paused while PalletBox parts bin was swapped.
+      Popcorn stuffer paused while PalletBox parts bin was swapped.
   Clean mold of Styrene: spray with bleach, dry.
   Ship to "Anytown, CA".
 ~SyntheticOrder
 ~IJM_220 ~IJM ~observer::BinObserver
 ~Steel ~Block
 ~YSplitBelt ~ConveyerBelt ~observer::BinObserver
+~ZipLock ~factory_method::Packager ~observer::BinObserver
+~Popcorn ~factory_method::Stuffer ~observer::BinObserver
 ~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~LargeOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Dino ~bridge::Shape
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
 ~Plastic ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
@@ -350,38 +353,39 @@ Process order:
 	address		= Wherever, USA
 	endOfOrder
 Process order:
-  <>Unknown size |200000| defaulting to 100000.
-  <>Unknown packager |ZipLock| defaulting to None.
-  Setup injection line for 100000 order:
-    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
-  <>Unknown finish |sanded| defaulting to smooth.
-  <>Unknown mold |dino| defaulting to duck.
-  Create duck mold from mill with 2 cavities - steps: D2C4G1
-    using HighCarbon tools (drill, cut, and high speed grind)
-    to mill Steel block into 2 duck shapes with smooth finish.
+  Setup injection line for 200000 order with ZipLock packager and bubble wrap stuffer:
+    IJM_240 - Steel(4) - V-Level conveyer belt - Crate.
+  Create dino mold from mill with 4 cavities - steps: G5D2C1
+    using EDM tools (static punch, static slice, and static etch)
+    to mill Steel block into 4 dino shapes with sanded finish.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with gray-Nylon66.
-    Recipe: gray-Nylon66(33) + Hydrophilic(2) = 35 cc.
-    Volume: duck(35) * 2 cavities = 70 cc.
+    Recipe: gray-Nylon66(28) + Hydrophilic(2) = 30 cc.
+    Volume: dino(30) * 4 cavities = 120 cc.
+    <>Using most sophisticated estimation algorithm for orders greater than 150000.
   Estimated run time (Historical) = 391 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (50000)*28(Steel,35)/60 + 54)/60.
-  Cycle IJM_220 for Nylon66 50000 times.
+    (118 + (50000)*28(Steel,30)/60 + 54)/60.
+  Cycle IJM_240 for Nylon66 50000 times.
     Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
-    Whenever PalletBox parts bin was full...
-      IJM_220 paused while PalletBox parts bin was swapped.
-      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+    Whenever Crate parts bin was full...
+      IJM_240 paused while Crate parts bin was swapped.
+      V-Level conveyer belt paused while Crate parts bin was swapped.
+      ZipLock packager paused while Crate parts bin was swapped.
+      Bubblewrap stuffer paused while Crate parts bin was swapped.
   Clean mold of Nylon66: ozone wash.
   Ship to "Wherever, USA".
 ~SyntheticOrder
-~IJM_220 ~IJM ~observer::BinObserver
+~IJM_240 ~IJM ~observer::BinObserver
 ~Steel ~Block
-~YSplitBelt ~ConveyerBelt ~observer::BinObserver
-~PalletBox ~PartsBin ~observer::BinSubject
+~VLevelBelt ~ConveyerBelt ~observer::BinObserver
+~ZipLock ~factory_method::Packager ~observer::BinObserver
+~Bubblewrap ~factory_method::Stuffer ~observer::BinObserver
+~Crate ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
-~LargeOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~HugeOrder ~abstract_factory::InjectionLine
+~Dino ~bridge::Shape ~EDM ~bridge::Platform
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
 ~Hydrophilic ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
@@ -407,41 +411,39 @@ Process order:
 	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
 	endOfOrder
 Process order:
-  <>Unknown size |400000| defaulting to 100000.
-  Setup injection line for 100000 order:
-    IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
-  <>Unknown finish |satin| defaulting to smooth.
-  Create hero mold from mill with 2 cavities - steps: D1C1D1G7
-    using HighCarbon tools (drill, cut, and high speed grind)
-    to mill Steel block into 2 hero shapes with smooth finish.
-  Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
-    Ignoring unknown tag IncCounter.
-    Ignoring unknown tag PartNumber.
-    Ignoring unknown tag RecycleCode.
+  Setup injection line for 400000 order with expanding foam stuffer:
+    IJM_280 - Steel(8) - V-Level conveyer belt - Crate.
+  Create hero mold from mill with 8 cavities - steps: D1C1D1G7
+    using EDM tools (static punch, static slice, and static etch)
+    to mill Steel block into 8 hero shapes with satin finish.
+  Insert tags [IncCounter PartNumber RecycleCode ModelNumber Country Date] of width 18/20 mm, blank tag is 2 mm.
   Load plastic bin with white-Nylon66.
-    Recipe: white-Nylon66(45) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 50 cc.
-    Volume: hero(50) * 2 cavities = 100 cc.
+    Recipe: white-Nylon66(42) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) + MicroFibers(3) = 50 cc.
+    Volume: hero(50) * 8 cavities = 400 cc.
+    <>Using most sophisticated estimation algorithm for orders greater than 150000.
   Estimated run time (Historical) = 419 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
     (118 + (50000)*30(Steel,50)/60 + 54)/60.
-  Cycle IJM_220 for Nylon66 50000 times.
+  Cycle IJM_280 for Nylon66 50000 times.
     Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
-    Whenever PalletBox parts bin was full...
-      IJM_220 paused while PalletBox parts bin was swapped.
-      Y-Split conveyer belt paused while PalletBox parts bin was swapped.
+    Whenever Crate parts bin was full...
+      IJM_280 paused while Crate parts bin was swapped.
+      V-Level conveyer belt paused while Crate parts bin was swapped.
+      Foam stuffer paused while Crate parts bin was swapped.
   Clean mold of Nylon66: ozone wash.
   Ship to "PLay Toys, 1234 5th st, Pastoria, IL 34556".
 ~SyntheticOrder
-~IJM_220 ~IJM ~observer::BinObserver
+~IJM_280 ~IJM ~observer::BinObserver
 ~Steel ~Block
-~YSplitBelt ~ConveyerBelt ~observer::BinObserver
-~PalletBox ~PartsBin ~observer::BinSubject
+~VLevelBelt ~ConveyerBelt ~observer::BinObserver
+~Foam ~factory_method::Stuffer ~observer::BinObserver
+~Crate ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
-~LargeOrder ~abstract_factory::InjectionLine
-~Hero ~bridge::Shape ~HighCarbon ~bridge::Platform
-~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
-~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
-~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
+~GiganticOrder ~abstract_factory::InjectionLine
+~Hero ~bridge::Shape ~EDM ~bridge::Platform
+~Inventory ~SisterCompany ~Purchase ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
+~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~RecycleCode ~Tags ~PartNumber ~Tags ~IncCounter ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
+~MicroFibers ~Additive ~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
 ~Nylon66Clean ~adapter::CleanMold
 ~template_method::ProcessOrder

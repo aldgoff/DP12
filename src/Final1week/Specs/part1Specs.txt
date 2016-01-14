@@ -65,9 +65,10 @@
    8.2. 2 - Y-Split
 9. Support these output parts bins: (domain: order["size"])
    9.0. Default to largest if size > max
-   9.1. 10,000 - CardboardBox
-   9.2. 20,000 - ShellBox
-   9.3. 50,000 - PallotBox
+   9.1.  10,000 - CardboardBox
+   9.2.  20,000 - ShellBox
+   9.3.  50,000 - PallotBox
+   9.4. 100,000 - PallotBox
 
 10. Implement these Packagers: (domain: order["packager"])
 	10.1. Bulk (default, just dump parts to the parts bin)

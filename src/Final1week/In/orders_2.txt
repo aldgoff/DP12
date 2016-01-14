@@ -89,6 +89,7 @@
 	plastic		= Nylon66
 	moldLoc		= mill
 	finish		= sanded
+	Hydrophilic	= 2
 	packager	= ZipLock
 	stuffer		= Bubblewrap
 	address		= Wherever, USA
@@ -97,7 +98,7 @@
 	orderNum		= 9
 	comment			= New Specs: max out, mill or last.
 	size			= 400000
-	mold			= dino
+	mold			= hero
 	color			= white
 	plastic			= Nylon66
 	moldLoc			= mill
@@ -107,7 +108,7 @@
 	UVInhibiter		= 2
 	Hydrophilic		= 2
 	AntiBacterial	= 1
-	packager		= ZipLock
+	packager		= Bulk
 	stuffer			= Foam
 	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
 	endOfOrder

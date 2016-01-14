@@ -1150,6 +1150,7 @@ public:
 Int Int::createRestrictedInt(int value) {
 	if(value <= 7)	return Int(6);
 	if(value >= 8)	return Int(9);
+	return 0;
 }
 
 void demo(int seqNo) {

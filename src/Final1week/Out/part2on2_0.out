@@ -1,4 +1,4 @@
-<<< final part1 >>>
+<<< final part2 >>>
 1:
 	orderNum	= 1
 	comment		= Null order - check default behaviors.
@@ -15,7 +15,7 @@ Process order:
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   <>Unknown color || defaulting to black.
   Load plastic bin with ABS and color bin with black.
-      Recipe: ABS(32) black(3) = 35 cc.
+    Recipe: ABS(32) + black(3) = 35 cc.
     Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (BackOfTheEnvelope) = 1 hour.
     (orderSize/cavities)*cycleTime/3600.
@@ -60,7 +60,7 @@ Process order:
   Pull duck mold from inventory.
   Insert tags [ModelNumber] of width 2/20 mm, blank tag is 18 mm.
   Load plastic bin with ABS and color bin with red.
-      Recipe: ABS(30) red(3) + UVInhibiter(2) = 35 cc.
+    Recipe: ABS(30) + red(3) + UVInhibiter(2) = 35 cc.
     Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (BackOfTheEnvelope) = 108 hours.
     (orderSize/cavities)*cycleTime/3600.
@@ -109,7 +109,7 @@ Process order:
     to mill Aluminum block into 2 car shapes with smooth finish.
   Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
   Load plastic bin with Polypropylene and color bin with orange.
-      Recipe: Polypropylene(31) orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 40 cc.
+    Recipe: Polypropylene(31) + orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 40 cc.
     Volume: car(40) * 2 cavities = 80 cc.
   Estimated run time (Calculation) = 61 hours.
     (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/3600.
@@ -159,7 +159,7 @@ Process order:
     Ignoring unknown tag ModelNum.
     Ignoring unknown tag date.
   Load plastic bin with Polyethelene and color bin with yellow.
-      Recipe: Polyethelene(45) yellow(5) = 50 cc.
+    Recipe: Polyethelene(45) + yellow(5) = 50 cc.
     Volume: hero(50) * 1 cavity = 50 cc.
   Estimated run time (Historical) = 419 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
@@ -206,7 +206,7 @@ Process order:
     to mill Steel block into 2 hero shapes with dimpled finish.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with PET and color bin with green.
-      Recipe: PET(45) green(5) = 50 cc.
+    Recipe: PET(45) + green(5) = 50 cc.
     Volume: hero(50) * 2 cavities = 100 cc.
   Estimated run time (Historical) = 419 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
@@ -259,7 +259,7 @@ Process order:
     Ignoring unknown tag PartNumber.
     Ignoring unknown tag RecycleCode.
   Load plastic bin with PET and color bin with blue.
-      Recipe: PET(32) blue(3) = 35 cc.
+    Recipe: PET(32) + blue(3) = 35 cc.
     Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (Historical) = 313 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
@@ -298,7 +298,6 @@ Process order:
 	stuffer		= Popcorn
 	address		= Anytown, CA
 	endOfOrder
-  <>Unknown plastic |Styrene| defaulting to ABS.
 Process order:
   <>Unknown packager |ZipLock| defaulting to None.
   Setup injection line for 100000 order:
@@ -307,19 +306,19 @@ Process order:
   <>Unknown moldLoc |purchase| defaulting to inventory.
   Pull duck mold from inventory.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
-  Load plastic bin with ABS and color bin with violet.
-      Recipe: ABS(32) violet(3) = 35 cc.
+  Load plastic bin with violet-Styrene.
+    Recipe: violet-Styrene(35) = 35 cc.
     Volume: duck(35) * 2 cavities = 70 cc.
   Estimated run time (Historical) = 391 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
     (118 + (50000)*28(Steel,35)/60 + 54)/60.
-  Cycle IJM_220 for ABS 50000 times.
-    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+  Cycle IJM_220 for Styrene 50000 times.
+    Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
     Whenever PalletBox parts bin was full...
       IJM_220 paused while PalletBox parts bin was swapped.
       Y-Split conveyer belt paused while PalletBox parts bin was swapped.
-  Clean mold of ABS: soak in alcohol, rinse with water, dry.
-~ABSOrder
+  Clean mold of Styrene: spray with bleach, dry.
+~SyntheticOrder
 ~IJM_220 ~IJM ~observer::BinObserver
 ~Steel ~Block
 ~YSplitBelt ~ConveyerBelt ~observer::BinObserver
@@ -331,7 +330,7 @@ Process order:
 ~Blank ~dec::Cavity 
 ~Plastic ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
-~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~StyreneClean ~adapter::CleanMold
 ~template_method::ProcessOrder
 
 8:
@@ -343,11 +342,11 @@ Process order:
 	plastic		= Nylon66
 	moldLoc		= mill
 	finish		= sanded
+	Hydrophilic	= 2
 	packager	= ZipLock
 	stuffer		= Bubblewrap
 	address		= Wherever, USA
 	endOfOrder
-  <>Unknown plastic |Nylon66| defaulting to ABS.
 Process order:
   <>Unknown size |200000| defaulting to 100000.
   <>Unknown packager |ZipLock| defaulting to None.
@@ -359,19 +358,19 @@ Process order:
     using HighCarbon tools (drill, cut, and high speed grind)
     to mill Steel block into 2 duck shapes with smooth finish.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
-  Load plastic bin with ABS and color bin with gray.
-      Recipe: ABS(32) gray(3) = 35 cc.
+  Load plastic bin with gray-Nylon66.
+    Recipe: gray-Nylon66(33) + Hydrophilic(2) = 35 cc.
     Volume: duck(35) * 2 cavities = 70 cc.
   Estimated run time (Historical) = 391 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
     (118 + (50000)*28(Steel,35)/60 + 54)/60.
-  Cycle IJM_220 for ABS 50000 times.
-    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+  Cycle IJM_220 for Nylon66 50000 times.
+    Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
     Whenever PalletBox parts bin was full...
       IJM_220 paused while PalletBox parts bin was swapped.
       Y-Split conveyer belt paused while PalletBox parts bin was swapped.
-  Clean mold of ABS: soak in alcohol, rinse with water, dry.
-~ABSOrder
+  Clean mold of Nylon66: ozone wash.
+~SyntheticOrder
 ~IJM_220 ~IJM ~observer::BinObserver
 ~Steel ~Block
 ~YSplitBelt ~ConveyerBelt ~observer::BinObserver
@@ -381,16 +380,16 @@ Process order:
 ~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Blank ~dec::Cavity 
-~Plastic ~dec::Polymer 
+~Hydrophilic ~Additive ~Plastic ~dec::Polymer ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
-~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~Nylon66Clean ~adapter::CleanMold
 ~template_method::ProcessOrder
 
 9:
 	orderNum		= 9
 	comment			= New Specs: max out, mill or last.
 	size			= 400000
-	mold			= dino
+	mold			= hero
 	color			= white
 	plastic			= Nylon66
 	moldLoc			= mill
@@ -400,50 +399,47 @@ Process order:
 	UVInhibiter		= 2
 	Hydrophilic		= 2
 	AntiBacterial	= 1
-	packager		= ZipLock
+	packager		= Bulk
 	stuffer			= Foam
 	address			= PLay Toys, 1234 5th st, Pastoria, IL 34556
 	endOfOrder
-  <>Unknown plastic |Nylon66| defaulting to ABS.
 Process order:
   <>Unknown size |400000| defaulting to 100000.
-  <>Unknown packager |ZipLock| defaulting to None.
   Setup injection line for 100000 order:
     IJM_220 - Steel(2) - Y-Split conveyer belt - PalletBox.
   <>Unknown finish |satin| defaulting to smooth.
-  <>Unknown mold |dino| defaulting to duck.
-  Create duck mold from mill with 2 cavities - steps: D2C4G1
+  Create hero mold from mill with 2 cavities - steps: D1C1D1G7
     using HighCarbon tools (drill, cut, and high speed grind)
-    to mill Steel block into 2 duck shapes with smooth finish.
+    to mill Steel block into 2 hero shapes with smooth finish.
   Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
     Ignoring unknown tag IncCounter.
     Ignoring unknown tag PartNumber.
     Ignoring unknown tag RecycleCode.
-  Load plastic bin with ABS and color bin with white.
-      Recipe: ABS(27) white(3) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 35 cc.
-    Volume: duck(35) * 2 cavities = 70 cc.
-  Estimated run time (Historical) = 391 hours.
+  Load plastic bin with white-Nylon66.
+    Recipe: white-Nylon66(45) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 50 cc.
+    Volume: hero(50) * 2 cavities = 100 cc.
+  Estimated run time (Historical) = 419 hours.
     (setupAvg_min + (orderSize/cavities)*cycleTime_sec(metal, volume_cc)/60 + teardownAvg_min)/60.
-    (118 + (50000)*28(Steel,35)/60 + 54)/60.
-  Cycle IJM_220 for ABS 50000 times.
-    Close - heat to 440 - inject at 125 PSI - cool to 360 - separate - progressive eject.
+    (118 + (50000)*30(Steel,50)/60 + 54)/60.
+  Cycle IJM_220 for Nylon66 50000 times.
+    Close - heat to 480 - inject at 150 PSI - cool to 390 - separate - shock eject.
     Whenever PalletBox parts bin was full...
       IJM_220 paused while PalletBox parts bin was swapped.
       Y-Split conveyer belt paused while PalletBox parts bin was swapped.
-  Clean mold of ABS: soak in alcohol, rinse with water, dry.
-~ABSOrder
+  Clean mold of Nylon66: ozone wash.
+~SyntheticOrder
 ~IJM_220 ~IJM ~observer::BinObserver
 ~Steel ~Block
 ~YSplitBelt ~ConveyerBelt ~observer::BinObserver
 ~PalletBox ~PartsBin ~observer::BinSubject
  BinObservers left to process (should be zero) = 0.
 ~LargeOrder ~abstract_factory::InjectionLine
-~Duck ~bridge::Shape ~HighCarbon ~bridge::Platform
+~Hero ~bridge::Shape ~HighCarbon ~bridge::Platform
 ~Inventory ~SisterCompany ~Mill ~CofR::Mold ~CofR::Mold ~CofR::Mold ~CofR::Mold 
 ~Date ~Tags ~Country ~Tags ~ModelNumber ~Tags ~Blank ~dec::Cavity ~dec::Cavity ~dec::Cavity ~dec::Cavity 
 ~Hydrophilic ~Additive ~AntiBacterial ~Additive ~UVInhibiter ~Additive ~Plastic ~dec::Polymer ~dec::Polymer ~dec::Polymer ~dec::Polymer 
 ~Historical ~strategy::RuntimeEstimate
-~ABSClean ~legacy_classes::CleanABS ~adapter::CleanMold
+~Nylon66Clean ~adapter::CleanMold
 ~template_method::ProcessOrder
 
 
