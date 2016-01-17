@@ -98,7 +98,6 @@ public:
 			 << bin->name << " parts bin was swapped.\n";
 	}
 };
-// Seam point - add another class.
 class Foam : public Stuffer {
 public:
 	Foam(BinSubject* bin) : Stuffer(bin) {}
@@ -110,13 +109,14 @@ public:
 			 << bin->name << " parts bin was swapped.\n";
 	}
 };
+// Seam point - add another class.
 
 Stuffer* Stuffer::makeObject(map<string,string>& order, BinSubject* bin) {
 	if(order["stuffer"] == "Air")			return 0;	// Null, no Observer.
 	if(order["stuffer"] == "Popcorn")		return new Popcorn(bin);
 	if(order["stuffer"] == "Bubblewrap")	return new Bubblewrap(bin);
+	if(order["stuffer"] == "Foam")			return new Foam(bin);
 	// Seam point - add another class.
-	if(order["stuffer"] == "Foam")	return new Foam(bin);
 
 	legacy_classes::defaulting(order, "stuffer", "None");
 	return 0;

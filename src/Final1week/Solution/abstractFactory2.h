@@ -42,7 +42,7 @@ public:
 	string setup() { return "IJM_220"; }
 };
 // Seam point - add another IJM type.
-class IJM_140 : public IJM {		// SmallOrder.
+class IJM_140 : public IJM {		// FastOrder.
 public:
 	IJM_140(BinSubject* bin) : IJM(bin) {}
 	~IJM_140() { DTORF("~IJM_140 "); }

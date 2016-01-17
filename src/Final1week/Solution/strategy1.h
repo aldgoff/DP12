@@ -124,8 +124,8 @@ RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& 
 	if(size <= 150000)	return new Historical;
 	// Seam point - add another runtime estimation algorithm.
 
-	cout << "    <>Using most sophisticated estimation algorithm";
-	cout << " for orders greater than 150000.\n";
+	cout << "    <>Using most sophisticated estimation algorithm"
+		 << " for orders greater than 150000.\n";
 	return new Historical;
 }
 

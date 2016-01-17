@@ -252,8 +252,8 @@ RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& 
 	if(size <= 150000)	return new Historical;
 	// Seam point - add another runtime estimation algorithm.
 
-	cout << "    <>Using most sophisticated estimation algorithm";
-	cout << " for orders greater than 150000.\n";
+	cout << "    <>Using most sophisticated estimation algorithm"
+		 << " for orders greater than 150000.\n";
 	return new Historical;
 }
 
@@ -334,8 +334,8 @@ public:
 	string wrap() { return "ShrinkWrap"; }
 public:
 	void update(BinSubject* bin) {
-		cout << "      Shrink wrap packager paused while ";
-		cout << bin->name << " parts bin was swapped.\n";
+		cout << "      Shrink wrap packager paused while "
+			 << bin->name << " parts bin was swapped.\n";
 	}
 };
 class HardPack : public Packager {
@@ -346,8 +346,8 @@ public:
 	string wrap() { return "HardPack"; }
 public:
 	void update(BinSubject* bin) {
-		cout << "      Hard pack packager paused while ";
-		cout << bin->name << " parts bin was swapped.\n";
+		cout << "      Hard pack packager paused while "
+			 << bin->name << " parts bin was swapped.\n";
 	}
 };
 // Seam point - add another class.
@@ -381,28 +381,28 @@ public:
 	}
 	virtual string setup() { return "IJM base"; }
 };
-class IJM_110 : public IJM {					// PilotOrder.
+class IJM_110 : public IJM {		// PilotOrder.
 public:
 	IJM_110(BinSubject* bin) : IJM(bin) {}
 	~IJM_110() { DTORF("~IJM_110 "); }
 public:
 	string setup() { return "IJM_110"; }
 };
-class IJM_120 : public IJM {					// SmallOrder.
+class IJM_120 : public IJM {		// SmallOrder.
 public:
 	IJM_120(BinSubject* bin) : IJM(bin) {}
 	~IJM_120() { DTORF("~IJM_120 "); }
 public:
 	string setup() { return "IJM_120"; }
 };
-class IJM_210 : public IJM {					// MediumOrder.
+class IJM_210 : public IJM {		// MediumOrder.
 public:
 	IJM_210(BinSubject* bin) : IJM(bin) {}
 	~IJM_210() { DTORF("~IJM_210 "); }
 public:
 	string setup() { return "IJM_210"; }
 };
-class IJM_220 : public IJM {					// LargeOrder.
+class IJM_220 : public IJM {		// LargeOrder.
 public:
 	IJM_220(BinSubject* bin) : IJM(bin) {}
 	~IJM_220() { DTORF("~IJM_220 "); }
@@ -521,7 +521,7 @@ public:
 	static InjectionLine* createInjectionLine(map<string,string>& order);
 };
 class PilotOrder : public InjectionLine {
-public:	virtual ~PilotOrder() { DTORF("~PilotOrder "); }
+public:	~PilotOrder() { DTORF("~PilotOrder "); }
 public:
 	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
 		return new IJM_110(bin);
@@ -537,7 +537,7 @@ public:
 	}
 };
 class SmallOrder : public InjectionLine {
-public:	virtual ~SmallOrder() { DTORF("~SmallOrder "); }
+public:	~SmallOrder() { DTORF("~SmallOrder "); }
 public:
 	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
 		return new IJM_120(bin);
@@ -553,7 +553,7 @@ public:
 	}
 };
 class MediumOrder : public InjectionLine {
-public:	virtual ~MediumOrder() { DTORF("~MediumOrder "); }
+public:	~MediumOrder() { DTORF("~MediumOrder "); }
 public:
 	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
 		return new IJM_210(bin);
@@ -569,7 +569,7 @@ public:
 	}
 };
 class LargeOrder : public InjectionLine {
-public:	virtual ~LargeOrder() { DTORF("~LargeOrder "); }
+public:	~LargeOrder() { DTORF("~LargeOrder "); }
 public:
 	IJM* createIJM(map<string,string>& order, BinSubject* bin) {
 		return new IJM_220(bin);
@@ -700,7 +700,7 @@ public:
 class Duck : public Shape {
 public:
 	Duck(Platform* platform) : Shape(platform, "duck", 35) {};
-	virtual ~Duck() { DTORF("~Duck "); }
+	~Duck() { DTORF("~Duck "); }
 public:
 	virtual void steps() {
 		cout << "steps: D2C4G1\n";
@@ -709,7 +709,7 @@ public:
 class Car : public Shape {
 public:
 	Car(Platform* platform) : Shape(platform, "car", 40) {};
-	virtual ~Car() { DTORF("~Car "); }
+	~Car() { DTORF("~Car "); }
 public:
 	virtual void steps() {
 		cout << "steps: D2C8D1G3\n";
@@ -718,7 +718,7 @@ public:
 class Hero : public Shape {
 public:
 	Hero(Platform* platform) : Shape(platform, "hero", 50) {};
-	virtual ~Hero() { DTORF("~Hero "); }
+	~Hero() { DTORF("~Hero "); }
 public:
 	virtual void steps() {
 		cout << "steps: D1C1D1G7\n";
@@ -769,7 +769,7 @@ public:
 class Inventory : public Mold {
 public:
 	Inventory(Mold* successor=0) : Mold(successor) {}
-	virtual ~Inventory() { DTORF("~Inventory "); delete successor; }
+	~Inventory() { DTORF("~Inventory "); delete successor; }
 public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
@@ -787,7 +787,7 @@ public:
 class SisterCompany : public Mold {
 public:
 	SisterCompany(Mold* successor=0) : Mold(successor) {}
-	virtual ~SisterCompany() { DTORF("~SisterCompany "); delete successor; }
+	~SisterCompany() { DTORF("~SisterCompany "); delete successor; }
 public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
@@ -806,7 +806,7 @@ public:
 class Mill : public Mold {
 public:
 	Mill(Mold* successor=0) : Mold(successor) {}
-	virtual ~Mill() { DTORF("~Mill "); delete successor; }
+	~Mill() { DTORF("~Mill "); delete successor; }
 public:
 	Shape* from(map<string,string>& order) {
 		string place = order["moldLoc"];
@@ -867,7 +867,7 @@ public:
 class Blank : public Cavity {
 public:
 	Blank(unsigned width_mm=20) : Cavity(width_mm) {}
-	virtual ~Blank() { DTORF("~Blank "); }
+	~Blank() { DTORF("~Blank "); }
 public:
 	virtual unsigned width_mm() { return 0; }
 	string list() { return ""; }
@@ -877,12 +877,12 @@ protected:
 	Cavity* delegate;
 public:
 	Tags(Cavity* delegate) : delegate(delegate) {}
-	virtual ~Tags() { DTORF("~Tags "); delete delegate; }
+	~Tags() { DTORF("~Tags "); delete delegate; }
 };
 class ModelNumber : public Tags {
 public:
 	ModelNumber(Cavity* delegate) : Tags(delegate) {}
-	virtual ~ModelNumber() { DTORF("~ModelNumber "); }
+	~ModelNumber() { DTORF("~ModelNumber "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "ModelNumber "; }
@@ -890,7 +890,7 @@ public:
 class Country : public Tags {
 public:
 	Country(Cavity* delegate) : Tags(delegate) {}
-	virtual ~Country() { DTORF("~Country "); }
+	~Country() { DTORF("~Country "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Country "; }
@@ -898,7 +898,7 @@ public:
 class Date : public Tags {
 public:
 	Date(Cavity* delegate) : Tags(delegate) {}
-	virtual ~Date() { DTORF("~Date "); }
+	~Date() { DTORF("~Date "); }
 public:
 	unsigned width_mm() { return delegate->width_mm() + 2; }
 	string list() { return delegate->list() + "Date "; }
@@ -947,7 +947,7 @@ protected:
 class Plastic : public Polymer {
 public:
 	Plastic(unsigned volume_cc=0) : Polymer(volume_cc) {}
-	virtual ~Plastic() { DTORF("~Plastic "); }
+	~Plastic() { DTORF("~Plastic "); }
 };
 class Additive : public Polymer {
 protected:
@@ -955,13 +955,13 @@ protected:
 public:
 	Additive(Polymer* delegate, unsigned volume_cc)
 	  : Polymer(volume_cc), delegate(delegate) {}
-	virtual ~Additive() { DTORF("~Additive "); delete delegate; }
+	~Additive() { DTORF("~Additive "); delete delegate; }
 };
 class UVInhibiter : public Additive {
 public:
 	UVInhibiter(Polymer* delegate, unsigned volume_cc=0)
 	  : Additive(delegate, volume_cc) {}
-	virtual ~UVInhibiter() { DTORF("~UVInhibiter "); }
+	~UVInhibiter() { DTORF("~UVInhibiter "); }
 public:
 	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " + UVInhibiter" + volAsStr(); }
@@ -970,7 +970,7 @@ class AntiBacterial : public Additive {
 public:
 	AntiBacterial(Polymer* delegate, unsigned volume_cc=0)
 	  : Additive(delegate, volume_cc) {}
-	virtual ~AntiBacterial() { DTORF("~AntiBacterial "); }
+	~AntiBacterial() { DTORF("~AntiBacterial "); }
 public:
 	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " + AntiBacterial" + volAsStr(); }
@@ -979,7 +979,7 @@ class Hydrophilic : public Additive {
 public:
 	Hydrophilic(Polymer* delegate, unsigned volume_cc=0)
 	  : Additive(delegate, volume_cc) {}
-	virtual ~Hydrophilic() { DTORF("~Hydrophilic "); }
+	~Hydrophilic() { DTORF("~Hydrophilic "); }
 public:
 	unsigned mix() { return delegate->mix() + volume_cc; }
 	string idNvol() { return delegate->idNvol() + " + Hydrophilic" + volAsStr(); }
