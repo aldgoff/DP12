@@ -1,13 +1,14 @@
-class ProcessOrder4 { // Packager, pausing upstream machines - Observer(5).
+class ProcessOrder { // Packager, pausing upstream machines - Observer(5).
+protected:
 	adapter::CleanMold*					cleaning;
-	abstract_factory2::InjectionLine*	injectionLine;
-	abstract_factory2::IJM*				ijm;
-	abstract_factory2::Block*			block;
-	abstract_factory2::ConveyerBelt*	belt;
-	abstract_factory2::PartsBin*		bin;	// Inherits from observer::BinSubject.
+	abstract_factory::InjectionLine*	injectionLine;
+	abstract_factory::IJM*				ijm;
+	abstract_factory::Block*			block;
+	abstract_factory::ConveyerBelt*		belt;
+	abstract_factory::PartsBin*			bin;	// Inherits from observer::BinSubject.
 	factory_method::Packager*			packager;
 public:
-	ProcessOrder4()
+	ProcessOrder()
 		: cleaning(0)
 		, injectionLine(0)
 		, ijm(0)
@@ -16,7 +17,7 @@ public:
 		, bin(0)
 		, packager(0)
 	{}
-	virtual ~ProcessOrder4() {
+	virtual ~ProcessOrder() {
 		delete ijm;
 		delete block;
 		delete belt;
@@ -32,8 +33,7 @@ public:
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
 		insertTags(order);					// 6 - Decorator
-		loadBins(order);
-		loadAdditives(order);				// 6 - Decorator
+		loadBins(order);					// 6 - Decorator
 		runtimeEstimate(order);				// 1 - Strategy
 		injectionCycle(order);				// 4 - Template Method
 		simulateFullPartsBin(order);		// 5 - Observer
@@ -42,7 +42,7 @@ public:
 protected: // Template Method methods.
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
 		using namespace factory_method;
-		using namespace abstract_factory2;
+		using namespace abstract_factory;
 
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
@@ -83,12 +83,11 @@ protected: // Template Method methods.
 	void loadBins(map<string,string>& order) {
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with <color>.\n";
-	}
-	void loadAdditives(map<string,string>& order) {
+
 		int cavities = block->cavities;
 
-		cout << "    Recipe: " << order["plastic"] << "(vol) "
-				 << "<color>(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) + "
+				 << "<color>(vol) + <additive(<vol>) list> = (vol) cc.\n";
 
 		string plural = (cavities == 1) ? " cavity ": " cavities ";
 		cout << "    Volume: <mold>(vol) * "

@@ -1,15 +1,16 @@
-class ProcessOrder6 { // Acquire mold - CofR(7).
+class ProcessOrder { // Acquire mold - CofR(7).
+protected:
 	adapter::CleanMold*					cleaning;
-	abstract_factory2::InjectionLine*	injectionLine;
-	abstract_factory2::IJM*				ijm;
-	abstract_factory2::Block*			block;
-	abstract_factory2::ConveyerBelt*	belt;
-	abstract_factory2::PartsBin*		bin;	// Inherits from observer::BinSubject.
+	abstract_factory::InjectionLine*	injectionLine;
+	abstract_factory::IJM*				ijm;
+	abstract_factory::Block*			block;
+	abstract_factory::ConveyerBelt*		belt;
+	abstract_factory::PartsBin*			bin;	// Inherits from observer::BinSubject.
 	factory_method::Packager*			packager;
 	bridge::Shape*						shape;
 	chain_of_resp::Mold*				mold;
 public:
-	ProcessOrder6()
+	ProcessOrder()
 		: cleaning(0)
 		, injectionLine(0)
 		, ijm(0)
@@ -20,7 +21,7 @@ public:
 		, shape(0)
 		, mold(0)
 	{}
-	virtual ~ProcessOrder6() {
+	virtual ~ProcessOrder() {
 		delete ijm;
 		delete block;
 		delete belt;
@@ -38,8 +39,7 @@ public:
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
 		insertTags(order);					// 6 - Decorator
-		loadBins(order);
-		loadAdditives(order);				// 6 - Decorator
+		loadBins(order);					// 6 - Decorator
 		runtimeEstimate(order);				// 1 - Strategy
 		injectionCycle(order);				// 4 - Template Method
 		simulateFullPartsBin(order);		// 5 - Observer
@@ -48,7 +48,7 @@ public:
 protected: // Template Method methods.
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
 		using namespace factory_method;
-		using namespace abstract_factory2;
+		using namespace abstract_factory;
 
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
@@ -98,14 +98,15 @@ protected: // Template Method methods.
 		cout << "  Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.\n";
 	}
 	void loadBins(map<string,string>& order) {
+		using namespace decorator;
+
 		if(order.find("color") == order.end()) {
 			legacy_classes::defaulting(order, "color", "black");
 		}
 
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with " << order["color"] << ".\n";
-	}
-	void loadAdditives(map<string,string>& order) {
+
 		int cavities = block->cavities;
 
 		int shapeVol = shape->volume_cc;
@@ -114,7 +115,7 @@ protected: // Template Method methods.
 
 		int totalVol = cavities*shapeVol;
 
-		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") "
+		cout << "    Recipe: " << order["plastic"] << "(" << plasticVol << ") + "
 			 << order["color"] << "(" << colorVol << ") "
 			 << "<additive(<vol>) list> = (" << shapeVol << ") cc.\n";
 

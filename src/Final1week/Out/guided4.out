@@ -12,7 +12,7 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with ABS and color bin with <color>.
-    Recipe: ABS(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Recipe: ABS(vol) + <color>(vol) + <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * 1 cavity = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -52,7 +52,7 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with ABS and color bin with <color>.
-    Recipe: ABS(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Recipe: ABS(vol) + <color>(vol) + <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * 1 cavity = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -94,7 +94,7 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polypropylene and color bin with <color>.
-    Recipe: Polypropylene(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Recipe: Polypropylene(vol) + <color>(vol) + <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * 2 cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -135,7 +135,7 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with Polyethelene and color bin with <color>.
-    Recipe: Polyethelene(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Recipe: Polyethelene(vol) + <color>(vol) + <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * 1 cavity = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -175,7 +175,7 @@ Process order:
   <Acquire> <mold> mold from <moldLoc>.
   Insert tags [<list>] of width <width>/20 mm, blank tag is <20-width> mm.
   Load plastic bin with PET and color bin with <color>.
-    Recipe: PET(vol) <color>(vol) <additive(<vol>) list> = (vol) cc.
+    Recipe: PET(vol) + <color>(vol) + <additive(<vol>) list> = (vol) cc.
     Volume: <mold>(vol) * 2 cavities = (vol) cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:

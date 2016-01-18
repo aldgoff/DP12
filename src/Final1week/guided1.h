@@ -1245,7 +1245,7 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
-#define G8	// Successively replace with 1,2,3,...,9.
+#define G4	// Successively replace with 1,2,3,...,9.
 
 #ifdef G0 // Architecture - Template Method(4), Factory Method(3).
 #include "PC/processOrder0.h"
