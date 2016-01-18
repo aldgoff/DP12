@@ -1,14 +1,14 @@
 /*
- * finalGuided.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
+ * guided1.h - tutorial from final.h to finalPart1.h
  *
- *  Created on: <MMDDCCYY>
- *      Author: <studentName>
+ *  Created on: 1/17/16
+ *      Author: Allan Goff
  */
 
-#ifndef FINAL_GUIDED_H_
-#define FINAL_GUIDED_H_
+#ifndef FINAL_GUIDED1_H_
+#define FINAL_GUIDED1_H_
 
-namespace final_guided {
+namespace final_guided1 {
 
 const bool on = true;	// Useful macro to turn dtor instrumentation on/off.
 #define DTORF(x) if(on) { cout << x; }
@@ -1245,19 +1245,59 @@ namespace template_method {	// DP 3.
  * 11. Diff with output file
  */
 
+#define G8	// Successively replace with 1,2,3,...,9.
+
+#ifdef G0 // Architecture - Template Method(4), Factory Method(3).
+#include "PC/processOrder0.h"
+#endif
+#ifdef G1 // Dtor instrumentation and non defaulted order specs.
+#include "PC/processOrder1.h"
+#endif
+#ifdef G2 // Clean molds - Adapter(2).
+#include "PC/processOrder2.h"
+#endif
+#ifdef G3 // Setup injection line - Abstract Factory(9).
+#define abstract_factory	abstract_factory_1
+#include "PC/processOrder3.h"
+#endif
+#ifdef G4 // Packager, pausing upstream machines - Observer(5).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder4.h"
+#endif
+#ifdef G5 // Mold Shape & Platform - Bridge(8).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder5.h"
+#endif
+#ifdef G6 // Acquire mold - CofR(7).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder6.h"
+#endif
+#ifdef G7 // Tags - Decorator(6).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder7.h"
+#endif
+#ifdef G8 // Additives - Decorator(6).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder8.h"
+#endif
+#ifdef G9 // Estimated run time - Strategy(1).
+#define abstract_factory	abstract_factory2
+#include "PC/processOrder9.h"
+#endif
+
 #define ProcessInherit ProcessOrder9 // Pedagogy: successively replace with 0,1,2,3...
 
 #ifndef ProcessChain
-#include "PC/processOrder0.h"	// Architecture - Template Method(4), Factory Method(3).
-#include "PC/processOrder1.h"	// Dtor instrumentation and non defaulted order specs.
-#include "PC/processOrder2.h"	// Clean molds - Adapter(2).
-#include "PC/processOrder3.h"	// Setup injection line - Abstract Factory(9).
-#include "PC/processOrder4.h"	// Packager, pausing upstream machines - Observer(5).
-#include "PC/processOrder5.h"	// Mold Shape & Platform - Bridge(8).
-#include "PC/processOrder6.h"	// Acquire mold - CofR(7).
-#include "PC/processOrder7.h"	// Tags - Decorator(6).
-#include "PC/processOrder8.h"	// Additives - Decorator(6).
-#include "PC/processOrder9.h"	// Estimated run time - Strategy(1).
+//#include "PC/processOrder0.h"	// Architecture - Template Method(4), Factory Method(3).
+//#include "PC/processOrder1.h"	// Dtor instrumentation and non defaulted order specs.
+//#include "PC/processOrder2.h"	// Clean molds - Adapter(2).
+//#include "PC/processOrder3.h"	// Setup injection line - Abstract Factory(9).
+//#include "PC/processOrder4.h"	// Packager, pausing upstream machines - Observer(5).
+//#include "PC/processOrder5.h"	// Mold Shape & Platform - Bridge(8).
+//#include "PC/processOrder6.h"	// Acquire mold - CofR(7).
+//#include "PC/processOrder7.h"	// Tags - Decorator(6).
+//#include "PC/processOrder8.h"	// Additives - Decorator(6).
+//#include "PC/processOrder9.h"	// Estimated run time - Strategy(1).
 #else
 class ProcessOrder0 { // Architecture - Template Method(4), Factory Method(3).
 public:
@@ -2610,7 +2650,7 @@ protected: // Helper methods.
 };
 #endif
 
-class ABSOrder : public ProcessInherit {
+class ABSOrder : public ProcessOrder {
 public: ~ABSOrder() { DTORF("~ABSOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -2619,7 +2659,7 @@ public:
 			 << " - cool to 360 - separate - progressive eject.\n";
 	}
 };
-class PropyleneOrder : public ProcessInherit {
+class PropyleneOrder : public ProcessOrder {
 public: ~PropyleneOrder() { DTORF("~PropyleneOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -2628,7 +2668,7 @@ public:
 			 << " - cool to 290 - separate - smooth eject.\n";
 	}
 };
-class EtheleneOrder : public ProcessInherit {
+class EtheleneOrder : public ProcessOrder {
 public: ~EtheleneOrder() { DTORF("~EtheleneOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -2637,7 +2677,7 @@ public:
 			 << " - cool to 280 - separate - smooth eject.\n";
 	}
 };
-class PETOrder : public ProcessInherit {
+class PETOrder : public ProcessOrder {
 public: ~PETOrder() { DTORF("~PETOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -2650,7 +2690,7 @@ public:
 // Seam point - add another constant step.
 // Seam point - convert a constant step into a polymorphic step.
 
-ProcessInherit* getProcessOrder(map<string,string>& order) { // Factory Method(3).
+ProcessOrder* getProcessOrder(map<string,string>& order) { // Factory Method(3).
 	if(order["plastic"] == "ABS")				return new ABSOrder;
 	if(order["plastic"] == "Polypropylene")		return new PropyleneOrder;
 	if(order["plastic"] == "Polyethelene")		return new EtheleneOrder;
@@ -2669,7 +2709,7 @@ void process(map<string,string>& order) {
 
 	using namespace template_method;
 
-	ProcessInherit* processOrder = getProcessOrder(order);
+	ProcessOrder* processOrder = getProcessOrder(order);
 
 	processOrder->run(order);
 
@@ -2739,6 +2779,6 @@ void demo(const string& orderFile) {
 	}
 }
 
-} // final_guided
+} // final_guided1
 
-#endif /* FINAL_GUIDED_H_ */
+#endif /* FINAL_GUIDED1_H_ */

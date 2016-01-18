@@ -1,8 +1,8 @@
 /*
- * finalGuided.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
+ * finalPart1.h - Solution to Part1, original specs run against orders_1.txt.
  *
- *  Created on: <MMDDCCYY>
- *      Author: <studentName>
+ *  Created on: 1/17/16
+ *      Author: Allan Goff
  */
 
 #ifndef FINAL_PART1_H_
@@ -68,16 +68,6 @@ void defaulting(map<string,string>& order, const string& option, string def="sim
 }
 
 namespace adapter {			// DP 2.
-
-/* Instruction Steps:
- * 1. Unfold Base class
- *    1.1. Why pass metal to the clean method?
- * 2. Unfold ABS class
- *    2.1. Unfold clean method
- * 3. Unfold the Factory Method
- * 4. Students complete the classes from the specs
- * 5. Unfold the rest.
- */
 
 class CleanMold {
 public:	virtual ~CleanMold() { DTORF("~adapter::CleanMold\n"); }
@@ -363,8 +353,6 @@ Packager* Packager::makeObject(map<string,string>& order, BinSubject* bin) {
 }
 
 } // factory_method
-
-#define ProcessChain	// When undefined compiles files in PC dir.
 
 namespace abstract_factory {// DP 9.
 
@@ -1005,26 +993,15 @@ Polymer* addAdditives(Polymer* additive, map<string,string>& order) {
 
 namespace template_method {	// DP 3.
 
-/* Instruction Steps: IN WORK.
- * 1. Unfold base class
- * 2. Unfold Factory Method
- * 3. Unfold process function below namespace
- * 4. Unfold run method
- * 5. Unfold setupLine method
- * 6. Unfold ctor/dtor
- * 7. Students complete the classes
- * 8. Unfold the rest.
- * 9. Note how cleanMold uses the adapter hierarchy
- * 10. Run code
- * 11. Diff with output file
+/* Execution lines:
+ * C:\Users\adgoffx\git\DP12>
+ * Debug\DP12 final part1 src\final1week\In\orders_1.txt > src\Final1week\Out\guidedN.out
+ * Debug\DP12 final part1 src\final1week\In\orders_1.txt > src\Final1week\Out\part1on1.out
+ * Debug\DP12 final part1 src\final1week\In\orders_2.txt > src\Final1week\Out\part1on2.out
  */
 
-#define ProcessInherit ProcessOrderP0 // Pedagogy: successively replace with 0,1,2,3...
-
-#ifndef ProcessChain
-#include "Solution/processOrder0.h"
-#else
-class ProcessOrderP0 { // Estimated run time - Strategy(1).
+class ProcessOrder {
+protected:
 	adapter::CleanMold*					cleaning;
 	abstract_factory::InjectionLine*	injectionLine;
 	abstract_factory::IJM*				ijm;
@@ -1038,7 +1015,7 @@ class ProcessOrderP0 { // Estimated run time - Strategy(1).
 	decorator::Polymer*					additives;
 	strategy::RuntimeEstimate*			runtimeEst;
 public:
-	ProcessOrderP0()
+	ProcessOrder()
 		: cleaning(0)
 		, injectionLine(0)
 		, ijm(0)
@@ -1052,7 +1029,7 @@ public:
 		, additives(0)
 		, runtimeEst(0)
 	{}
-	virtual ~ProcessOrderP0() {
+	virtual ~ProcessOrder() {
 		delete ijm;
 		delete block;
 		delete belt;
@@ -1073,8 +1050,7 @@ public:
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
 		insertTags(order);					// 6 - Decorator
-		loadBins(order);
-		loadAdditives(order);				// 6 - Decorator
+		loadBins(order);					// 6 - Decorator
 		runtimeEstimate(order);				// 1 - Strategy
 		injectionCycle(order);				// 4 - Template Method
 		simulateFullPartsBin(order);		// 5 - Observer
@@ -1155,15 +1131,14 @@ protected: // Template Method methods.
 		Cavity::unknownTags.str("");	// Clear.
 	}
 	void loadBins(map<string,string>& order) {
+		using namespace decorator;
+
 		if(order.find("color") == order.end()) {
 			legacy_classes::defaulting(order, "color", "black");
 		}
 
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with " << order["color"] << ".\n";
-	}
-	void loadAdditives(map<string,string>& order) {
-		using namespace decorator;
 
 		int cavities = block->cavities;
 
@@ -1220,9 +1195,7 @@ protected: // Helper methods.
 			 << order["plastic"] << " " << runSize << " times.\n";
 	}
 };
-#endif
-
-class ABSOrder : public ProcessInherit {
+class ABSOrder : public ProcessOrder {
 public: ~ABSOrder() { DTORF("~ABSOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -1231,7 +1204,7 @@ public:
 			 << " - cool to 360 - separate - progressive eject.\n";
 	}
 };
-class PropyleneOrder : public ProcessInherit {
+class PropyleneOrder : public ProcessOrder {
 public: ~PropyleneOrder() { DTORF("~PropyleneOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -1240,7 +1213,7 @@ public:
 			 << " - cool to 290 - separate - smooth eject.\n";
 	}
 };
-class EtheleneOrder : public ProcessInherit {
+class EtheleneOrder : public ProcessOrder {
 public: ~EtheleneOrder() { DTORF("~EtheleneOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -1249,7 +1222,7 @@ public:
 			 << " - cool to 280 - separate - smooth eject.\n";
 	}
 };
-class PETOrder : public ProcessInherit {
+class PETOrder : public ProcessOrder {
 public: ~PETOrder() { DTORF("~PETOrder\n"); }
 public:
 	virtual void injectionCycle(map<string,string>& order) {
@@ -1262,7 +1235,7 @@ public:
 // Seam point - add another constant step.
 // Seam point - convert a constant step into a polymorphic step.
 
-ProcessInherit* getProcessOrder(map<string,string>& order) { // Factory Method(3).
+ProcessOrder* getProcessOrder(map<string,string>& order) { // Factory Method(3).
 	if(order["plastic"] == "ABS")				return new ABSOrder;
 	if(order["plastic"] == "Polypropylene")		return new PropyleneOrder;
 	if(order["plastic"] == "Polyethelene")		return new EtheleneOrder;
@@ -1281,7 +1254,7 @@ void process(map<string,string>& order) {
 
 	using namespace template_method;
 
-	ProcessInherit* processOrder = getProcessOrder(order);
+	ProcessOrder* processOrder = getProcessOrder(order);
 
 	processOrder->run(order);
 

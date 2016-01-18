@@ -15,7 +15,7 @@ Process order:
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   <>Unknown color || defaulting to black.
   Load plastic bin with ABS and color bin with black.
-      Recipe: ABS(32) black(3) = 35 cc.
+    Recipe: ABS(32) + black(3) = 35 cc.
     Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -59,7 +59,7 @@ Process order:
   Pull duck mold from inventory.
   Insert tags [ModelNumber] of width 2/20 mm, blank tag is 18 mm.
   Load plastic bin with ABS and color bin with red.
-      Recipe: ABS(30) red(3) + UVInhibiter(2) = 35 cc.
+    Recipe: ABS(30) + red(3) + UVInhibiter(2) = 35 cc.
     Volume: duck(35) * 1 cavity = 35 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -107,7 +107,7 @@ Process order:
     to mill Aluminum block into 2 car shapes with smooth finish.
   Insert tags [ModelNumber Country Date] of width 6/20 mm, blank tag is 14 mm.
   Load plastic bin with Polypropylene and color bin with orange.
-      Recipe: Polypropylene(31) orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 40 cc.
+    Recipe: Polypropylene(31) + orange(4) + UVInhibiter(2) + AntiBacterial(1) + Hydrophilic(2) = 40 cc.
     Volume: car(40) * 2 cavities = 80 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -156,7 +156,7 @@ Process order:
     Ignoring unknown tag ModelNum.
     Ignoring unknown tag date.
   Load plastic bin with Polyethelene and color bin with yellow.
-      Recipe: Polyethelene(45) yellow(5) = 50 cc.
+    Recipe: Polyethelene(45) + yellow(5) = 50 cc.
     Volume: hero(50) * 1 cavity = 50 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:
@@ -202,7 +202,7 @@ Process order:
     to mill Steel block into 2 hero shapes with dimpled finish.
   Insert tags [] of width 0/20 mm, blank tag is 20 mm.
   Load plastic bin with PET and color bin with green.
-      Recipe: PET(45) green(5) = 50 cc.
+    Recipe: PET(45) + green(5) = 50 cc.
     Volume: hero(50) * 2 cavities = 100 cc.
   Estimated run time (algorithm) = x hour(s).
     Formula:

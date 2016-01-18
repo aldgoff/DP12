@@ -1,8 +1,8 @@
 /*
- * finalGuided.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
+ * guided2.h - tutorial from finalPart1.h to finalPart2.h
  *
- *  Created on: <MMDDCCYY>
- *      Author: <studentName>
+ *  Created on: 1/17/16
+ *      Author: Allan Goff
  */
 
 #ifndef FINAL_GUIDED2_H
@@ -2147,7 +2147,7 @@ namespace template_method {		// DP 3.
  *        Compare finalPart1.h finalPart2.h
  */
 
-#define P6	// Successively replace with 1,2,3,...6.
+#define P6	// Successively replace with 1,2,3,...,6.
 
 #ifdef P0 // Synthetics & clean.
 #define abstract_factory	abstract_factory_1

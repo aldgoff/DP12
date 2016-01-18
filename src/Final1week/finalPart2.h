@@ -1,8 +1,8 @@
 /*
- * finalGuided.h - Part 1: finalOriginal.h  Part 2: finalSolution.h
+ * finalPart2.h - Solution to Part2, new specs run against orders_2.txt.
  *
- *  Created on: <MMDDCCYY>
- *      Author: <studentName>
+ *  Created on: 1/17/16
+ *      Author: Allan Goff
  */
 
 #ifndef FINAL_PART2_H_
@@ -297,7 +297,7 @@ RuntimeEstimate* RuntimeEstimate::selectEstimationAlgorithm(map<string,string>& 
 	return new Projection;
 }
 
-} // strategy_2
+} // strategy
 
 namespace observer {			// DP 5.
 
@@ -474,7 +474,7 @@ Stuffer* Stuffer::makeObject(map<string,string>& order, BinSubject* bin) {
 	return 0;
 }
 
-} // factory_method_2
+} // factory_method
 
 namespace abstract_factory {	// DP 9.
 
@@ -795,7 +795,7 @@ InjectionLine* InjectionLine::createInjectionLine(map<string,string>& order) {
 	return new GiganticOrder;
 }
 
-} // abstract_factory_2
+} // abstract_factory
 
 namespace bridge {				// DP 8.
 
@@ -958,7 +958,7 @@ Shape* Shape::getShape(map<string,string>& order) {
 	return new Duck(platform);
 }
 
-} // bridge_2
+} // bridge
 
 namespace chain_of_resp {		// DP 7.
 
@@ -1078,7 +1078,7 @@ Mold* Mold::acquireMold(map<string,string>& order) {
 
 // Seam points - add another responder.
 
-} // chain_of_resp_2
+} // chain_of_resp
 
 namespace decorator {			// DP 6.
 
@@ -1277,7 +1277,7 @@ Polymer* addAdditives(Polymer* additive, map<string,string>& order) {
 	return additive;
 }
 
-} // decorator_2
+} // decorator
 
 namespace template_method {		// DP 3.
 
@@ -1289,18 +1289,18 @@ namespace template_method {		// DP 3.
 class ProcessOrder {
 protected:
 	adapter::CleanMold*					cleaning;
-	abstract_factory_2::InjectionLine*	injectionLine;
-	abstract_factory_2::IJM*			ijm;
-	abstract_factory_2::Block*			block;
-	abstract_factory_2::ConveyerBelt*	belt;
-	abstract_factory_2::PartsBin*		bin;	// Inherits from observer::BinSubject.
-	factory_method_2::Packager*			packager;
-	factory_method_2::Stuffer*			cushion;	// Specs 2.
-	bridge_2::Shape*					shape;
-	chain_of_resp_2::Mold*				mold;
-	decorator_2::Cavity*				tags;
-	decorator_2::Polymer*				additives;
-	strategy_2::RuntimeEstimate*		runtimeEst;
+	abstract_factory::InjectionLine*	injectionLine;
+	abstract_factory::IJM*				ijm;
+	abstract_factory::Block*			block;
+	abstract_factory::ConveyerBelt*		belt;
+	abstract_factory::PartsBin*			bin;	// Inherits from observer::BinSubject.
+	factory_method::Packager*			packager;
+	factory_method::Stuffer*			cushion;	// Specs 2.
+	bridge::Shape*						shape;
+	chain_of_resp::Mold*				mold;
+	decorator::Cavity*					tags;
+	decorator::Polymer*					additives;
+	strategy::RuntimeEstimate*			runtimeEst;
 public:
 	ProcessOrder()
 		: cleaning(0)
@@ -1348,8 +1348,8 @@ public:
 	}
 protected: // Template Method methods.
 	void setupLine(map<string,string>& order) {	// AF (order size), Factory (packaging).
-		using namespace factory_method_2;
-		using namespace abstract_factory_2;
+		using namespace factory_method;
+		using namespace abstract_factory;
 
 		if(order.find("size") == order.end()) {
 			cout << "  <>No size specified, defaulting to 100.\n";
@@ -1393,8 +1393,8 @@ protected: // Template Method methods.
 		order["cavities"] = cavities.str();
 	}
 	void getMold(map<string,string>& order) {
-		using namespace bridge_2;
-		using namespace chain_of_resp_2;
+		using namespace bridge;
+		using namespace chain_of_resp;
 
 		mold = Mold::acquireMold(order);
 
@@ -1404,7 +1404,7 @@ protected: // Template Method methods.
 		order["volume"] = volume.str();
 	}
 	void insertTags(map<string,string>& order) {
-		using namespace decorator_2;
+		using namespace decorator;
 
 		tags = new Blank();
 
@@ -1427,7 +1427,7 @@ protected: // Template Method methods.
 		Cavity::unknownTags.str("");	// Clear.
 	}
 	virtual void loadBins(map<string,string>& order) {
-		using namespace decorator_2;
+		using namespace decorator;
 
 		if(order.find("color") == order.end()) {
 			legacy_classes::defaulting(order, "color", "black");
@@ -1456,7 +1456,7 @@ protected: // Template Method methods.
 			 << "= " << totalVol << " cc.\n";
 	}
 	void runtimeEstimate(map<string,string>& order) {
-		using namespace strategy_2;
+		using namespace strategy;
 
 		runtimeEst = RuntimeEstimate::selectEstimationAlgorithm(order);
 		unsigned runtime = (*runtimeEst)(order);
