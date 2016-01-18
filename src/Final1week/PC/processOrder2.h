@@ -1,10 +1,11 @@
-class ProcessOrder2 { // Clean molds - Adapter(2).
+class ProcessOrder { // Clean molds - Adapter(2).
+protected:
 	adapter::CleanMold*	cleaning;
 public:
-	ProcessOrder2()
+	ProcessOrder()
 		: cleaning(0)
 	{}
-	virtual ~ProcessOrder2() {
+	virtual ~ProcessOrder() {
 		delete cleaning;
 		DTORF("~template_method::ProcessOrder\n");
 	}
@@ -14,8 +15,7 @@ public:
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
 		insertTags(order);					// 6 - Decorator
-		loadBins(order);
-		loadAdditives(order);				// 6 - Decorator
+		loadBins(order);					// 6 - Decorator
 		runtimeEstimate(order);				// 1 - Strategy
 		injectionCycle(order);				// 4 - Template Method
 		simulateFullPartsBin(order);		// 5 - Observer
@@ -48,10 +48,8 @@ protected: // Template Method methods.
 	void loadBins(map<string,string>& order) {
 		cout << "  Load plastic bin with " << order["plastic"]
 			 << " and color bin with <color>.\n";
-	}
-	void loadAdditives(map<string,string>& order) {
-		cout << "    Recipe: " << order["plastic"] << "(vol) "
-				 << "<color>(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Recipe: " << order["plastic"] << "(vol) + "
+				 << "<color>(vol) + <additive(<vol>) list> = (vol) cc.\n";
 		cout << "    Volume: <mold>(vol) * "
 			 << "<cavities> cavities = (vol) cc.\n";
 	}

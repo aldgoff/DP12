@@ -1,8 +1,8 @@
-class ProcessOrder0 { // Architecture - Template Method(4), Factory Method(3).
+class ProcessOrder { // Architecture - Template Method(4), Factory Method(3).
 public:
-	ProcessOrder0()
+	ProcessOrder()
 	{}
-	virtual ~ProcessOrder0() {
+	virtual ~ProcessOrder() {
 		DTORF("~template_method::ProcessOrder\n");
 	}
 public:
@@ -11,8 +11,7 @@ public:
 		setupLine(order);					// 9 - Abstract Factory
 		getMold(order);						// 7 - Chain of Responsibility, 8 - Bridge
 		insertTags(order);					// 6 - Decorator
-		loadBins(order);
-		loadAdditives(order);				// 6 - Decorator
+		loadBins(order);					// 6 - Decorator
 		runtimeEstimate(order);				// 1 - Strategy
 		injectionCycle(order);				// 4 - Template Method
 		simulateFullPartsBin(order);		// 5 - Observer
@@ -40,10 +39,8 @@ protected: // Template Method methods.
 	void loadBins(map<string,string>& order) {
 		cout << "  Load plastic bin with <plastic>"
 			 << " and color bin with <color>.\n";
-	}
-	void loadAdditives(map<string,string>& order) {
-		cout << "    Recipe: <plastic>(vol) "
-			 << "<color>(vol) <additive(<vol>) list> = (vol) cc.\n";
+		cout << "    Recipe: <plastic>(vol) + "
+			 << "<color>(vol) + <additive(<vol>) list> = (vol) cc.\n";
 		cout << "    Volume: <mold>(vol) * "
 			 << "<cavities> cavities = (vol) cc.\n";
 	}
