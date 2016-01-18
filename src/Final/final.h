@@ -49,8 +49,9 @@ public:
 		else if(opt == "part2")		final_part2::demo(args[2]);
 
 		else {
-			cout << "<< final [design|guided|DtoO|original|OtoS|solution]";
-			cout << " [src/Final/In/orders_1/2.txt] >>\n";
+			cout << "<< final [design|DtoO|original|OtoS|solution]\n";
+			cout << "   final [design|guided1|part1|guided2|part2]\n";
+			cout << "   src/[Final|Final1week]/In/[orders_1.txt|orders_2.txt] >>\n";
 			return 0;
 		}
 
