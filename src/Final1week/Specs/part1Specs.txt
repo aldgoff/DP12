@@ -29,10 +29,8 @@
    3.4. PET: Close - heat to 404 - inject at 110 PSI - cool to 340 - separate - smooth eject.
 
 4. Instrument the destructors:
-   4.1. "~<ClassName> "
-   4.2. Or better, use the DTOR macro in macros.h.
-		  If your classes differ too much you can turn dtor instrumentation off.
-   4.3. Use newlines to logically group the class heirarchies.
+   4.1. DTORF("~<className> ");
+   4.2. Use newlines to logically group the class heirarchies.
 
 5. Clean the molds: (domains: order["plastic"] and metal)
    5.0. "  Clean <metal> mold of <plastic>: <cleaning steps>."

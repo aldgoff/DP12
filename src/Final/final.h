@@ -16,10 +16,10 @@
 #include "../Final/finalOtoS.h"
 #include "../Final/finalSolution.h"
 
+#include "../Final1week/guided1.h"
 #include "../Final1week/finalPart1.h"
 #include "../Final1week/guided2.h"
 #include "../Final1week/finalPart2.h"
-#include "../Final1week/guided1.h"
 
 namespace final {
 
@@ -36,6 +36,7 @@ public:
 
 		// final <command> src/Final/In/orders_1/2.txt
 		// final <command> src/Final1week/In/orders_1/2.txt
+
 		if(		opt == "design")	final_design::demo(args[2]);
 
 		else if(opt == "DtoO")		final_d_to_o::demo(args[2]);	// 12 wk course.

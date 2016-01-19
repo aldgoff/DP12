@@ -1198,7 +1198,7 @@ protected: // Helper methods.
 class ABSOrder : public ProcessOrder {
 public: ~ABSOrder() { DTORF("~ABSOrder\n"); }
 public:
-	virtual void injectionCycle(map<string,string>& order) {
+	void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to 440 - inject at 125 PSI"
 			 << " - cool to 360 - separate - progressive eject.\n";
@@ -1207,7 +1207,7 @@ public:
 class PropyleneOrder : public ProcessOrder {
 public: ~PropyleneOrder() { DTORF("~PropyleneOrder\n"); }
 public:
-	virtual void injectionCycle(map<string,string>& order) {
+	void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to 350 - inject at 90 PSI"
 			 << " - cool to 290 - separate - smooth eject.\n";
@@ -1216,7 +1216,7 @@ public:
 class EtheleneOrder : public ProcessOrder {
 public: ~EtheleneOrder() { DTORF("~EtheleneOrder\n"); }
 public:
-	virtual void injectionCycle(map<string,string>& order) {
+	void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to 360 - inject at 95 PSI"
 			 << " - cool to 280 - separate - smooth eject.\n";
@@ -1225,7 +1225,7 @@ public:
 class PETOrder : public ProcessOrder {
 public: ~PETOrder() { DTORF("~PETOrder\n"); }
 public:
-	virtual void injectionCycle(map<string,string>& order) {
+	void injectionCycle(map<string,string>& order) {
 		cycle(order);
 		cout << "    Close - heat to 404 - inject at 110 PSI"
 			 << " - cool to 340 - separate - smooth eject.\n";
